@@ -15,6 +15,8 @@ export function useChannelMonitor() {
   const sourceRef = useRef(null);
   const precisePollRef = useRef(null);
   const hasShownCountRef = useRef(false);
+  const preciseSourceActiveRef = useRef(false);
+  const pollFailStreakRef = useRef(0);
 
   const applySubscriberCount = useCallback((next, { allowDelta = true } = {}) => {
     setSubscriberCount((prev) => {
@@ -46,9 +48,17 @@ export function useChannelMonitor() {
       const poll = async () => {
         try {
           const stats = await fetchLiveSubscriberCount(channelId);
-          applySubscriberCount(stats.subscriberCount);
+          pollFailStreakRef.current = 0;
+          const wasRounded = !preciseSourceActiveRef.current;
+          preciseSourceActiveRef.current = stats.precise !== false;
+          applySubscriberCount(stats.subscriberCount, {
+            allowDelta: preciseSourceActiveRef.current && !wasRounded,
+          });
         } catch {
-          /* mantém último valor do servidor */
+          pollFailStreakRef.current += 1;
+          if (pollFailStreakRef.current >= 3) {
+            stopPrecisePolling();
+          }
         }
       };
 
@@ -82,8 +92,13 @@ export function useChannelMonitor() {
       source.addEventListener('stats', (event) => {
         const data = JSON.parse(event.data);
         setChannel(data.channel);
+        const isInitial = data.change?.type === 'initial';
         if (data.channel.subscriberCountPrecise) {
-          const isInitial = data.change?.type === 'initial';
+          preciseSourceActiveRef.current = true;
+          applySubscriberCount(data.channel.subscriberCount, {
+            allowDelta: !isInitial,
+          });
+        } else if (!preciseSourceActiveRef.current) {
           applySubscriberCount(data.channel.subscriberCount, {
             allowDelta: !isInitial,
           });
@@ -94,7 +109,7 @@ export function useChannelMonitor() {
 
       source.addEventListener('heartbeat', (event) => {
         const data = JSON.parse(event.data);
-        if (data.subscriberCountPrecise && data.subscriberCount != null) {
+        if (data.subscriberCount != null && !preciseSourceActiveRef.current) {
           applySubscriberCount(data.subscriberCount);
         }
         setStatus('live');
@@ -132,6 +147,8 @@ export function useChannelMonitor() {
       setError(null);
       setDelta(0);
       hasShownCountRef.current = false;
+      preciseSourceActiveRef.current = false;
+      pollFailStreakRef.current = 0;
       setSubscriberCount(null);
       disconnect();
 
@@ -151,13 +168,13 @@ export function useChannelMonitor() {
         if (!data.channel.hiddenSubscriberCount) {
           try {
             const stats = await fetchLiveSubscriberCount(data.channel.id);
+            preciseSourceActiveRef.current = stats.precise !== false;
             applySubscriberCount(stats.subscriberCount, { allowDelta: false });
           } catch {
-            if (data.channel.subscriberCountPrecise) {
-              applySubscriberCount(data.channel.subscriberCount, {
-                allowDelta: false,
-              });
-            }
+            preciseSourceActiveRef.current = false;
+            applySubscriberCount(data.channel.subscriberCount, {
+              allowDelta: false,
+            });
           }
           startPrecisePolling(data.channel.id);
         }
@@ -178,6 +195,8 @@ export function useChannelMonitor() {
     stopPrecisePolling();
     disconnect();
     hasShownCountRef.current = false;
+    preciseSourceActiveRef.current = false;
+    pollFailStreakRef.current = 0;
     setChannel(null);
     setSubscriberCount(null);
     setDelta(0);
