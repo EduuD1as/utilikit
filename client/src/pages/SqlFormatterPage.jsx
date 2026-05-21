@@ -184,7 +184,6 @@ export function SqlFormatterPage({ onNavigate }) {
               onChange={(e) => setInput(e.target.value)}
               placeholder="SELECT * FROM tabela WHERE id = 1;"
               spellCheck={false}
-              rows={14}
             />
           </div>
 
@@ -198,7 +197,6 @@ export function SqlFormatterPage({ onNavigate }) {
               readOnly
               placeholder="O SQL formatado aparecerá aqui."
               spellCheck={false}
-              rows={14}
             />
           </div>
         </div>
