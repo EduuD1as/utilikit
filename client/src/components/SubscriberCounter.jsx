@@ -66,7 +66,7 @@ export function SubscriberCounter({ count, delta, hidden }) {
           {hidden ? (
             <p className="counter-card__hidden">Contagem oculta pelo canal</p>
           ) : (
-            <>
+            <div className="counter-card__main">
               <span ref={numberRef} className="counter-card__number">
                 {formatCount(count)}
               </span>
@@ -80,7 +80,7 @@ export function SubscriberCounter({ count, delta, hidden }) {
                   {formatCount(delta)}
                 </span>
               )}
-            </>
+            </div>
           )}
         </div>
 

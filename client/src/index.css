@@ -407,9 +407,14 @@ body:has(.app--youtube) {
   display: flex;
   align-items: baseline;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: 0.65rem 0.85rem;
   min-height: 3.5rem;
+}
+
+.counter-card__main {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
 }
 
 .counter-card__number {
@@ -437,6 +442,12 @@ body:has(.app--youtube) {
 }
 
 .counter-card__delta {
+  position: absolute;
+  left: 100%;
+  margin-left: 0.65rem;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
   font-size: 0.9rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;

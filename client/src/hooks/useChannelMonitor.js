@@ -14,14 +14,21 @@ export function useChannelMonitor() {
   const [loading, setLoading] = useState(false);
   const sourceRef = useRef(null);
   const precisePollRef = useRef(null);
+  const hasShownCountRef = useRef(false);
 
-  const applySubscriberCount = useCallback((next) => {
+  const applySubscriberCount = useCallback((next, { allowDelta = true } = {}) => {
     setSubscriberCount((prev) => {
-      if (prev != null && next !== prev) {
+      if (
+        allowDelta &&
+        hasShownCountRef.current &&
+        prev != null &&
+        next !== prev
+      ) {
         setDelta(next - prev);
       }
       return next;
     });
+    if (next != null) hasShownCountRef.current = true;
     setLastUpdate(new Date());
   }, []);
 
@@ -76,8 +83,10 @@ export function useChannelMonitor() {
         const data = JSON.parse(event.data);
         setChannel(data.channel);
         if (data.channel.subscriberCountPrecise) {
-          applySubscriberCount(data.channel.subscriberCount);
-          if (data.change?.delta) setDelta(data.change.delta);
+          const isInitial = data.change?.type === 'initial';
+          applySubscriberCount(data.channel.subscriberCount, {
+            allowDelta: !isInitial,
+          });
         }
         setStatus('live');
         setError(null);
@@ -122,6 +131,8 @@ export function useChannelMonitor() {
       setLoading(true);
       setError(null);
       setDelta(0);
+      hasShownCountRef.current = false;
+      setSubscriberCount(null);
       disconnect();
 
       try {
@@ -136,14 +147,21 @@ export function useChannelMonitor() {
 
         setChannel(data.channel);
         setDelta(0);
-        if (data.channel.subscriberCountPrecise) {
-          applySubscriberCount(data.channel.subscriberCount);
-        } else {
-          setSubscriberCount(data.channel.subscriberCount);
-        }
+
         if (!data.channel.hiddenSubscriberCount) {
+          try {
+            const stats = await fetchLiveSubscriberCount(data.channel.id);
+            applySubscriberCount(stats.subscriberCount, { allowDelta: false });
+          } catch {
+            if (data.channel.subscriberCountPrecise) {
+              applySubscriberCount(data.channel.subscriberCount, {
+                allowDelta: false,
+              });
+            }
+          }
           startPrecisePolling(data.channel.id);
         }
+
         connectSSE(data.channel.id);
       } catch (err) {
         setError(err.message);
@@ -159,6 +177,7 @@ export function useChannelMonitor() {
   const stopMonitoring = useCallback(() => {
     stopPrecisePolling();
     disconnect();
+    hasShownCountRef.current = false;
     setChannel(null);
     setSubscriberCount(null);
     setDelta(0);
