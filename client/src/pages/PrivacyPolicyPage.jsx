@@ -112,6 +112,10 @@ export function PrivacyPolicyPage({ onNavigate }) {
           inscritos, chamada diretamente do seu navegador.
         </li>
         <li>
+          <strong>Frankfurter (api.frankfurter.app):</strong> cotações de moedas no
+          conversor, chamada diretamente do seu navegador.
+        </li>
+        <li>
           <strong>Google AdSense:</strong> se você consentir cookies de publicidade.
         </li>
         <li>
