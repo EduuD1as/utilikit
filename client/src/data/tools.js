@@ -12,7 +12,7 @@ export const TOOLS = [
   {
     id: 'youtube-subscribers',
     title: 'Contador de inscritos',
-    description: 'Acompanhe inscritos do YouTube em tempo real com animação ao vivo.',
+    description: 'Acompanhe inscritos do YouTube em tempo real.',
     category: 'social',
     path: '/contador-youtube',
     available: true,
