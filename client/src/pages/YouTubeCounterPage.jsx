@@ -92,7 +92,7 @@ export function YouTubeCounterPage({ onNavigate }) {
             </div>
             <p>Informe um canal para começar a acompanhar os inscritos.</p>
             <p className="empty__examples">
-              Ex.: <code>https://youtube.com/@MrBeast</code> ou <code>MrBeast</code>
+              Ex.: <code>https://youtube.com/channel/UCX6OQ9DkcsbYNE6H8uQQuVA</code> ou o ID do canal
             </p>
           </section>
         )}
@@ -100,7 +100,7 @@ export function YouTubeCounterPage({ onNavigate }) {
 
       <SiteFooter
         onNavigate={onNavigate}
-        note="Contador via YouTube Data API e estimativa SocialCounts."
+        note="Contador em tempo real via SocialCounts API."
       />
     </div>
   );

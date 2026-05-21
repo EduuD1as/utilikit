@@ -1,5 +1,5 @@
-import { getChannelById } from './youtube.js';
-import { clearSubscriberOffset } from './subscriberCount.js';
+import { getChannelById } from './socialcounts.js';
+import { clearSubscriberOffset } from './socialcounts.js';
 import { broadcastToChannel } from './sse.js';
 
 const snapshots = new Map();

@@ -7,8 +7,8 @@ import { fileURLToPath } from 'url';
 import { addClient, getActiveChannelIds, getClientCount } from './sse.js';
 import { startPoller } from './poller.js';
 import { clearChannelSnapshot } from './poller.js';
-import { isConfigured, resolveChannel, getChannelById } from './youtube.js';
-import { resolveLiveSubscriberStats } from './subscriberCount.js';
+import { resolveChannel, getChannelById } from './socialcounts.js';
+import { resolveLiveSubscriberStats } from './socialcounts.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -25,7 +25,6 @@ app.use(express.json());
 app.get('/api/health', (_req, res) => {
   res.json({
     ok: true,
-    configured: isConfigured(),
     clients: getClientCount(),
     activeChannels: getActiveChannelIds().size,
   });
@@ -103,6 +102,6 @@ if (fs.existsSync(clientDist)) {
 
 app.listen(PORT, () => {
   console.log(`[server] http://localhost:${PORT}`);
-  console.log(`[server] YouTube API: ${isConfigured() ? 'configurada' : 'NÃO configurada'}`);
+  console.log(`[server] Usando SocialCounts API (sem chave do YouTube necessária)`);
   startPoller(getActiveChannelIds);
 });
