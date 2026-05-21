@@ -1,4 +1,5 @@
 import { getChannelById } from './youtube.js';
+import { clearSubscriberOffset } from './subscriberCount.js';
 import { broadcastToChannel } from './sse.js';
 
 const snapshots = new Map();
@@ -73,4 +74,5 @@ export function startPoller(getActiveChannelIds) {
 
 export function clearChannelSnapshot(channelId) {
   snapshots.delete(channelId);
+  clearSubscriberOffset(channelId);
 }

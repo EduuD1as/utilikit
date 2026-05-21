@@ -1,22 +1,51 @@
 const SOCIALCOUNTS_BASE =
   'https://api.socialcounts.org/youtube-live-subscriber-count';
 
-/**
- * A YouTube Data API arredonda inscritos para 3 algarismos significativos.
- * O Socialcounts interpola entre atualizações da API e devolve o número
- * completo usado por contadores ao vivo.
- */
-export async function fetchLiveSubscriberStats(channelId) {
-  const res = await fetch(`${SOCIALCOUNTS_BASE}/${channelId}`, {
-    headers: { Accept: 'application/json' },
-    signal: AbortSignal.timeout(12000),
-  });
+const FETCH_HEADERS = {
+  Accept: 'application/json',
+  'User-Agent':
+    'Mozilla/5.0 (compatible; UtiliKit/1.0; +https://utilikit.com.br)',
+};
+
+/** Diferença entre contagem exata e valor arredondado da API (por canal). */
+const offsetCache = new Map();
+
+function fetchWithTimeout(url, options = {}, ms = 15000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  return fetch(url, { ...options, signal: controller.signal }).finally(() =>
+    clearTimeout(timer)
+  );
+}
+
+async function fetchSocialCounts(channelId, attempt = 1) {
+  const res = await fetchWithTimeout(
+    `${SOCIALCOUNTS_BASE}/${encodeURIComponent(channelId)}`,
+    { headers: FETCH_HEADERS },
+    15000
+  );
 
   if (!res.ok) {
-    throw new Error(`Falha ao obter inscritos (${res.status}).`);
+    const body = await res.text().catch(() => '');
+    const retryable = res.status >= 500 || res.status === 429;
+    if (retryable && attempt < 3) {
+      await new Promise((r) => setTimeout(r, attempt * 400));
+      return fetchSocialCounts(channelId, attempt + 1);
+    }
+    throw new Error(
+      `SocialCounts ${res.status}${body ? `: ${body.slice(0, 80)}` : ''}`
+    );
   }
 
-  const data = await res.json();
+  return res.json();
+}
+
+/**
+ * A YouTube Data API arredonda inscritos para 3 algarismos significativos.
+ * O SocialCounts estima o número completo entre atualizações da API.
+ */
+export async function fetchLiveSubscriberStats(channelId) {
+  const data = await fetchSocialCounts(channelId);
   const estimation = data?.counters?.estimation;
   const api = data?.counters?.api;
 
@@ -45,8 +74,25 @@ export async function fetchLiveSubscriberStats(channelId) {
   throw new Error('Contagem de inscritos indisponível para este canal.');
 }
 
+function applyOffsetEstimate(channel, apiRounded) {
+  const offset = offsetCache.get(channel.id);
+  if (offset == null) return null;
+
+  return {
+    ...channel,
+    subscriberCount: apiRounded + offset,
+    subscriberCountPrecise: true,
+    subscriberCountSource: 'estimated_offset',
+  };
+}
+
 export function applyLiveStats(channel, liveStats) {
   if (!liveStats) return channel;
+
+  const apiRounded = liveStats.apiRounded ?? channel.subscriberCount;
+  if (liveStats.precise && liveStats.apiRounded != null) {
+    offsetCache.set(channel.id, liveStats.subscriberCount - liveStats.apiRounded);
+  }
 
   return {
     ...channel,
@@ -61,15 +107,25 @@ export function applyLiveStats(channel, liveStats) {
 export async function enrichChannelWithLiveStats(channel) {
   if (channel.hiddenSubscriberCount) return channel;
 
+  const apiRounded = channel.subscriberCount;
+
   try {
     const liveStats = await fetchLiveSubscriberStats(channel.id);
     return applyLiveStats(channel, liveStats);
   } catch (err) {
     console.warn(`[subscribers] ${channel.id}: ${err.message}`);
+
+    const estimated = applyOffsetEstimate(channel, apiRounded);
+    if (estimated) return estimated;
+
     return {
       ...channel,
       subscriberCountPrecise: false,
       subscriberCountSource: 'youtube_api_rounded',
     };
   }
+}
+
+export function clearSubscriberOffset(channelId) {
+  offsetCache.delete(channelId);
 }
