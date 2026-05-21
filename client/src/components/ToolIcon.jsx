@@ -100,6 +100,15 @@ const ICONS = {
       d="M4 6h16M4 12h10M4 18h14"
     />
   ),
+  database: (
+    <path
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      d="M4 6c0 2.2 3.6 4 8 4s8-1.8 8-4-3.6-4-8-4-8 1.8-8 4Zm0 6c0 2.2 3.6 4 8 4s8-1.8 8-4M4 18c0 2.2 3.6 4 8 4s8-1.8 8-4"
+    />
+  ),
 };
 
 export function ToolIcon({ name, className = '' }) {

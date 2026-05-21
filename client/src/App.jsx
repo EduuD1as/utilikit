@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { HomePage } from './pages/HomePage.jsx';
 import { YouTubeCounterPage } from './pages/YouTubeCounterPage.jsx';
+import { SqlFormatterPage } from './pages/SqlFormatterPage.jsx';
 
 const ROUTES = {
   '/': HomePage,
   '/contador-youtube': YouTubeCounterPage,
+  '/formatador-sql': SqlFormatterPage,
 };
 
 function normalizePath(pathname) {

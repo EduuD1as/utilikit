@@ -8,6 +8,7 @@ Hub de ferramentas online — calculadoras, conversores, geradores e contadores.
 |------------|------|--------|
 | Página inicial | `/` | Disponível |
 | Contador de inscritos YouTube | `/contador-youtube` | Disponível |
+| Formatador de SQL | `/formatador-sql` | Disponível |
 | Demais utilidades | — | Em breve |
 
 ## Pré-requisitos

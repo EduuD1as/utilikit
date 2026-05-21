@@ -83,6 +83,16 @@ export const TOOLS = [
     icon: 'code',
   },
   {
+    id: 'sql-formatter',
+    title: 'Formatador de SQL',
+    description: 'Idente, organize e minifique consultas SQL no navegador.',
+    category: 'converters',
+    path: '/formatador-sql',
+    available: true,
+    accent: '#0ea5e9',
+    icon: 'database',
+  },
+  {
     id: 'password',
     title: 'Gerador de senhas',
     description: 'Senhas fortes com tamanho e símbolos configuráveis.',
