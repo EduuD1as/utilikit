@@ -64,21 +64,6 @@ export function HomePage({ onNavigate }) {
               aria-label="Buscar ferramentas"
             />
           </div>
-
-          <div className="home-hero__stats">
-            <div className="home-stat">
-              <span className="home-stat__value">{TOOLS.length}</span>
-              <span className="home-stat__label">ferramentas</span>
-            </div>
-            <div className="home-stat">
-              <span className="home-stat__value">{availableCount}</span>
-              <span className="home-stat__label">disponíveis</span>
-            </div>
-            <div className="home-stat">
-              <span className="home-stat__value">{soonCount}</span>
-              <span className="home-stat__label">em breve</span>
-            </div>
-          </div>
         </div>
       </section>
 

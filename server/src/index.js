@@ -8,6 +8,7 @@ import { addClient, getActiveChannelIds, getClientCount } from './sse.js';
 import { startPoller } from './poller.js';
 import { clearChannelSnapshot } from './poller.js';
 import { isConfigured, resolveChannel, getChannelById } from './youtube.js';
+import { resolveLiveSubscriberStats } from './subscriberCount.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -47,6 +48,18 @@ app.get('/api/channel/:channelId', async (req, res) => {
     res.json({ channel, fetchedAt: new Date().toISOString() });
   } catch (error) {
     res.status(400).json({ error: error.message });
+  }
+});
+
+app.get('/api/channel/:channelId/live-stats', async (req, res) => {
+  try {
+    const channelId = req.params.channelId.trim();
+    const apiRounded =
+      req.query.apiRounded != null ? Number(req.query.apiRounded) : undefined;
+    const stats = await resolveLiveSubscriberStats(channelId, apiRounded);
+    res.json({ stats, fetchedAt: new Date().toISOString() });
+  } catch (error) {
+    res.status(503).json({ error: error.message });
   }
 });
 

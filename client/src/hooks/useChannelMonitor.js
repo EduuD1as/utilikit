@@ -2,7 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { fetchLiveSubscriberCount } from '../lib/fetchLiveSubscriberCount.js';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
-const LIVE_POLL_MS = 3000;
+const LIVE_POLL_MS = 5000;
+const LIVE_POLL_BACKOFF_MS = 15000;
 
 export function useChannelMonitor() {
   const [channel, setChannel] = useState(null);
@@ -17,6 +18,8 @@ export function useChannelMonitor() {
   const hasShownCountRef = useRef(false);
   const preciseSourceActiveRef = useRef(false);
   const pollFailStreakRef = useRef(0);
+  const pollIntervalMsRef = useRef(LIVE_POLL_MS);
+  const apiRoundedRef = useRef(null);
 
   const applySubscriberCount = useCallback((next, { allowDelta = true } = {}) => {
     setSubscriberCount((prev) => {
@@ -41,14 +44,31 @@ export function useChannelMonitor() {
     }
   }, []);
 
+  const schedulePrecisePoll = useCallback(
+    (channelId, pollFn) => {
+      stopPrecisePolling();
+      pollFn();
+      precisePollRef.current = setInterval(pollFn, pollIntervalMsRef.current);
+    },
+    [stopPrecisePolling]
+  );
+
   const startPrecisePolling = useCallback(
     (channelId) => {
-      stopPrecisePolling();
+      pollFailStreakRef.current = 0;
+      pollIntervalMsRef.current = LIVE_POLL_MS;
 
       const poll = async () => {
         try {
-          const stats = await fetchLiveSubscriberCount(channelId);
+          const stats = await fetchLiveSubscriberCount(channelId, {
+            apiRounded: apiRoundedRef.current,
+          });
           pollFailStreakRef.current = 0;
+          if (pollIntervalMsRef.current !== LIVE_POLL_MS) {
+            pollIntervalMsRef.current = LIVE_POLL_MS;
+            schedulePrecisePoll(channelId, poll);
+            return;
+          }
           const wasRounded = !preciseSourceActiveRef.current;
           preciseSourceActiveRef.current = stats.precise !== false;
           applySubscriberCount(stats.subscriberCount, {
@@ -56,16 +76,19 @@ export function useChannelMonitor() {
           });
         } catch {
           pollFailStreakRef.current += 1;
-          if (pollFailStreakRef.current >= 3) {
-            stopPrecisePolling();
+          if (
+            pollFailStreakRef.current >= 2 &&
+            pollIntervalMsRef.current !== LIVE_POLL_BACKOFF_MS
+          ) {
+            pollIntervalMsRef.current = LIVE_POLL_BACKOFF_MS;
+            schedulePrecisePoll(channelId, poll);
           }
         }
       };
 
-      poll();
-      precisePollRef.current = setInterval(poll, LIVE_POLL_MS);
+      schedulePrecisePoll(channelId, poll);
     },
-    [applySubscriberCount, stopPrecisePolling]
+    [applySubscriberCount, schedulePrecisePoll]
   );
 
   const disconnect = useCallback(() => {
@@ -92,15 +115,17 @@ export function useChannelMonitor() {
       source.addEventListener('stats', (event) => {
         const data = JSON.parse(event.data);
         setChannel(data.channel);
+        if (data.channel.subscriberCount != null) {
+          apiRoundedRef.current = data.channel.subscriberCount;
+        }
         const isInitial = data.change?.type === 'initial';
-        if (data.channel.subscriberCountPrecise) {
-          preciseSourceActiveRef.current = true;
+        const fromServer = data.channel.subscriberCount != null;
+        if (fromServer) {
+          if (data.channel.subscriberCountPrecise) {
+            preciseSourceActiveRef.current = true;
+          }
           applySubscriberCount(data.channel.subscriberCount, {
-            allowDelta: !isInitial,
-          });
-        } else if (!preciseSourceActiveRef.current) {
-          applySubscriberCount(data.channel.subscriberCount, {
-            allowDelta: !isInitial,
+            allowDelta: !isInitial && data.channel.subscriberCountPrecise,
           });
         }
         setStatus('live');
@@ -109,8 +134,13 @@ export function useChannelMonitor() {
 
       source.addEventListener('heartbeat', (event) => {
         const data = JSON.parse(event.data);
-        if (data.subscriberCount != null && !preciseSourceActiveRef.current) {
-          applySubscriberCount(data.subscriberCount);
+        if (data.subscriberCount != null) {
+          applySubscriberCount(data.subscriberCount, {
+            allowDelta: data.subscriberCountPrecise === true,
+          });
+          if (data.subscriberCountPrecise) {
+            preciseSourceActiveRef.current = true;
+          }
         }
         setStatus('live');
       });
@@ -163,11 +193,14 @@ export function useChannelMonitor() {
         if (!res.ok) throw new Error(data.error || 'Erro ao buscar canal.');
 
         setChannel(data.channel);
+        apiRoundedRef.current = data.channel.subscriberCount;
         setDelta(0);
 
         if (!data.channel.hiddenSubscriberCount) {
           try {
-            const stats = await fetchLiveSubscriberCount(data.channel.id);
+            const stats = await fetchLiveSubscriberCount(data.channel.id, {
+              apiRounded: data.channel.subscriberCount,
+            });
             preciseSourceActiveRef.current = stats.precise !== false;
             applySubscriberCount(stats.subscriberCount, { allowDelta: false });
           } catch {
@@ -197,6 +230,7 @@ export function useChannelMonitor() {
     hasShownCountRef.current = false;
     preciseSourceActiveRef.current = false;
     pollFailStreakRef.current = 0;
+    apiRoundedRef.current = null;
     setChannel(null);
     setSubscriberCount(null);
     setDelta(0);
