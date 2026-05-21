@@ -10,17 +10,22 @@ export function HomePage({ onNavigate }) {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return TOOLS.filter((tool) => {
-      const matchesCategory =
-        category === 'all' || tool.category === category;
+      const matchesAvailability =
+        category === 'soon'
+          ? !tool.available
+          : category === 'all'
+            ? tool.available
+            : tool.available && tool.category === category;
       const matchesQuery =
         !q ||
         tool.title.toLowerCase().includes(q) ||
         tool.description.toLowerCase().includes(q);
-      return matchesCategory && matchesQuery;
+      return matchesAvailability && matchesQuery;
     });
   }, [query, category]);
 
   const availableCount = TOOLS.filter((t) => t.available).length;
+  const soonCount = TOOLS.length - availableCount;
 
   return (
     <div className="home">
@@ -66,11 +71,11 @@ export function HomePage({ onNavigate }) {
             </div>
             <div className="home-stat">
               <span className="home-stat__value">{availableCount}</span>
-              <span className="home-stat__label">disponíveis agora</span>
+              <span className="home-stat__label">disponíveis</span>
             </div>
             <div className="home-stat">
-              <span className="home-stat__value">{CATEGORIES.length - 1}</span>
-              <span className="home-stat__label">categorias</span>
+              <span className="home-stat__value">{soonCount}</span>
+              <span className="home-stat__label">em breve</span>
             </div>
           </div>
         </div>
@@ -94,7 +99,9 @@ export function HomePage({ onNavigate }) {
 
         {filtered.length === 0 ? (
           <p className="home-empty">
-            Nenhuma ferramenta encontrada. Tente outro termo ou categoria.
+            {category === 'soon'
+              ? 'Nenhuma ferramenta em breve encontrada para essa busca.'
+              : 'Nenhuma ferramenta encontrada. Tente outro termo ou categoria.'}
           </p>
         ) : (
           <div className="home-grid">

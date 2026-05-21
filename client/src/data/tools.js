@@ -1,5 +1,6 @@
 export const CATEGORIES = [
   { id: 'all', label: 'Todas' },
+  { id: 'soon', label: 'Em breve' },
   { id: 'social', label: 'Redes sociais' },
   { id: 'calculators', label: 'Calculadoras' },
   { id: 'converters', label: 'Conversores' },
