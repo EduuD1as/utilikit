@@ -4,6 +4,7 @@ import { SubscriberCounter } from '../components/SubscriberCounter.jsx';
 import { ChannelCard } from '../components/ChannelCard.jsx';
 import { StatusBadge } from '../components/StatusBadge.jsx';
 import { Logo } from '../components/Logo.jsx';
+import { SiteFooter } from '../components/SiteFooter.jsx';
 
 export function YouTubeCounterPage({ onNavigate }) {
   const {
@@ -97,9 +98,10 @@ export function YouTubeCounterPage({ onNavigate }) {
         )}
       </main>
 
-      <footer className="footer">
-        <p>Dados oficiais via YouTube Data API</p>
-      </footer>
+      <SiteFooter
+        onNavigate={onNavigate}
+        note="Contador via YouTube Data API e estimativa SocialCounts."
+      />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import { Logo } from '../components/Logo.jsx';
+import { SiteFooter } from '../components/SiteFooter.jsx';
 import {
   SQL_DIALECTS,
   formatSqlQuery,
@@ -205,9 +206,10 @@ export function SqlFormatterPage({ onNavigate }) {
         </div>
       </main>
 
-      <footer className="footer">
-        <p>Processamento local — nada é enviado ao servidor</p>
-      </footer>
+      <SiteFooter
+        onNavigate={onNavigate}
+        note="SQL formatado localmente no seu navegador — nada é enviado ao servidor."
+      />
     </div>
   );
 }

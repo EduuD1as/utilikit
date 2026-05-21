@@ -1,12 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
+import { CookieConsentProvider } from './context/CookieConsentContext.jsx';
+import { CookieBanner } from './components/CookieBanner.jsx';
 import { HomePage } from './pages/HomePage.jsx';
 import { YouTubeCounterPage } from './pages/YouTubeCounterPage.jsx';
 import { SqlFormatterPage } from './pages/SqlFormatterPage.jsx';
+import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage.jsx';
+import { TermsPage } from './pages/TermsPage.jsx';
 
 const ROUTES = {
   '/': HomePage,
   '/contador-youtube': YouTubeCounterPage,
   '/formatador-sql': SqlFormatterPage,
+  '/privacidade': PrivacyPolicyPage,
+  '/termos': TermsPage,
 };
 
 function normalizePath(pathname) {
@@ -33,5 +39,11 @@ export default function App() {
   }, []);
 
   const Page = ROUTES[path] ?? HomePage;
-  return <Page onNavigate={navigate} />;
+
+  return (
+    <CookieConsentProvider>
+      <Page onNavigate={navigate} />
+      <CookieBanner onNavigate={navigate} />
+    </CookieConsentProvider>
+  );
 }

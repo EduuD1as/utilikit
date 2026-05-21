@@ -1,0 +1,231 @@
+/* Legal pages & LGPD cookie banner */
+
+.legal-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.legal-page__main {
+  flex: 1;
+  max-width: min(720px, calc(100vw - 2.5rem));
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+  width: 100%;
+}
+
+.legal-page__back {
+  margin-bottom: 1.25rem;
+}
+
+.legal-page__title {
+  font-size: clamp(1.75rem, 5vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+}
+
+.legal-page__meta {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.legal-page__content h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 1.75rem 0 0.65rem;
+  color: var(--text);
+}
+
+.legal-page__content p,
+.legal-page__content li {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.legal-page__content ul {
+  margin: 0.5rem 0 1rem 1.25rem;
+}
+
+.legal-page__content a {
+  color: #818cf8;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.legal-page__inline-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: #818cf8;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.legal-page__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  margin: 0.75rem 0 1rem;
+}
+
+.legal-page__table th,
+.legal-page__table td {
+  border: 1px solid var(--border);
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.legal-page__table th {
+  background: var(--surface-elevated);
+  color: var(--text);
+  font-weight: 600;
+}
+
+.legal-page__table td {
+  color: var(--text-muted);
+}
+
+/* Footer legal links */
+.site-footer__nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.site-footer__link {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-size: 0.82rem;
+  color: #a5b4fc;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.site-footer__link:hover {
+  color: #c7d2fe;
+}
+
+.site-footer__note {
+  max-width: 36rem;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+.site-footer__note a {
+  color: #a5b4fc;
+}
+
+/* Cookie banner */
+.cookie-banner {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 1000;
+  padding: 1rem 1.25rem 1.25rem;
+  pointer-events: none;
+}
+
+.cookie-banner__panel {
+  pointer-events: auto;
+  max-width: min(560px, calc(100vw - 2rem));
+  margin: 0 auto;
+  padding: 1.25rem 1.35rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.5);
+}
+
+.cookie-banner__title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.cookie-banner__text {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin-bottom: 1rem;
+}
+
+.cookie-banner__prefs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+  padding: 0.85rem;
+  background: var(--surface-elevated);
+  border-radius: 10px;
+}
+
+.cookie-banner__option {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.cookie-banner__option--locked {
+  opacity: 0.85;
+  cursor: default;
+}
+
+.cookie-banner__option input {
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+.cookie-banner__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.cookie-banner__btn {
+  flex: 1 1 auto;
+  min-width: 7rem;
+}
+
+.cookie-banner__links {
+  margin-top: 0.85rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.cookie-banner__link {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: #a5b4fc;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .cookie-banner__actions {
+    flex-direction: column;
+  }
+
+  .cookie-banner__btn {
+    width: 100%;
+  }
+
+  .legal-page__table {
+    font-size: 0.8rem;
+  }
+}

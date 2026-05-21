@@ -42,6 +42,15 @@ npm run start
 
 Abra **http://localhost:3001** — o Express serve o React e a API.
 
+## Privacidade (LGPD)
+
+- Política de Privacidade: `/privacidade`
+- Termos de Uso: `/termos`
+- Banner de cookies com opções **Aceitar todos**, **Apenas essenciais** e **Personalizar**
+- Scripts de publicidade (AdSense) só carregam após consentimento — configure `VITE_ADSENSE_CLIENT` em `client/.env` quando aprovado
+
+Atualize o e-mail de contato em `client/src/data/legal.js`.
+
 ## Estrutura
 
 ```

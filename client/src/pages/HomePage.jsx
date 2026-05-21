@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { CATEGORIES, TOOLS } from '../data/tools.js';
 import { SiteHeader } from '../components/SiteHeader.jsx';
+import { SiteFooter } from '../components/SiteFooter.jsx';
 import { ToolCard } from '../components/ToolCard.jsx';
 
 export function HomePage({ onNavigate }) {
@@ -112,12 +113,7 @@ export function HomePage({ onNavigate }) {
         )}
       </main>
 
-      <footer className="site-footer">
-        <p>
-          UtiliKit — ferramentas em evolução. Novas utilidades são adicionadas
-          regularmente.
-        </p>
-      </footer>
+      <SiteFooter onNavigate={onNavigate} />
     </div>
   );
 }
