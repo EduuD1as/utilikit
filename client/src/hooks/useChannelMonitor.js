@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { fetchLiveSubscriberCount } from '../lib/fetchLiveSubscriberCount.js';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
+const LIVE_POLL_MS = 3000;
 
 export function useChannelMonitor() {
   const [channel, setChannel] = useState(null);
@@ -11,6 +13,43 @@ export function useChannelMonitor() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const sourceRef = useRef(null);
+  const precisePollRef = useRef(null);
+
+  const applySubscriberCount = useCallback((next) => {
+    setSubscriberCount((prev) => {
+      if (prev != null && next !== prev) {
+        setDelta(next - prev);
+      }
+      return next;
+    });
+    setLastUpdate(new Date());
+  }, []);
+
+  const stopPrecisePolling = useCallback(() => {
+    if (precisePollRef.current) {
+      clearInterval(precisePollRef.current);
+      precisePollRef.current = null;
+    }
+  }, []);
+
+  const startPrecisePolling = useCallback(
+    (channelId) => {
+      stopPrecisePolling();
+
+      const poll = async () => {
+        try {
+          const stats = await fetchLiveSubscriberCount(channelId);
+          applySubscriberCount(stats.subscriberCount);
+        } catch {
+          /* mantém último valor do servidor */
+        }
+      };
+
+      poll();
+      precisePollRef.current = setInterval(poll, LIVE_POLL_MS);
+    },
+    [applySubscriberCount, stopPrecisePolling]
+  );
 
   const disconnect = useCallback(() => {
     sourceRef.current?.close();
@@ -36,24 +75,19 @@ export function useChannelMonitor() {
       source.addEventListener('stats', (event) => {
         const data = JSON.parse(event.data);
         setChannel(data.channel);
-        setSubscriberCount(data.channel.subscriberCount);
-        setDelta(data.change?.delta ?? 0);
-        setLastUpdate(new Date(data.fetchedAt));
+        if (data.channel.subscriberCountPrecise) {
+          applySubscriberCount(data.channel.subscriberCount);
+          if (data.change?.delta) setDelta(data.change.delta);
+        }
         setStatus('live');
         setError(null);
       });
 
       source.addEventListener('heartbeat', (event) => {
         const data = JSON.parse(event.data);
-        if (data.subscriberCount != null) {
-          setSubscriberCount((prev) => {
-            if (prev != null && prev !== data.subscriberCount) {
-              setDelta(data.subscriberCount - prev);
-            }
-            return data.subscriberCount;
-          });
+        if (data.subscriberCountPrecise && data.subscriberCount != null) {
+          applySubscriberCount(data.subscriberCount);
         }
-        setLastUpdate(new Date(data.fetchedAt));
         setStatus('live');
       });
 
@@ -74,7 +108,7 @@ export function useChannelMonitor() {
         setTimeout(() => connectSSE(channelId), 3000);
       };
     },
-    [disconnect]
+    [applySubscriberCount, disconnect]
   );
 
   const searchChannel = useCallback(
@@ -101,8 +135,15 @@ export function useChannelMonitor() {
         if (!res.ok) throw new Error(data.error || 'Erro ao buscar canal.');
 
         setChannel(data.channel);
-        setSubscriberCount(data.channel.subscriberCount);
-        setLastUpdate(new Date(data.fetchedAt));
+        setDelta(0);
+        if (data.channel.subscriberCountPrecise) {
+          applySubscriberCount(data.channel.subscriberCount);
+        } else {
+          setSubscriberCount(data.channel.subscriberCount);
+        }
+        if (!data.channel.hiddenSubscriberCount) {
+          startPrecisePolling(data.channel.id);
+        }
         connectSSE(data.channel.id);
       } catch (err) {
         setError(err.message);
@@ -112,19 +153,26 @@ export function useChannelMonitor() {
         setLoading(false);
       }
     },
-    [connectSSE, disconnect]
+    [applySubscriberCount, connectSSE, disconnect, startPrecisePolling]
   );
 
   const stopMonitoring = useCallback(() => {
+    stopPrecisePolling();
     disconnect();
     setChannel(null);
     setSubscriberCount(null);
     setDelta(0);
     setLastUpdate(null);
     setError(null);
-  }, [disconnect]);
+  }, [disconnect, stopPrecisePolling]);
 
-  useEffect(() => () => disconnect(), [disconnect]);
+  useEffect(
+    () => () => {
+      stopPrecisePolling();
+      disconnect();
+    },
+    [disconnect, stopPrecisePolling]
+  );
 
   return {
     channel,

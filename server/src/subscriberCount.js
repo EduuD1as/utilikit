@@ -3,8 +3,11 @@ const SOCIALCOUNTS_BASE =
 
 const FETCH_HEADERS = {
   Accept: 'application/json',
+  'Accept-Language': 'en-US,en;q=0.9',
+  Referer: 'https://socialcounts.org/',
+  Origin: 'https://socialcounts.org',
   'User-Agent':
-    'Mozilla/5.0 (compatible; UtiliKit/1.0; +https://utilikit.com.br)',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
 };
 
 /** Diferença entre contagem exata e valor arredondado da API (por canal). */
@@ -19,25 +22,38 @@ function fetchWithTimeout(url, options = {}, ms = 15000) {
 }
 
 async function fetchSocialCounts(channelId, attempt = 1) {
-  const res = await fetchWithTimeout(
-    `${SOCIALCOUNTS_BASE}/${encodeURIComponent(channelId)}`,
-    { headers: FETCH_HEADERS },
-    15000
-  );
+  try {
+    const res = await fetchWithTimeout(
+      `${SOCIALCOUNTS_BASE}/${encodeURIComponent(channelId)}`,
+      { headers: FETCH_HEADERS },
+      15000
+    );
 
-  if (!res.ok) {
-    const body = await res.text().catch(() => '');
-    const retryable = res.status >= 500 || res.status === 429;
-    if (retryable && attempt < 3) {
+    if (!res.ok) {
+      const body = await res.text().catch(() => '');
+      const retryable = res.status >= 500 || res.status === 429;
+      if (retryable && attempt < 3) {
+        await new Promise((r) => setTimeout(r, attempt * 400));
+        return fetchSocialCounts(channelId, attempt + 1);
+      }
+      throw new Error(
+        `SocialCounts ${res.status}${body ? `: ${body.slice(0, 80)}` : ''}`
+      );
+    }
+
+    return res.json();
+  } catch (err) {
+    const retryable =
+      attempt < 3 &&
+      (err.name === 'AbortError' ||
+        err.cause?.code === 'ECONNRESET' ||
+        err.cause?.code === 'ETIMEDOUT');
+    if (retryable) {
       await new Promise((r) => setTimeout(r, attempt * 400));
       return fetchSocialCounts(channelId, attempt + 1);
     }
-    throw new Error(
-      `SocialCounts ${res.status}${body ? `: ${body.slice(0, 80)}` : ''}`
-    );
+    throw err;
   }
-
-  return res.json();
 }
 
 /**
