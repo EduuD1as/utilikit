@@ -190,6 +190,9 @@ export function SqlFormatterPage({ onNavigate }) {
           <div className="sql-editor__pane">
             <div className="sql-editor__head">
               <span className="sql-editor__title">Saída</span>
+              <span className="sql-editor__head-spacer" aria-hidden="true">
+                Carregar exemplo
+              </span>
             </div>
             <textarea
               className="sql-editor__area sql-editor__area--output"
