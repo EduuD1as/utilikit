@@ -9,11 +9,7 @@ body {
 }
 
 body:has(.home) {
-  background:
-    radial-gradient(ellipse 70% 45% at 15% -5%, var(--brand-soft), transparent),
-    radial-gradient(ellipse 55% 40% at 90% 0%, rgba(236, 72, 153, 0.08), transparent),
-    var(--bg);
-  background-attachment: fixed;
+  background: var(--bg);
 }
 
 /* Site header */
@@ -103,6 +99,10 @@ body:has(.home) {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background:
+    radial-gradient(ellipse 70% 45% at 15% -5%, var(--brand-soft), transparent),
+    radial-gradient(ellipse 55% 40% at 90% 0%, rgba(236, 72, 153, 0.08), transparent),
+    var(--bg);
 }
 
 .home-hero {
