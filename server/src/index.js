@@ -10,6 +10,7 @@ import { clearChannelSnapshot } from './poller.js';
 import { resolveChannel, getChannelById } from './socialcounts.js';
 import { resolveLiveSubscriberStats } from './socialcounts.js';
 import { formatErrorForUser } from './error-messages.js';
+import { fetchCurrencyList, fetchRates } from './exchangeRates.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -29,6 +30,28 @@ app.get('/api/health', (_req, res) => {
     clients: getClientCount(),
     activeChannels: getActiveChannelIds().size,
   });
+});
+
+app.get('/api/currency/currencies', async (_req, res) => {
+  try {
+    const currencies = await fetchCurrencyList();
+    res.json(currencies);
+  } catch (error) {
+    res.status(503).json({
+      error: error.message || 'Não foi possível carregar as moedas.',
+    });
+  }
+});
+
+app.get('/api/currency/latest', async (req, res) => {
+  try {
+    const rates = await fetchRates(req.query.from || 'BRL');
+    res.json(rates);
+  } catch (error) {
+    res.status(503).json({
+      error: error.message || 'Não foi possível carregar as cotações.',
+    });
+  }
 });
 
 app.post('/api/channel/lookup', async (req, res) => {

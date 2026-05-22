@@ -27,6 +27,7 @@ export const CURRENCY_NAMES = {
   CHF: 'Franco suíço',
   MXN: 'Peso mexicano',
   CNY: 'Yuan chinês',
+  MYR: 'Ringgit malaio',
   HKD: 'Dólar de Hong Kong',
   SGD: 'Dólar de Singapura',
   NZD: 'Dólar neozelandês',

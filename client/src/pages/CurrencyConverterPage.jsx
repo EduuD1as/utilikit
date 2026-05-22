@@ -37,6 +37,7 @@ export function CurrencyConverterPage({ onNavigate }) {
   const [to, setTo] = useState('USD');
   const [rates, setRates] = useState(null);
   const [rateDate, setRateDate] = useState(null);
+  const [rateSource, setRateSource] = useState(null);
   const [currencyCodes, setCurrencyCodes] = useState(POPULAR_CURRENCY_CODES);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -66,10 +67,12 @@ export function CurrencyConverterPage({ onNavigate }) {
       const data = await fetchRates(base);
       setRates(data.rates);
       setRateDate(data.date);
+      setRateSource(data.source);
     } catch (err) {
       setError(err.message || 'Não foi possível carregar as cotações.');
       setRates(null);
       setRateDate(null);
+      setRateSource(null);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -128,7 +131,7 @@ export function CurrencyConverterPage({ onNavigate }) {
       <main className="panel fx-panel">
         {error && (
           <div className="alert alert--error" role="alert">
-            {error}
+            <span>{error}</span>
             <button
               type="button"
               className="fx-panel__retry"
@@ -225,7 +228,10 @@ export function CurrencyConverterPage({ onNavigate }) {
 
           <div className="fx-meta">
             {rateDate && !loading && (
-              <span>Cotação de {rateDate.split('-').reverse().join('/')}</span>
+              <span>
+                {rateSource === 'fallback' ? 'Cotação estimada de ' : 'Cotação de '}
+                {rateDate.split('-').reverse().join('/')}
+              </span>
             )}
             <button
               type="button"
