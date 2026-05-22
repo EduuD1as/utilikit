@@ -15,6 +15,7 @@ function parsePayload(data) {
   if (estimation?.subscriberCount != null) {
     return {
       subscriberCount: Number(estimation.subscriberCount),
+      apiRounded: api?.subscriberCount != null ? Number(api.subscriberCount) : null,
       precise: true,
     };
   }
@@ -22,6 +23,7 @@ function parsePayload(data) {
   if (api?.subscriberCount != null) {
     return {
       subscriberCount: Number(api.subscriberCount),
+      apiRounded: Number(api.subscriberCount),
       precise: false,
     };
   }
@@ -47,6 +49,7 @@ async function fetchFromServer(channelId, apiRounded) {
   }
   return {
     subscriberCount: Number(stats.subscriberCount),
+    apiRounded: stats.apiRounded != null ? Number(stats.apiRounded) : null,
     precise: stats.precise !== false,
   };
 }
@@ -76,12 +79,13 @@ async function fetchFromSocialCounts(channelId) {
  * Contagem ao vivo: servidor (cache + estimativa local) com fallback direto ao SocialCounts.
  */
 export async function fetchLiveSubscriberCount(channelId, { apiRounded } = {}) {
-  if (API_BASE) {
+  try {
+    return await fetchFromServer(channelId, apiRounded);
+  } catch (serverError) {
     try {
-      return await fetchFromServer(channelId, apiRounded);
+      return await fetchFromSocialCounts(channelId);
     } catch {
-      /* tenta SocialCounts no navegador */
+      throw serverError;
     }
   }
-  return fetchFromSocialCounts(channelId);
 }

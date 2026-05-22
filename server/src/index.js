@@ -144,6 +144,6 @@ if (fs.existsSync(clientDist)) {
 
 app.listen(PORT, () => {
   console.log(`[server] http://localhost:${PORT}`);
-  console.log(`[server] Usando SocialCounts API (sem chave do YouTube necessária)`);
+  console.log('[server] YouTube counter providers: SocialCounts -> YouTube API -> public page');
   startPoller(getActiveChannelIds);
 });

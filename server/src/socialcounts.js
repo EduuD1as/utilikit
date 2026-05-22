@@ -1,20 +1,30 @@
-/**
- * SocialCounts API - Busca de canais YouTube e contagem em tempo real
- * Sem necessidade de chave de API do YouTube
- */
+import {
+  fetchOfficialChannelById,
+  isYouTubeApiConfigured,
+} from './youtube-data-api.js';
 
 const SOCIALCOUNTS_BASE = 'https://api.socialcounts.org/youtube-live-subscriber-count';
-const FETCH_HEADERS = {
+const YOUTUBE_BASE = 'https://www.youtube.com';
+const FETCH_TIMEOUT_MS = 8000;
+const SOCIALCOUNTS_TIMEOUT_MS = 4500;
+const SOCIALCOUNTS_CACHE_TTL_MS = 20000;
+const SOCIALCOUNTS_FAIL_BACKOFF_MS = 90000;
+
+const SOCIALCOUNTS_HEADERS = {
   Accept: 'application/json',
   'Accept-Language': 'en-US,en;q=0.9',
   Referer: 'https://socialcounts.org/',
   Origin: 'https://socialcounts.org',
-  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  'User-Agent':
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
 };
 
-const FETCH_TIMEOUT_MS = 8000;
-const SOCIALCOUNTS_CACHE_TTL_MS = 20000;
-const SOCIALCOUNTS_FAIL_BACKOFF_MS = 90000;
+const YOUTUBE_HEADERS = {
+  Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+  'Accept-Language': 'en-US,en;q=0.9,pt-BR;q=0.8',
+  'User-Agent':
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+};
 
 const offsetCache = new Map();
 const socialCountsCache = new Map();
@@ -49,14 +59,15 @@ async function fetchSocialCounts(channelId, attempt = 1) {
   try {
     const res = await fetchWithTimeout(
       `${SOCIALCOUNTS_BASE}/${encodeURIComponent(channelId)}`,
-      { headers: FETCH_HEADERS }
+      { headers: SOCIALCOUNTS_HEADERS },
+      SOCIALCOUNTS_TIMEOUT_MS
     );
 
     if (!res.ok) {
       const body = await res.text().catch(() => '');
       const retryable = res.status >= 500 || res.status === 429;
       if (retryable && attempt < 2) {
-        await new Promise((r) => setTimeout(r, attempt * 500));
+        await new Promise((resolve) => setTimeout(resolve, attempt * 500));
         return fetchSocialCounts(channelId, attempt + 1);
       }
       throw new Error(
@@ -66,8 +77,8 @@ async function fetchSocialCounts(channelId, attempt = 1) {
 
     return res.json();
   } catch (err) {
-    if (attempt < 2 && isRetryableError(err)) {
-      await new Promise((r) => setTimeout(r, attempt * 500));
+    if (attempt < 2 && err.name !== 'AbortError' && isRetryableError(err)) {
+      await new Promise((resolve) => setTimeout(resolve, attempt * 500));
       return fetchSocialCounts(channelId, attempt + 1);
     }
     throw err;
@@ -83,7 +94,7 @@ async function fetchSocialCountsCached(channelId) {
   }
 
   if (cached?.failUntil && now < cached.failUntil) {
-    throw new Error('SocialCounts indisponível (cooldown)');
+    throw new Error('SocialCounts unavailable (cooldown)');
   }
 
   try {
@@ -189,7 +200,7 @@ function parseSocialCountsPayload(data) {
       viewCount: estimation.viewCount != null ? Number(estimation.viewCount) : null,
       videoCount: estimation.videoCount != null ? Number(estimation.videoCount) : null,
       precise: true,
-      source: 'live',
+      source: 'socialcounts_live',
       apiRounded: api?.subscriberCount != null ? Number(api.subscriberCount) : null,
     };
   }
@@ -200,7 +211,7 @@ function parseSocialCountsPayload(data) {
       viewCount: api.viewCount != null ? Number(api.viewCount) : null,
       videoCount: api.videoCount != null ? Number(api.videoCount) : null,
       precise: false,
-      source: 'api_rounded',
+      source: 'socialcounts_api_rounded',
       apiRounded: Number(api.subscriberCount),
     };
   }
@@ -208,11 +219,152 @@ function parseSocialCountsPayload(data) {
   return null;
 }
 
+function decodeHtml(value = '') {
+  return value
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>');
+}
+
+function parseJsonString(value) {
+  try {
+    return JSON.parse(`"${value.replace(/"/g, '\\"')}"`);
+  } catch {
+    return value;
+  }
+}
+
+function extractMeta(html, name) {
+  const patterns = [
+    new RegExp(`<meta[^>]+property=["']${name}["'][^>]+content=["']([^"']*)["']`, 'i'),
+    new RegExp(`<meta[^>]+content=["']([^"']*)["'][^>]+property=["']${name}["']`, 'i'),
+    new RegExp(`<meta[^>]+name=["']${name}["'][^>]+content=["']([^"']*)["']`, 'i'),
+  ];
+
+  for (const pattern of patterns) {
+    const match = html.match(pattern);
+    if (match) return decodeHtml(match[1]);
+  }
+  return null;
+}
+
+function parseCompactCount(text) {
+  const cleaned = String(text)
+    .replace(/\\u0026/g, '&')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const match = cleaned.match(/([\d.,]+)\s*(K|M|B|mil|mi|bi)?/i);
+  if (!match) return null;
+
+  let raw = match[1];
+  if (raw.includes(',') && !raw.includes('.')) raw = raw.replace(',', '.');
+  raw = raw.replace(/,/g, '');
+
+  const value = Number(raw);
+  if (!Number.isFinite(value)) return null;
+
+  const suffix = match[2]?.toLowerCase();
+  const multiplier =
+    suffix === 'k' || suffix === 'mil'
+      ? 1_000
+      : suffix === 'm' || suffix === 'mi'
+        ? 1_000_000
+        : suffix === 'b' || suffix === 'bi'
+          ? 1_000_000_000
+          : 1;
+
+  return Math.round(value * multiplier);
+}
+
+function extractSubscriberCountFromHtml(html) {
+  const pageHeader = html.match(
+    /"metadata":\{"contentMetadataViewModel":\{"metadataRows":\[\{"metadataParts":\[\{"text":\{"content":"@[^"]+"[\s\S]{0,1500}?"content":"([^"]*(?:subscribers|inscritos)[^"]*)"/i
+  );
+  const matches = [
+    pageHeader,
+    html.match(/"content":"([^"]*(?:subscribers|inscritos)[^"]*)"/i),
+    html.match(/"subscriberCountText":\{"simpleText":"([^"]+)"/),
+    html.match(/"subscriberCountText":\{"runs":\[\{"text":"([^"]+)"/),
+    html.match(/"simpleText":"([^"]*(?:subscribers|inscritos)[^"]*)"/i),
+  ];
+
+  for (const match of matches) {
+    if (!match) continue;
+    const count = parseCompactCount(parseJsonString(match[1]));
+    if (count != null) return count;
+  }
+
+  return null;
+}
+
+function extractChannelMetadataFromHtml(html) {
+  const metadata = html.match(
+    /"channelMetadataRenderer":\{"title":"((?:\\.|[^"\\])*)","description":"((?:\\.|[^"\\])*)"/
+  );
+  const avatar = html.match(/"avatar":\{"thumbnails":\[\{"url":"((?:\\.|[^"\\])*)"/);
+
+  return {
+    title: metadata ? parseJsonString(metadata[1]) : null,
+    description: metadata ? parseJsonString(metadata[2]) : null,
+    thumbnail: avatar ? parseJsonString(avatar[1]) : null,
+  };
+}
+
+async function fetchPublicChannelById(channelId) {
+  const res = await fetchWithTimeout(`${YOUTUBE_BASE}/channel/${channelId}`, {
+    headers: YOUTUBE_HEADERS,
+  });
+
+  if (!res.ok) {
+    if (res.status === 404) throw new Error('Canal nao encontrado.');
+    throw new Error(`YouTube public page ${res.status}`);
+  }
+
+  const html = await res.text();
+  const subscriberCount = extractSubscriberCountFromHtml(html);
+  const metadata = extractChannelMetadataFromHtml(html);
+  const title =
+    metadata.title ||
+    extractMeta(html, 'og:title') ||
+    decodeHtml(html.match(/<title>([^<]+)<\/title>/i)?.[1] || '') ||
+    'Canal';
+
+  return {
+    id: channelId,
+    title,
+    description: metadata.description || extractMeta(html, 'og:description') || '',
+    thumbnail: metadata.thumbnail || extractMeta(html, 'og:image'),
+    customUrl: null,
+    subscriberCount: subscriberCount ?? 0,
+    subscriberCountApiRounded: subscriberCount,
+    subscriberCountPrecise: false,
+    subscriberCountSource: 'youtube_public_rounded',
+    hiddenSubscriberCount: subscriberCount == null,
+    viewCount: 0,
+    videoCount: 0,
+  };
+}
+
+async function fetchPublicSubscriberStats(channelId) {
+  const channel = await fetchPublicChannelById(channelId);
+  if (channel.hiddenSubscriberCount || channel.subscriberCount == null) {
+    throw new Error('Contagem publica indisponivel para este canal.');
+  }
+  return {
+    subscriberCount: channel.subscriberCount,
+    precise: false,
+    source: 'youtube_public_rounded',
+    apiRounded: channel.subscriberCount,
+  };
+}
+
 export async function fetchLiveSubscriberStats(channelId) {
   const data = await fetchSocialCountsCached(channelId);
   const parsed = parseSocialCountsPayload(data);
   if (!parsed) {
-    throw new Error('Contagem de inscritos indisponível para este canal.');
+    throw new Error('Contagem de inscritos indisponivel para este canal.');
   }
   return parsed;
 }
@@ -220,7 +372,7 @@ export async function fetchLiveSubscriberStats(channelId) {
 export function applyLiveStats(channel, liveStats) {
   if (!liveStats) return channel;
 
-  const apiRounded = liveStats.apiRounded ?? channel.subscriberCount;
+  const apiRounded = liveStats.apiRounded ?? channel.subscriberCountApiRounded ?? channel.subscriberCount;
   if (liveStats.precise && liveStats.apiRounded != null) {
     offsetCache.set(channel.id, liveStats.subscriberCount - liveStats.apiRounded);
   }
@@ -229,6 +381,7 @@ export function applyLiveStats(channel, liveStats) {
   return {
     ...channel,
     subscriberCount: liveStats.subscriberCount,
+    subscriberCountApiRounded: apiRounded,
     subscriberCountPrecise: liveStats.precise,
     subscriberCountSource: liveStats.source,
     ...(liveStats.viewCount != null && { viewCount: liveStats.viewCount }),
@@ -240,69 +393,104 @@ export async function resolveLiveSubscriberStats(channelId, apiRounded) {
   try {
     return await fetchLiveSubscriberStats(channelId);
   } catch (err) {
-    const rounded =
-      apiRounded ?? getChannelState(channelId).lastApiRounded ?? null;
-    if (rounded == null) throw err;
-    if (!String(err.message).includes('cooldown')) {
-      warnOnce(channelId, err.message);
+    let rounded = apiRounded ?? getChannelState(channelId).lastApiRounded ?? null;
+    if (!String(err.message).includes('cooldown')) warnOnce(channelId, err.message);
+
+    if (rounded == null && isYouTubeApiConfigured()) {
+      try {
+        const channel = await fetchOfficialChannelById(channelId);
+        rounded = channel.subscriberCountApiRounded ?? channel.subscriberCount;
+      } catch (fallbackErr) {
+        warnOnce(channelId, fallbackErr.message);
+      }
     }
+
+    if (rounded == null) {
+      try {
+        const publicStats = await fetchPublicSubscriberStats(channelId);
+        rounded = publicStats.apiRounded;
+      } catch (fallbackErr) {
+        warnOnce(channelId, fallbackErr.message);
+      }
+    }
+
+    if (rounded == null) throw err;
     return buildLocalEstimate(channelId, rounded);
   }
 }
 
-/**
- * Busca canal no SocialCounts por ID
- * Retorna objeto mínimo com info do canal
- */
-export async function getChannelById(channelId) {
+async function getSocialCountsChannelById(channelId) {
   const data = await fetchSocialCountsCached(channelId);
-
   const metadata = data?.metadata || {};
+  const parsed = parseSocialCountsPayload(data);
+
   const channel = {
     id: channelId,
     title: metadata.title || metadata.channelName || 'Canal',
     description: metadata.description || '',
     thumbnail: metadata.thumbnails?.default?.url || null,
     customUrl: metadata.customUrl || null,
-    subscriberCount: 0,
-    subscriberCountPrecise: false,
-    subscriberCountSource: 'socialcounts',
+    subscriberCount: parsed?.subscriberCount ?? 0,
+    subscriberCountApiRounded: parsed?.apiRounded ?? parsed?.subscriberCount ?? null,
+    subscriberCountPrecise: parsed?.precise ?? false,
+    subscriberCountSource: parsed?.source ?? 'socialcounts',
     hiddenSubscriberCount: false,
-    viewCount: 0,
-    videoCount: 0,
+    viewCount: parsed?.viewCount ?? 0,
+    videoCount: parsed?.videoCount ?? 0,
   };
 
-  const parsed = parseSocialCountsPayload(data);
-  if (parsed) {
-    channel.subscriberCount = parsed.subscriberCount;
-    channel.subscriberCountPrecise = parsed.precise;
-    channel.subscriberCountSource = parsed.source;
-    if (parsed.viewCount != null) channel.viewCount = parsed.viewCount;
-    if (parsed.videoCount != null) channel.videoCount = parsed.videoCount;
-  }
-
+  if (parsed) return applyLiveStats(channel, parsed);
   return channel;
 }
 
-/**
- * Resolve canal a partir de entrada do usuário
- * Suporta: ID, URL com ID, handle @, URL @handle, nome, URL legada
- * 
- * Exemplos que funcionam:
- * - UCX6OQ9DkcsbYNE6H8uQQuVA (ID puro)
- * - https://www.youtube.com/channel/UCX6OQ9DkcsbYNE6H8uQQuVA (URL com ID)
- * - @MrBeast (handle com @)
- * - https://www.youtube.com/@MrBeast (URL com handle)
- * - MrBeast (nome puro - busca)
- */
+export async function getChannelById(channelId) {
+  let lastError;
+
+  try {
+    return await getSocialCountsChannelById(channelId);
+  } catch (err) {
+    lastError = err;
+    warnOnce(channelId, err.message);
+  }
+
+  if (isYouTubeApiConfigured()) {
+    try {
+      const channel = await fetchOfficialChannelById(channelId);
+      if (channel.hiddenSubscriberCount) return channel;
+      const liveStats = await resolveLiveSubscriberStats(
+        channelId,
+        channel.subscriberCountApiRounded ?? channel.subscriberCount
+      );
+      return applyLiveStats(channel, liveStats);
+    } catch (err) {
+      lastError = err;
+      warnOnce(channelId, err.message);
+    }
+  }
+
+  try {
+    const channel = await fetchPublicChannelById(channelId);
+    if (channel.hiddenSubscriberCount) return channel;
+    const liveStats = await resolveLiveSubscriberStats(
+      channelId,
+      channel.subscriberCountApiRounded ?? channel.subscriberCount
+    );
+    return applyLiveStats(channel, liveStats);
+  } catch (err) {
+    lastError = err;
+  }
+
+  throw lastError || new Error('Nao foi possivel carregar o canal.');
+}
+
 export async function resolveChannel(query) {
   const { resolveUserInput } = await import('./youtube-resolver.js');
-  
+
   try {
     const channelId = await resolveUserInput(query);
     return getChannelById(channelId);
   } catch (err) {
-    throw new Error(`Não foi possível encontrar o canal: ${err.message}`);
+    throw new Error(`Nao foi possivel encontrar o canal: ${err.message}`);
   }
 }
 

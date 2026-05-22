@@ -63,6 +63,9 @@ export function useChannelMonitor() {
           const stats = await fetchLiveSubscriberCount(channelId, {
             apiRounded: apiRoundedRef.current,
           });
+          if (stats.apiRounded != null) {
+            apiRoundedRef.current = stats.apiRounded;
+          }
           pollFailStreakRef.current = 0;
           if (pollIntervalMsRef.current !== LIVE_POLL_MS) {
             pollIntervalMsRef.current = LIVE_POLL_MS;
@@ -115,7 +118,12 @@ export function useChannelMonitor() {
       source.addEventListener('stats', (event) => {
         const data = JSON.parse(event.data);
         setChannel(data.channel);
-        if (data.channel.subscriberCount != null) {
+        if (data.channel.subscriberCountApiRounded != null) {
+          apiRoundedRef.current = data.channel.subscriberCountApiRounded;
+        } else if (
+          data.channel.subscriberCount != null &&
+          data.channel.subscriberCountPrecise === false
+        ) {
           apiRoundedRef.current = data.channel.subscriberCount;
         }
         const isInitial = data.change?.type === 'initial';
@@ -134,6 +142,9 @@ export function useChannelMonitor() {
 
       source.addEventListener('heartbeat', (event) => {
         const data = JSON.parse(event.data);
+        if (data.subscriberCountApiRounded != null) {
+          apiRoundedRef.current = data.subscriberCountApiRounded;
+        }
         if (data.subscriberCount != null) {
           applySubscriberCount(data.subscriberCount, {
             allowDelta: data.subscriberCountPrecise === true,
@@ -199,14 +210,18 @@ export function useChannelMonitor() {
         }
 
         setChannel(data.channel);
-        apiRoundedRef.current = data.channel.subscriberCount;
+        apiRoundedRef.current =
+          data.channel.subscriberCountApiRounded ?? data.channel.subscriberCount;
         setDelta(0);
 
         if (!data.channel.hiddenSubscriberCount) {
           try {
             const stats = await fetchLiveSubscriberCount(data.channel.id, {
-              apiRounded: data.channel.subscriberCount,
+              apiRounded: apiRoundedRef.current,
             });
+            if (stats.apiRounded != null) {
+              apiRoundedRef.current = stats.apiRounded;
+            }
             preciseSourceActiveRef.current = stats.precise !== false;
             applySubscriberCount(stats.subscriberCount, { allowDelta: false });
           } catch {

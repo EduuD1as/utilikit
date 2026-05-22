@@ -40,6 +40,7 @@ async function pollChannel(channelId) {
     broadcastToChannel(channelId, 'heartbeat', {
       fetchedAt: payload.fetchedAt,
       subscriberCount: channel.subscriberCount,
+      subscriberCountApiRounded: channel.subscriberCountApiRounded,
       subscriberCountPrecise: channel.subscriberCountPrecise,
     });
   }

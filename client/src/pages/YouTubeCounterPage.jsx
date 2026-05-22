@@ -104,7 +104,7 @@ export function YouTubeCounterPage({ onNavigate }) {
 
       <SiteFooter
         onNavigate={onNavigate}
-        note="Contador em tempo real via SocialCounts API."
+        note="Contador com SocialCounts, YouTube Data API opcional e fallback publico."
       />
     </div>
   );

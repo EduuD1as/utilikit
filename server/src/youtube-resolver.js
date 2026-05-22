@@ -1,8 +1,8 @@
-/**
- * youtube-resolver.js
- * Converte handles (@MrBeast), nomes e links para channel ID
- * Usa scraping básico do YouTube para extrair metadados
- */
+import {
+  isYouTubeApiConfigured,
+  resolveOfficialHandleToChannelId,
+  resolveOfficialNameToChannelId,
+} from './youtube-data-api.js';
 
 const YOUTUBE_BASE = 'https://www.youtube.com';
 const FETCH_TIMEOUT_MS = 8000;
@@ -15,161 +15,136 @@ function fetchWithTimeout(url, options = {}, ms = FETCH_TIMEOUT_MS) {
   );
 }
 
-/**
- * Extrai channel ID do HTML da página
- * Procura por padrões como "channelId":"UC..." ou externalId
- */
+function youtubeHeaders() {
+  return {
+    Accept:
+      'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Language': 'en-US,en;q=0.9,pt-BR;q=0.8',
+    'User-Agent':
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  };
+}
+
 function extractChannelIdFromHtml(html) {
-  // Padrão 1: "channelId":"UC..."
-  const match1 = html.match(/"channelId":"(UC[\w-]{22})"/);
-  if (match1) return match1[1];
+  const patterns = [
+    /"channelMetadataRenderer":\{[^}]*"externalId":"(UC[\w-]{22})"/,
+    /"externalId":"(UC[\w-]{22})"/,
+    /"responseContext":\{[\s\S]{0,1200}?"browse_id","value":"(UC[\w-]{22})"/,
+    /"channelId":"(UC[\w-]{22})"/,
+    /"browseId":"(UC[\w-]{22})"/,
+    /"webCommandMetadata":\{"url":"\/channel\/(UC[\w-]{22})"/,
+    /<link rel="canonical" href="https:\/\/www\.youtube\.com\/channel\/(UC[\w-]{22})"/,
+  ];
 
-  // Padrão 2: "externalId":"UC..."
-  const match2 = html.match(/"externalId":"(UC[\w-]{22})"/);
-  if (match2) return match2[1];
-
-  // Padrão 3: "browse":"(UC[\w-]{22})"
-  const match3 = html.match(/"browse[^"]*":"(UC[\w-]{22})"/);
-  if (match3) return match3[1];
-
-  // Padrão 4: ytInitialData com channel info
-  const match4 = html.match(/"channelMetadataRenderer"[^}]*"externalId":"(UC[\w-]{22})"/);
-  if (match4) return match4[1];
+  for (const pattern of patterns) {
+    const match = html.match(pattern);
+    if (match) return match[1];
+  }
 
   return null;
 }
 
-/**
- * Busca canal pelo handle (@MrBeast)
- * Acessa youtube.com/@MrBeast e extrai o channel ID
- */
 export async function resolveHandleToChannelId(handle) {
   const cleanHandle = handle.replace(/^@/, '').trim();
-  if (!cleanHandle) throw new Error('Handle inválido');
+  if (!cleanHandle) throw new Error('Handle invalido');
+
+  if (isYouTubeApiConfigured()) {
+    try {
+      return await resolveOfficialHandleToChannelId(cleanHandle);
+    } catch (err) {
+      console.warn(`[youtube-resolver] official handle lookup failed: ${err.message}`);
+    }
+  }
 
   try {
     const url = `${YOUTUBE_BASE}/@${encodeURIComponent(cleanHandle)}`;
-    const res = await fetchWithTimeout(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-      },
-    });
+    const res = await fetchWithTimeout(url, { headers: youtubeHeaders() });
 
     if (!res.ok) {
       if (res.status === 404) {
-        throw new Error(`Canal @${cleanHandle} não encontrado no YouTube`);
+        throw new Error(`Canal @${cleanHandle} nao encontrado no YouTube`);
       }
       throw new Error(`YouTube respondeu com erro ${res.status}`);
     }
 
-    const html = await res.text();
-    const channelId = extractChannelIdFromHtml(html);
-
+    const channelId = extractChannelIdFromHtml(await res.text());
     if (!channelId) {
-      throw new Error(`Não foi possível extrair o channel ID para @${cleanHandle}. O layout do YouTube pode ter mudado.`);
+      throw new Error(
+        `Nao foi possivel extrair o channel ID para @${cleanHandle}. O layout do YouTube pode ter mudado.`
+      );
     }
 
     return channelId;
   } catch (err) {
     if (err.name === 'AbortError') {
-      throw new Error(`Timeout ao conectar em youtube.com/@${cleanHandle}. Sua internet pode estar lenta.`);
+      throw new Error(`Timeout ao conectar em youtube.com/@${cleanHandle}.`);
     }
     throw err;
   }
 }
 
-/**
- * Busca canal pelo nome (busca no YouTube)
- * Acessa youtube.com/results?search_query=name e extrai primeiro canal
- */
 export async function resolveNameToChannelId(name) {
   const cleanName = name.trim();
-  if (!cleanName) throw new Error('Nome inválido');
+  if (!cleanName) throw new Error('Nome invalido');
+
+  if (isYouTubeApiConfigured()) {
+    try {
+      return await resolveOfficialNameToChannelId(cleanName);
+    } catch (err) {
+      console.warn(`[youtube-resolver] official search failed: ${err.message}`);
+    }
+  }
 
   try {
     const query = encodeURIComponent(cleanName);
     const url = `${YOUTUBE_BASE}/results?search_query=${query}`;
-    
-    const res = await fetchWithTimeout(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-      },
-    });
+    const res = await fetchWithTimeout(url, { headers: youtubeHeaders() });
 
     if (!res.ok) {
       if (res.status === 429) {
-        throw new Error(`Muitas buscas muito rápido. Por favor, aguarde alguns segundos.`);
+        throw new Error('Muitas buscas muito rapido. Aguarde alguns segundos.');
       }
       throw new Error(`YouTube respondeu com erro ${res.status}`);
     }
 
     const html = await res.text();
-    
-    // Procura pelo primeiro resultado que seja um canal
-    const channelMatch = html.match(/"\/channel\/(UC[\w-]{22})/);
-    if (channelMatch) {
-      return channelMatch[1];
-    }
+    const channelMatch =
+      html.match(/"url":"\/channel\/(UC[\w-]{22})"/) ||
+      html.match(/"channelId":"(UC[\w-]{22})"/) ||
+      html.match(/"browseId":"(UC[\w-]{22})"/);
 
-    // Fallback: procura por padrão de channel ID em qualquer lugar
-    const idMatch = html.match(/"channelId":"(UC[\w-]{22})"/);
-    if (idMatch) {
-      return idMatch[1];
-    }
+    if (channelMatch) return channelMatch[1];
 
-    throw new Error(`Nenhum canal encontrado para "${cleanName}". Tente ser mais específico.`);
+    throw new Error(`Nenhum canal encontrado para "${cleanName}".`);
   } catch (err) {
     if (err.name === 'AbortError') {
-      throw new Error(`Timeout ao buscar "${cleanName}". Sua internet pode estar lenta. Tente novamente.`);
+      throw new Error(`Timeout ao buscar "${cleanName}". Tente novamente.`);
     }
     throw err;
   }
 }
 
-/**
- * Parse e resolve entrada do usuário
- * Suporta: ID, handle, URL @handle, URL c/user, nome puro
- * Retorna o channel ID
- */
 export async function resolveUserInput(input) {
   const raw = input?.trim();
   if (!raw) throw new Error('Entrada vazia');
 
-  // ========== URL com ID: youtube.com/channel/UC... ==========
   const channelUrlMatch = raw.match(
     /(?:https?:\/\/)?(?:www\.)?youtube\.com\/channel\/(UC[\w-]{22})/i
   );
-  if (channelUrlMatch) {
-    return channelUrlMatch[1];
-  }
+  if (channelUrlMatch) return channelUrlMatch[1];
 
-  // ========== URL com @handle: youtube.com/@NomeCanal ==========
   const handleUrlMatch = raw.match(
     /(?:https?:\/\/)?(?:www\.)?youtube\.com\/@([\w.-]+)/i
   );
-  if (handleUrlMatch) {
-    return resolveHandleToChannelId(handleUrlMatch[1]);
-  }
+  if (handleUrlMatch) return resolveHandleToChannelId(handleUrlMatch[1]);
 
-  // ========== URL legada: youtube.com/c/NomeCanal ou /user/NomeCanal ==========
   const legacyUrlMatch = raw.match(
     /(?:https?:\/\/)?(?:www\.)?youtube\.com\/(?:c|user)\/([\w.-]+)/i
   );
-  if (legacyUrlMatch) {
-    // URLs legadas precisam ser resolvidas por nome
-    return resolveNameToChannelId(legacyUrlMatch[1]);
-  }
+  if (legacyUrlMatch) return resolveNameToChannelId(legacyUrlMatch[1]);
 
-  // ========== ID puro: UC... ==========
-  if (/^UC[\w-]{22}$/i.test(raw)) {
-    return raw;
-  }
+  if (/^UC[\w-]{22}$/i.test(raw)) return raw;
+  if (raw.startsWith('@')) return resolveHandleToChannelId(raw.slice(1));
 
-  // ========== Handle com @: @MrBeast ==========
-  if (raw.startsWith('@')) {
-    return resolveHandleToChannelId(raw.slice(1));
-  }
-
-  // ========== Nome puro: "MrBeast" ou "mr beast" ==========
   return resolveNameToChannelId(raw);
 }
