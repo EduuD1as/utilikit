@@ -13,6 +13,7 @@ body:has(.home) {
     radial-gradient(ellipse 70% 45% at 15% -5%, var(--brand-soft), transparent),
     radial-gradient(ellipse 55% 40% at 90% 0%, rgba(236, 72, 153, 0.08), transparent),
     var(--bg);
+  background-attachment: fixed;
 }
 
 /* Site header */
