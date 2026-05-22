@@ -5,6 +5,7 @@ import { HomePage } from './pages/HomePage.jsx';
 import { YouTubeCounterPage } from './pages/YouTubeCounterPage.jsx';
 import { SqlFormatterPage } from './pages/SqlFormatterPage.jsx';
 import { JsonFormatterPage } from './pages/JsonFormatterPage.jsx';
+import { DocumentConverterPage } from './pages/DocumentConverterPage.jsx';
 import { CurrencyConverterPage } from './pages/CurrencyConverterPage.jsx';
 import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage.jsx';
 import { TermsPage } from './pages/TermsPage.jsx';
@@ -14,6 +15,7 @@ const ROUTES = {
   '/contador-youtube': YouTubeCounterPage,
   '/formatador-sql': SqlFormatterPage,
   '/formatador-json': JsonFormatterPage,
+  '/conversor-documentos': DocumentConverterPage,
   '/conversor-moedas': CurrencyConverterPage,
   '/privacidade': PrivacyPolicyPage,
   '/termos': TermsPage,

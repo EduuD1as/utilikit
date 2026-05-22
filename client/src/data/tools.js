@@ -105,6 +105,16 @@ export const TOOLS = [
     icon: 'code',
   },
   {
+    id: 'document-converter',
+    title: 'Conversor de Documentos',
+    description: 'Converta entre Word (DOCX) e PDF no navegador, sem envios.',
+    category: 'converters',
+    path: '/conversor-documentos',
+    available: true,
+    accent: '#8b5cf6',
+    icon: 'file',
+  },
+  {
     id: 'password',
     title: 'Gerador de senhas',
     description: 'Senhas fortes com tamanho e símbolos configuráveis.',
