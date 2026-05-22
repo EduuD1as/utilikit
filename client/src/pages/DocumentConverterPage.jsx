@@ -45,22 +45,20 @@ export function DocumentConverterPage({ onNavigate }) {
     setSuccess(false);
 
     try {
+      let result;
       if (mode === 'word-to-pdf') {
-        // For now, we'll show a message that this requires server-side processing
-        // Word to PDF is complex in browser-only environment
-        setError(
-          'Conversão Word → PDF requer processamento no servidor. Esta versão extrai o conteúdo como exemplo. Para uma conversão completa com layout preservado, use um serviço online dedicado.'
-        );
+        result = await wordToPdf(file);
       } else {
-        const result = await pdfToWord(file);
-        if (result.success) {
-          downloadBlob(result.blob, result.fileName);
-          setSuccess(true);
-          setFile(null);
-          setError(null);
-        } else {
-          setError(`Erro: ${result.error}`);
-        }
+        result = await pdfToWord(file);
+      }
+
+      if (result.success) {
+        downloadBlob(result.blob, result.fileName);
+        setSuccess(true);
+        setFile(null);
+        setError(null);
+      } else {
+        setError(`Erro: ${result.error}`);
       }
     } catch (err) {
       setError(`Erro ao converter: ${err.message}`);
@@ -179,7 +177,7 @@ export function DocumentConverterPage({ onNavigate }) {
               onClick={handleConvert}
               disabled={!file || converting}
             >
-              {converting ? 'Convertendo...' : `Converter para ${modeLabel.split(' ')[2] || 'Word'}`}
+              {converting ? 'Convertendo...' : `Converter para ${mode === 'word-to-pdf' ? 'PDF' : 'Word'}`}
             </button>
             {file && (
               <button
@@ -197,16 +195,19 @@ export function DocumentConverterPage({ onNavigate }) {
             <p className="doc-info__title">ℹ️ Informações</p>
             <ul className="doc-info__list">
               <li>
-                <strong>PDF → Word:</strong> Extrai o texto do PDF e cria um documento Word. O layout pode não ser 100% preservado.
+                <strong>Word → PDF:</strong> Converte documentos Word para PDF preservando o layout e formatação.
               </li>
               <li>
-                <strong>Word → PDF:</strong> Nota: conversão complexa - recomendamos usar ferramentas online dedicadas para máxima qualidade.
+                <strong>PDF → Word:</strong> Extrai o texto do PDF e cria um documento Word. O layout pode não ser 100% preservado.
               </li>
               <li>
                 <strong>Privacidade:</strong> Todo processamento ocorre localmente no seu navegador.
               </li>
               <li>
                 <strong>Tamanho máximo:</strong> 50MB por arquivo.
+              </li>
+              <li>
+                <strong>Compatibilidade:</strong> Funciona com .docx, .doc, .odt e .pdf.
               </li>
             </ul>
           </div>
@@ -224,3 +225,4 @@ export function DocumentConverterPage({ onNavigate }) {
     </div>
   );
 }
+
