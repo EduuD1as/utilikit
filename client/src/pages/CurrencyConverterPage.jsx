@@ -95,13 +95,6 @@ export function CurrencyConverterPage({ onNavigate }) {
   const swap = () => {
     setFrom(to);
     setTo(from);
-    if (result != null && amount != null && amount > 0) {
-      setAmountIn(
-        result >= 1000
-          ? result.toFixed(2)
-          : String(Number(result.toFixed(6)))
-      );
-    }
   };
 
   const unitRate =
