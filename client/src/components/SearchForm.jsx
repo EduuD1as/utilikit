@@ -20,7 +20,7 @@ export function SearchForm({ onSearch, loading, disabled }) {
         <input
           type="text"
           className="search__input"
-          placeholder="Cole o link ou digite o nome do canal (@canal)"
+          placeholder="Link, @handle ou nome do canal"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           disabled={loading || disabled}
