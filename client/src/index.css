@@ -807,7 +807,19 @@ body:has(.app--youtube) {
   padding-right: clamp(1rem, 2.5vw, 2rem);
 }
 
-.app--sql .panel {
+/* JSON formatter */
+.app--json {
+  --accent: #f59e0b;
+  --accent-hover: #d97706;
+  --accent-soft: rgba(245, 158, 11, 0.2);
+  max-width: min(1440px, calc(100vw - 2rem));
+  width: 100%;
+  padding-left: clamp(1rem, 2.5vw, 2rem);
+  padding-right: clamp(1rem, 2.5vw, 2rem);
+}
+
+.app--sql .panel,
+.app--json .panel {
   padding: 1.75rem clamp(1.25rem, 2vw, 2rem);
 }
 

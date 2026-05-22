@@ -95,6 +95,16 @@ export const TOOLS = [
     icon: 'database',
   },
   {
+    id: 'json-formatter',
+    title: 'Formatador de JSON',
+    description: 'Formate, valide e minifique JSON facilmente no navegador.',
+    category: 'converters',
+    path: '/formatador-json',
+    available: true,
+    accent: '#f59e0b',
+    icon: 'code',
+  },
+  {
     id: 'password',
     title: 'Gerador de senhas',
     description: 'Senhas fortes com tamanho e símbolos configuráveis.',
