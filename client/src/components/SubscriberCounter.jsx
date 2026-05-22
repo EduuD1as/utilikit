@@ -1,53 +1,28 @@
 import { useEffect, useRef } from 'react';
 
 function formatCount(n) {
-  if (n == null) return '—';
+  if (n == null) return '-';
   return new Intl.NumberFormat('pt-BR').format(n);
 }
 
 export function SubscriberCounter({ count, delta, hidden }) {
-  const numberRef = useRef(null);
   const prevCount = useRef(count);
+  const previous = prevCount.current;
+  const formatted = formatCount(count);
+  const previousFormatted = formatCount(previous);
+  const direction =
+    count != null && previous != null && count < previous ? 'down' : 'up';
+  const shouldAnimate =
+    !hidden && count != null && previous != null && count !== previous;
 
   useEffect(() => {
-    if (
-      count == null ||
-      hidden ||
-      prevCount.current == null ||
-      count === prevCount.current
-    ) {
-      prevCount.current = count;
-      return;
-    }
-
-    const increased = count > prevCount.current;
     prevCount.current = count;
-    const el = numberRef.current;
-    if (!el) return;
-
-    el.classList.remove(
-      'counter-card__number--updated',
-      'counter-card__number--up',
-      'counter-card__number--down'
-    );
-    void el.offsetWidth;
-    el.classList.add(
-      increased
-        ? 'counter-card__number--up'
-        : 'counter-card__number--down'
-    );
-
-    const timer = setTimeout(() => {
-      el.classList.remove(
-        'counter-card__number--up',
-        'counter-card__number--down'
-      );
-    }, 500);
-
-    return () => clearTimeout(timer);
   }, [count, hidden]);
 
   const showDelta = !hidden && delta !== 0;
+  const maxLength = Math.max(formatted.length, previousFormatted.length);
+  const padded = formatted.padStart(maxLength, ' ');
+  const previousPadded = previousFormatted.padStart(maxLength, ' ');
 
   return (
     <div className="counter-card">
@@ -67,8 +42,35 @@ export function SubscriberCounter({ count, delta, hidden }) {
             <p className="counter-card__hidden">Contagem oculta pelo canal</p>
           ) : (
             <div className="counter-card__main">
-              <span ref={numberRef} className="counter-card__number">
-                {formatCount(count)}
+              <span
+                className={`counter-card__number counter-card__number--${direction}`}
+              >
+                {padded.split('').map((char, index) => {
+                  const oldChar = previousPadded[index];
+                  const changed = shouldAnimate && char !== oldChar;
+                  const isDigit = /\d/.test(char) && /\d/.test(oldChar);
+
+                  if (!changed || !isDigit) {
+                    return (
+                      <span
+                        key={`${index}-${char}`}
+                        className="counter-card__digit counter-card__digit--static"
+                      >
+                        {char}
+                      </span>
+                    );
+                  }
+
+                  return (
+                    <span
+                      key={`${index}-${oldChar}-${char}-${count}`}
+                      className="counter-card__digit counter-card__digit--rolling"
+                    >
+                      <span className="counter-card__digit-old">{oldChar}</span>
+                      <span className="counter-card__digit-new">{char}</span>
+                    </span>
+                  );
+                })}
               </span>
               {showDelta && (
                 <span

@@ -4,11 +4,14 @@ import {
 } from './youtube-data-api.js';
 
 const SOCIALCOUNTS_BASE = 'https://api.socialcounts.org/youtube-live-subscriber-count';
+const SUPERPLAYCOUNTS_BASE =
+  'https://api.superplaycounts.pp.ua/api/youtube-channel-counter/user';
 const YOUTUBE_BASE = 'https://www.youtube.com';
 const FETCH_TIMEOUT_MS = 8000;
 const SOCIALCOUNTS_TIMEOUT_MS = 4500;
 const SOCIALCOUNTS_CACHE_TTL_MS = 20000;
 const SOCIALCOUNTS_FAIL_BACKOFF_MS = 90000;
+const SUPERPLAYCOUNTS_CACHE_TTL_MS = 5000;
 
 const SOCIALCOUNTS_HEADERS = {
   Accept: 'application/json',
@@ -28,6 +31,7 @@ const YOUTUBE_HEADERS = {
 
 const offsetCache = new Map();
 const socialCountsCache = new Map();
+const superPlayCountsCache = new Map();
 const channelState = new Map();
 
 function getChannelState(channelId) {
@@ -108,6 +112,29 @@ async function fetchSocialCountsCached(channelId) {
     });
     throw err;
   }
+}
+
+async function fetchSuperPlayCountsCached(channelId) {
+  const cached = superPlayCountsCache.get(channelId);
+  const now = Date.now();
+
+  if (cached?.data && cached.at && now - cached.at < SUPERPLAYCOUNTS_CACHE_TTL_MS) {
+    return cached.data;
+  }
+
+  const res = await fetchWithTimeout(
+    `${SUPERPLAYCOUNTS_BASE}/${encodeURIComponent(channelId)}`,
+    { headers: { Accept: 'application/json' } },
+    FETCH_TIMEOUT_MS
+  );
+
+  if (!res.ok) {
+    throw new Error(`SuperPlayCounts ${res.status}`);
+  }
+
+  const data = await res.json();
+  superPlayCountsCache.set(channelId, { data, at: now });
+  return data;
 }
 
 function warnOnce(channelId, message) {
@@ -217,6 +244,42 @@ function parseSocialCountsPayload(data) {
   }
 
   return null;
+}
+
+function findCount(items, value) {
+  return items.find((item) => item?.value === value)?.count;
+}
+
+function parseSuperPlayCountsPayload(data) {
+  const stats = data?.statistics?.[0];
+  const counts = stats?.counts ?? [];
+  const user = stats?.user ?? [];
+  const subscriberCount = Number(findCount(counts, 'subscribers'));
+  const apiRounded = Number(findCount(counts, 'apisubscribers'));
+
+  if (!Number.isFinite(subscriberCount)) return null;
+
+  return {
+    subscriberCount,
+    viewCount: Number(findCount(counts, 'views')) || null,
+    videoCount: Number(findCount(counts, 'videos')) || null,
+    goal: Number(findCount(counts, 'goal')) || null,
+    apiRounded: Number.isFinite(apiRounded) ? apiRounded : null,
+    precise: true,
+    source: 'superplaycounts_estimate',
+    title: findCount(user, 'name') || null,
+    thumbnail: findCount(user, 'pfp') || null,
+    banner: findCount(user, 'banner') || null,
+  };
+}
+
+async function fetchSuperPlayCountsStats(channelId) {
+  const data = await fetchSuperPlayCountsCached(channelId);
+  const parsed = parseSuperPlayCountsPayload(data);
+  if (!parsed) {
+    throw new Error('SuperPlayCounts resposta sem contagem de inscritos.');
+  }
+  return parsed;
 }
 
 function decodeHtml(value = '') {
@@ -361,12 +424,21 @@ async function fetchPublicSubscriberStats(channelId) {
 }
 
 export async function fetchLiveSubscriberStats(channelId) {
-  const data = await fetchSocialCountsCached(channelId);
-  const parsed = parseSocialCountsPayload(data);
-  if (!parsed) {
-    throw new Error('Contagem de inscritos indisponivel para este canal.');
+  try {
+    return await fetchSuperPlayCountsStats(channelId);
+  } catch (superErr) {
+    warnOnce(channelId, superErr.message);
   }
-  return parsed;
+
+  try {
+    const data = await fetchSocialCountsCached(channelId);
+    const parsed = parseSocialCountsPayload(data);
+    if (parsed) return parsed;
+  } catch (socialErr) {
+    warnOnce(channelId, socialErr.message);
+  }
+
+  throw new Error('Contagem de inscritos indisponivel para este canal.');
 }
 
 export function applyLiveStats(channel, liveStats) {
@@ -443,8 +515,35 @@ async function getSocialCountsChannelById(channelId) {
   return channel;
 }
 
+async function getSuperPlayCountsChannelById(channelId) {
+  const parsed = await fetchSuperPlayCountsStats(channelId);
+  const channel = {
+    id: channelId,
+    title: parsed.title || 'Canal',
+    description: '',
+    thumbnail: parsed.thumbnail || null,
+    customUrl: null,
+    subscriberCount: parsed.subscriberCount,
+    subscriberCountApiRounded: parsed.apiRounded,
+    subscriberCountPrecise: parsed.precise,
+    subscriberCountSource: parsed.source,
+    hiddenSubscriberCount: false,
+    viewCount: parsed.viewCount ?? 0,
+    videoCount: parsed.videoCount ?? 0,
+  };
+
+  return applyLiveStats(channel, parsed);
+}
+
 export async function getChannelById(channelId) {
   let lastError;
+
+  try {
+    return await getSuperPlayCountsChannelById(channelId);
+  } catch (err) {
+    lastError = err;
+    warnOnce(channelId, err.message);
+  }
 
   try {
     return await getSocialCountsChannelById(channelId);
@@ -498,4 +597,5 @@ export function clearSubscriberOffset(channelId) {
   offsetCache.delete(channelId);
   channelState.delete(channelId);
   socialCountsCache.delete(channelId);
+  superPlayCountsCache.delete(channelId);
 }
