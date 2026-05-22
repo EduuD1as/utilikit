@@ -9,6 +9,7 @@ import { startPoller } from './poller.js';
 import { clearChannelSnapshot } from './poller.js';
 import { resolveChannel, getChannelById } from './socialcounts.js';
 import { resolveLiveSubscriberStats } from './socialcounts.js';
+import { formatErrorForUser } from './error-messages.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -37,7 +38,13 @@ app.post('/api/channel/lookup', async (req, res) => {
     clearChannelSnapshot(channel.id);
     res.json({ channel, fetchedAt: new Date().toISOString() });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    const formattedError = formatErrorForUser(error);
+    res.status(400).json({ 
+      error: formattedError.message,
+      title: formattedError.title,
+      suggestion: formattedError.suggestion,
+      type: formattedError.type,
+    });
   }
 });
 
@@ -46,7 +53,13 @@ app.get('/api/channel/:channelId', async (req, res) => {
     const channel = await getChannelById(req.params.channelId);
     res.json({ channel, fetchedAt: new Date().toISOString() });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    const formattedError = formatErrorForUser(error);
+    res.status(400).json({ 
+      error: formattedError.message,
+      title: formattedError.title,
+      suggestion: formattedError.suggestion,
+      type: formattedError.type,
+    });
   }
 });
 
@@ -58,7 +71,13 @@ app.get('/api/channel/:channelId/live-stats', async (req, res) => {
     const stats = await resolveLiveSubscriberStats(channelId, apiRounded);
     res.json({ stats, fetchedAt: new Date().toISOString() });
   } catch (error) {
-    res.status(503).json({ error: error.message });
+    const formattedError = formatErrorForUser(error);
+    res.status(503).json({ 
+      error: formattedError.message,
+      title: formattedError.title,
+      suggestion: formattedError.suggestion,
+      type: formattedError.type,
+    });
   }
 });
 

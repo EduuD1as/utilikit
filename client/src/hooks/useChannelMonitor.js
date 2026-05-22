@@ -190,7 +190,13 @@ export function useChannelMonitor() {
         });
 
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Erro ao buscar canal.');
+        if (!res.ok) {
+          // Se o backend retornou erro formatado com sugestão
+          if (data.title && data.suggestion) {
+            throw new Error(`${data.title}\n${data.message}\n\n${data.suggestion}`);
+          }
+          throw new Error(data.error || 'Erro ao buscar canal.');
+        }
 
         setChannel(data.channel);
         apiRoundedRef.current = data.channel.subscriberCount;

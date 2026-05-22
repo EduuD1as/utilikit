@@ -52,7 +52,11 @@ export function YouTubeCounterPage({ onNavigate }) {
 
         {error && (
           <div className="alert alert--error" role="alert">
-            {error}
+            {error.split('\n').map((line, i) => (
+              <div key={i} style={{ marginBottom: line ? '0.5rem' : 0 }}>
+                {line}
+              </div>
+            ))}
           </div>
         )}
 

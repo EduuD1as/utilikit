@@ -56,21 +56,25 @@ export async function resolveHandleToChannelId(handle) {
     });
 
     if (!res.ok) {
-      throw new Error(`YouTube respondeu com ${res.status}`);
+      if (res.status === 404) {
+        throw new Error(`Canal @${cleanHandle} não encontrado no YouTube`);
+      }
+      throw new Error(`YouTube respondeu com erro ${res.status}`);
     }
 
     const html = await res.text();
     const channelId = extractChannelIdFromHtml(html);
 
     if (!channelId) {
-      throw new Error(`Não foi possível extrair o channel ID para @${cleanHandle}`);
+      throw new Error(`Não foi possível extrair o channel ID para @${cleanHandle}. O layout do YouTube pode ter mudado.`);
     }
 
     return channelId;
   } catch (err) {
-    throw new Error(
-      `Erro ao resolver handle @${cleanHandle}: ${err.message}`
-    );
+    if (err.name === 'AbortError') {
+      throw new Error(`Timeout ao conectar em youtube.com/@${cleanHandle}. Sua internet pode estar lenta.`);
+    }
+    throw err;
   }
 }
 
@@ -93,7 +97,10 @@ export async function resolveNameToChannelId(name) {
     });
 
     if (!res.ok) {
-      throw new Error(`YouTube respondeu com ${res.status}`);
+      if (res.status === 429) {
+        throw new Error(`Muitas buscas muito rápido. Por favor, aguarde alguns segundos.`);
+      }
+      throw new Error(`YouTube respondeu com erro ${res.status}`);
     }
 
     const html = await res.text();
@@ -110,11 +117,12 @@ export async function resolveNameToChannelId(name) {
       return idMatch[1];
     }
 
-    throw new Error(`Nenhum canal encontrado para "${cleanName}"`);
+    throw new Error(`Nenhum canal encontrado para "${cleanName}". Tente ser mais específico.`);
   } catch (err) {
-    throw new Error(
-      `Erro ao buscar canal "${cleanName}": ${err.message}`
-    );
+    if (err.name === 'AbortError') {
+      throw new Error(`Timeout ao buscar "${cleanName}". Sua internet pode estar lenta. Tente novamente.`);
+    }
+    throw err;
   }
 }
 
