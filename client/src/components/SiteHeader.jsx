@@ -42,16 +42,6 @@ export function SiteHeader({ onNavigate, variant = 'home' }) {
           >
             Início
           </a>
-          <a
-            href="/contador-youtube"
-            className="site-header__link site-header__link--accent"
-            onClick={(e) => {
-              e.preventDefault();
-              onNavigate('/contador-youtube');
-            }}
-          >
-            YouTube
-          </a>
         </nav>
       </div>
     </header>
