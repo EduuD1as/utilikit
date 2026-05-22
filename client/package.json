@@ -15,7 +15,8 @@
     "docx": "^8.5.0",
     "jspdf": "^2.5.1",
     "html2canvas": "^1.4.1",
-    "mammoth": "^1.6.0"
+    "mammoth": "^1.6.0",
+    "qrcode.react": "^1.0.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",

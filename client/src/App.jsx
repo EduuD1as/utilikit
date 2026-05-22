@@ -7,6 +7,9 @@ import { SqlFormatterPage } from './pages/SqlFormatterPage.jsx';
 import { JsonFormatterPage } from './pages/JsonFormatterPage.jsx';
 import { DocumentConverterPage } from './pages/DocumentConverterPage.jsx';
 import { CurrencyConverterPage } from './pages/CurrencyConverterPage.jsx';
+import { QrCodeGeneratorPage } from './pages/QrCodeGeneratorPage.jsx';
+import { TextUtilitiesPage } from './pages/TextUtilitiesPage.jsx';
+import { UnitConverterPage } from './pages/UnitConverterPage.jsx';
 import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage.jsx';
 import { TermsPage } from './pages/TermsPage.jsx';
 
@@ -17,6 +20,9 @@ const ROUTES = {
   '/formatador-json': JsonFormatterPage,
   '/conversor-documentos': DocumentConverterPage,
   '/conversor-moedas': CurrencyConverterPage,
+  '/gerador-qr': QrCodeGeneratorPage,
+  '/text-utils': TextUtilitiesPage,
+  '/conversor-unidades': UnitConverterPage,
   '/privacidade': PrivacyPolicyPage,
   '/termos': TermsPage,
 };
