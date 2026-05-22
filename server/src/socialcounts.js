@@ -285,71 +285,24 @@ export async function getChannelById(channelId) {
 }
 
 /**
- * Parse input do usuário (URL, handle @, ID ou nome)
- * Retorna strategy e value para resolução
- */
-export function parseChannelInput(raw) {
-  const input = raw?.trim();
-  if (!input) throw new Error('Informe o link ou nome do canal.');
-
-  // URL com ID: youtube.com/channel/UC...
-  const channelUrl = input.match(
-    /(?:https?:\/\/)?(?:www\.)?youtube\.com\/channel\/(UC[\w-]{22})/i
-  );
-  if (channelUrl) return { strategy: 'id', value: channelUrl[1] };
-
-  // URL com @handle: youtube.com/@NomeCanal
-  const handleUrl = input.match(
-    /(?:https?:\/\/)?(?:www\.)?youtube\.com\/@([\w.-]+)/i
-  );
-  if (handleUrl) return { strategy: 'handle', value: handleUrl[1] };
-
-  // URL legada: youtube.com/c/NomeCanal ou youtube.com/user/NomeCanal
-  const legacyUrl = input.match(
-    /(?:https?:\/\/)?(?:www\.)?youtube\.com\/(?:c|user)\/([\w.-]+)/i
-  );
-  if (legacyUrl) return { strategy: 'search', value: legacyUrl[1] };
-
-  // ID puro: UC...
-  if (/^UC[\w-]{22}$/i.test(input)) {
-    return { strategy: 'id', value: input };
-  }
-
-  // Handle com @
-  if (input.startsWith('@')) {
-    return { strategy: 'search', value: input.slice(1) };
-  }
-
-  // Nome puro - buscar
-  return { strategy: 'search', value: input };
-}
-
-/**
  * Resolve canal a partir de entrada do usuário
- * Atualmente SocialCounts só funciona com ID, então tentamos ID direto
- * Se for handle/nome, convertemos para ID (simplificado - pode precisar scraping ou cache)
+ * Suporta: ID, URL com ID, handle @, URL @handle, nome, URL legada
+ * 
+ * Exemplos que funcionam:
+ * - UCX6OQ9DkcsbYNE6H8uQQuVA (ID puro)
+ * - https://www.youtube.com/channel/UCX6OQ9DkcsbYNE6H8uQQuVA (URL com ID)
+ * - @MrBeast (handle com @)
+ * - https://www.youtube.com/@MrBeast (URL com handle)
+ * - MrBeast (nome puro - busca)
  */
 export async function resolveChannel(query) {
-  const parsed = parseChannelInput(query);
-
-  switch (parsed.strategy) {
-    case 'id':
-      return getChannelById(parsed.value);
-
-    case 'handle':
-    case 'search':
-      // SocialCounts não tem endpoint de busca por nome/handle
-      // Tentamos como ID direto ou lançamos erro sugestivo
-      if (/^UC[\w-]{22}$/.test(parsed.value)) {
-        return getChannelById(parsed.value);
-      }
-      throw new Error(
-        `Para usar SocialCounts, forneça o ID do canal (UC...) ou URL direta do YouTube. ` +
-        `Exemplo: https://youtube.com/channel/UCxxxxxxxxxxxxxxxxxxxxxx`
-      );
-
-    default:
-      throw new Error('Estratégia de resolução inválida.');
+  const { resolveUserInput } = await import('./youtube-resolver.js');
+  
+  try {
+    const channelId = await resolveUserInput(query);
+    return getChannelById(channelId);
+  } catch (err) {
+    throw new Error(`Não foi possível encontrar o canal: ${err.message}`);
   }
 }
 

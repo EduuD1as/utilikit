@@ -1,4 +1,4 @@
-CHECKLIST - MIGRAÇÃO YOUTUBE API → SOCIALCOUNTS
+CHECKLIST - MIGRAÇÃO YOUTUBE API → SOCIALCOUNTS + SCRAPING
 ═════════════════════════════════════════════════════════════
 
 ✅ Backend - Refatoração Concluída
@@ -6,11 +6,16 @@ CHECKLIST - MIGRAÇÃO YOUTUBE API → SOCIALCOUNTS
   ✔️ Criado socialcounts.js com:
      - fetchLiveSubscriberStats()
      - getChannelById()
-     - resolveChannel()
-     - parseChannelInput()
+     - resolveChannel() (com suporte a scraping)
      - Caching com TTL
      - Retry logic
      - Estimativa local
+
+  ✔️ Criado youtube-resolver.js com:
+     - resolveHandleToChannelId() - converte @MrBeast para ID
+     - resolveNameToChannelId() - busca por nome
+     - resolveUserInput() - parse inteligente de entrada
+     - Suporta: nome, @handle, URLs, IDs
 
   ✔️ Atualizado index.js:
      - Importações corretas (socialcounts.js)
@@ -23,30 +28,43 @@ CHECKLIST - MIGRAÇÃO YOUTUBE API → SOCIALCOUNTS
 
   ✔️ Configuração limpa:
      - .env: removida YOUTUBE_API_KEY
-     - .env.example: remov onda YOUTUBE_API_KEY
+     - .env.example: removida YOUTUBE_API_KEY
 
 ✅ Frontend - Atualizado
 
   ✔️ YouTubeCounterPage.jsx:
-     - Footer atualizado
-     - Instruções de entrada corretas
-     - Exemplos corretos
+     - Footer atualizado (SocialCounts API)
+     - Instruções de entrada com exemplos novos
+     - Exemplos: @MrBeast, MrBeast, URL @handle
 
 ✅ Documentação
 
   ✔️ README.md:
      - Removida necessidade de chave API
      - Setup simplificado
-     - Seção de tecnologia adicionada
+     - Novo guia: "Como usar o Contador de Inscritos"
+     - Todos os formatos de entrada listados
 
-  ✔️ MIGRATION.md: Criado com instruções
+  ✔️ MIGRATION.md:
+     - Documentação completa de mudanças
+     - Explicação de como funciona o scraping
+     - Arquivos modificados e deletados
 
-✅ Limpeza (AINDA TODO)
+✅ Recursos Implementados
 
-  ❌ server/src/youtube.js - Precisa deletar
-  ❌ server/src/subscriberCount.js - Precisa deletar
+  ✔️ Busca por nome: "MrBeast"
+  ✔️ Busca por handle: "@MrBeast"
+  ✔️ URL com handle: "https://www.youtube.com/@MrBeast"
+  ✔️ ID direto: "UCX6OQ9DkcsbYNE6H8uQQuVA"
+  ✔️ URL com ID: "https://www.youtube.com/channel/UC..."
+  ✔️ URL legada: "youtube.com/c/NomeCanal"
+
+✅ Limpeza (PENDENTE)
+
+  ❌ server/src/youtube.js - DELETAR
+  ❌ server/src/subscriberCount.js - DELETAR
   
-  (Estes arquivos ainda existem mas não são mais usados)
+  (Arquivos obsoletos, não mais referenciados)
 
 ═════════════════════════════════════════════════════════════
 
@@ -55,14 +73,22 @@ CHECKLIST - MIGRAÇÃO YOUTUBE API → SOCIALCOUNTS
   1. npm run install:all
   2. npm run dev
   3. Abra http://localhost:5173/contador-youtube
-  4. Cole um ID de canal ou URL do YouTube (ex: UCX6OQ9DkcsbYNE6H8uQQuVA)
+  4. Teste os formatos:
+     - Digite: "MrBeast" → Busca pelo nome
+     - Digite: "@MrBeast" → Busca pelo handle
+     - Cole: "https://www.youtube.com/@MrBeast" → Extrai handle da URL
   5. Verifique se o contador atualiza em tempo real
 
 🐛 TROUBLESHOOTING:
 
-  Se der erro no servidor:
-  - Verifique que socialcounts.js existe em server/src/
-  - Confirme que não há imports de youtube.js ou subscriberCount.js
+  Se der erro "Não foi possível encontrar o canal":
+  - YouTube pode estar bloqueando o scraping (rate limit)
+  - Tente novamente após alguns segundos
+  - Use o ID direto como fallback: UCX6OQ9DkcsbYNE6H8uQQuVA
+
+  Se der erro geral:
+  - Verifique que youtube-resolver.js existe em server/src/
+  - Confirme que socialcounts.js tem import correto
   - Verifique console do servidor para mensagens de erro
 
 ═════════════════════════════════════════════════════════════

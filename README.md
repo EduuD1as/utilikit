@@ -50,9 +50,21 @@ Atualize o e-mail de contato em `client/src/data/legal.js`.
 
 ## Tecnologia
 
-- **YouTube**: Dados em tempo real via [SocialCounts API](https://socialcounts.org/) — sem necessidade de chave de API
+- **YouTube**: Dados em tempo real via [SocialCounts API](https://socialcounts.org/) com resolução de handles/nomes por scraping
 - **Frontend**: React 18 + Vite + CSS moderno
 - **Backend**: Node.js + Express + SSE para atualizações em tempo real
+
+## Como usar o Contador de Inscritos
+
+O contador aceita qualquer um dos formatos abaixo:
+
+✅ **Nome do canal:** `MrBeast`  
+✅ **Handle com @:** `@MrBeast`  
+✅ **URL com handle:** `https://www.youtube.com/@MrBeast`  
+✅ **ID do canal:** `UCX6OQ9DkcsbYNE6H8uQQuVA`  
+✅ **URL com ID:** `https://www.youtube.com/channel/UCX6OQ9DkcsbYNE6H8uQQuVA`  
+
+Todos os formatos funcionam igualmente bem!
 
 ## Estrutura
 

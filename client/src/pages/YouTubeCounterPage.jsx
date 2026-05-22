@@ -92,7 +92,7 @@ export function YouTubeCounterPage({ onNavigate }) {
             </div>
             <p>Informe um canal para começar a acompanhar os inscritos.</p>
             <p className="empty__examples">
-              Ex.: <code>https://youtube.com/channel/UCX6OQ9DkcsbYNE6H8uQQuVA</code> ou o ID do canal
+              Ex.: <code>@MrBeast</code>, <code>MrBeast</code> ou <code>https://www.youtube.com/@MrBeast</code>
             </p>
           </section>
         )}
