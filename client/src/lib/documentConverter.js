@@ -146,11 +146,13 @@ export async function wordToPdf(file) {
 
 export async function pdfToWord(file) {
   try {
-    // Simple text extraction from PDF by converting to image then to text
-    // For a more robust solution, use a server-side conversion
     const buffer = await file.arrayBuffer();
+<<<<<<< HEAD
 
     // Create a simple Word document with a note
+=======
+    
+>>>>>>> f7e6d7cb6c4f06bbc02616c3c4f9ab529826940e
     const doc = new Document({
       sections: [
         {
@@ -205,5 +207,3 @@ export function formatFileSize(bytes) {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
 }
-
-
