@@ -147,12 +147,7 @@ export async function wordToPdf(file) {
 export async function pdfToWord(file) {
   try {
     const buffer = await file.arrayBuffer();
-<<<<<<< HEAD
-
-    // Create a simple Word document with a note
-=======
     
->>>>>>> f7e6d7cb6c4f06bbc02616c3c4f9ab529826940e
     const doc = new Document({
       sections: [
         {
