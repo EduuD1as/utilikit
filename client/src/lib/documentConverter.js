@@ -4,124 +4,153 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
 export async function wordToPdf(file) {
-  const style = document.createElement('style');
-  const container = document.createElement('div');
+  let container = null;
+  let style = null;
 
   try {
     const buffer = await file.arrayBuffer();
     const result = await mammoth.convertToHtml({ arrayBuffer: buffer });
     const html = result.html;
 
-    // Style paragraphs and common elements
+    if (!html || html.trim() === '') {
+      throw new Error('Documento Word vazio ou inválido');
+    }
+
+    // Create container with visible positioning for proper rendering
+    container = document.createElement('div');
+    container.id = 'pdf-converter-container-' + Date.now();
+    container.innerHTML = html;
+    
+    // Set inline styles for proper rendering
+    Object.assign(container.style, {
+      position: 'fixed',
+      top: '0',
+      left: '0',
+      width: '210mm',
+      height: 'auto',
+      padding: '20px',
+      fontFamily: 'Arial, sans-serif',
+      fontSize: '14px',
+      lineHeight: '1.6',
+      color: '#000',
+      backgroundColor: '#fff',
+      zIndex: '99999',
+      visibility: 'visible',
+      opacity: '1',
+      display: 'block',
+    });
+
+    // Add styles
+    style = document.createElement('style');
     style.innerHTML = `
-      .pdf-converter-temp * {
-        margin: 0;
+      #${container.id} * {
+        box-sizing: border-box;
+      }
+      #${container.id} p {
+        margin: 0 0 10px 0;
         padding: 0;
       }
-      .pdf-converter-temp p {
-        margin: 0 0 6pt 0;
-        line-height: 1.5;
-      }
-      .pdf-converter-temp h1 {
-        font-size: 18pt;
+      #${container.id} h1, #${container.id} h2, #${container.id} h3, #${container.id} h4, #${container.id} h5, #${container.id} h6 {
+        margin: 15px 0 10px 0;
+        padding: 0;
         font-weight: bold;
-        margin: 12pt 0 6pt 0;
       }
-      .pdf-converter-temp h2 {
-        font-size: 16pt;
-        font-weight: bold;
-        margin: 12pt 0 6pt 0;
+      #${container.id} h1 { font-size: 24px; }
+      #${container.id} h2 { font-size: 20px; }
+      #${container.id} h3 { font-size: 18px; }
+      #${container.id} ul, #${container.id} ol {
+        margin: 10px 0;
+        padding-left: 30px;
       }
-      .pdf-converter-temp h3 {
-        font-size: 14pt;
-        font-weight: bold;
-        margin: 10pt 0 4pt 0;
+      #${container.id} li {
+        margin: 5px 0;
       }
-      .pdf-converter-temp ul,
-      .pdf-converter-temp ol {
-        margin: 6pt 0 6pt 20px;
-      }
-      .pdf-converter-temp li {
-        margin: 3pt 0;
-      }
-      .pdf-converter-temp table {
+      #${container.id} table {
         border-collapse: collapse;
         width: 100%;
-        margin: 6pt 0;
+        margin: 10px 0;
       }
-      .pdf-converter-temp td,
-      .pdf-converter-temp th {
-        border: 1px solid #ccc;
-        padding: 4px;
+      #${container.id} td, #${container.id} th {
+        border: 1px solid #999;
+        padding: 8px;
+        text-align: left;
       }
-      .pdf-converter-temp img {
+      #${container.id} th {
+        background: #f5f5f5;
+        font-weight: bold;
+      }
+      #${container.id} img {
         max-width: 100%;
         height: auto;
       }
+      #${container.id} strong, #${container.id} b {
+        font-weight: bold;
+      }
+      #${container.id} em, #${container.id} i {
+        font-style: italic;
+      }
+      #${container.id} u {
+        text-decoration: underline;
+      }
     `;
-
-    // Create a temporary container with proper styling for PDF rendering
-    container.className = 'pdf-converter-temp';
-    container.innerHTML = html;
-    container.style.position = 'absolute';
-    container.style.left = '-9999px';
-    container.style.width = '210mm';
-    container.style.padding = '15mm';
-    container.style.fontFamily = 'Arial, Helvetica, sans-serif';
-    container.style.fontSize = '12px';
-    container.style.color = '#000000';
-    container.style.background = '#ffffff';
 
     document.head.appendChild(style);
     document.body.appendChild(container);
 
-    // Render HTML to canvas with higher quality
+    // Wait for styles to be applied and images to load
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    // Render to canvas
     const canvas = await html2canvas(container, {
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#ffffff',
       scale: 2,
       logging: false,
+      windowHeight: container.scrollHeight,
+      windowWidth: 210 * 37.8, // 210mm in pixels at 96dpi
     });
 
-    // Create PDF with proper pagination
+    if (!canvas || canvas.width === 0 || canvas.height === 0) {
+      throw new Error('Falha ao renderizar documento para canvas');
+    }
+
+    // Create PDF
+    const pageWidthMm = 210;
+    const pageHeightMm = 297;
+    const marginMm = 10;
+
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
       format: 'a4',
     });
 
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    const margin = 10;
-    const contentWidth = pageWidth - 2 * margin;
-    const maxContentHeight = pageHeight - 2 * margin;
-
-    // Calculate image dimensions
-    const imgWidth = contentWidth;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-    // Add first page
-    let heightLeft = imgHeight;
-    let position = 0;
-
     const imgData = canvas.toDataURL('image/png');
-    pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight);
+    const imgWidthMm = pageWidthMm - 2 * marginMm;
+    const imgHeightMm = (canvas.height * imgWidthMm) / canvas.width;
 
-    heightLeft -= maxContentHeight;
+    let currentPageHeight = 0;
 
-    // Add additional pages as needed
-    while (heightLeft > 0) {
-      position = heightLeft - imgHeight;
+    // Add first image
+    pdf.addImage(imgData, 'PNG', marginMm, marginMm, imgWidthMm, imgHeightMm);
+    currentPageHeight = imgHeightMm + 2 * marginMm;
+
+    // Add additional pages if needed
+    let position = marginMm;
+    const availableHeight = pageHeightMm - 2 * marginMm;
+
+    while (currentPageHeight > pageHeightMm) {
       pdf.addPage();
-      pdf.addImage(imgData, 'PNG', margin, position + margin, imgWidth, imgHeight);
-      heightLeft -= maxContentHeight;
+      position -= availableHeight;
+      pdf.addImage(imgData, 'PNG', marginMm, position, imgWidthMm, imgHeightMm);
+      currentPageHeight -= availableHeight;
     }
 
     const pdfBlob = pdf.output('blob');
 
     if (!pdfBlob || pdfBlob.size === 0) {
-      throw new Error('Falha ao gerar PDF: blob inválido');
+      throw new Error('PDF gerado está vazio');
     }
 
     return {
@@ -130,15 +159,17 @@ export async function wordToPdf(file) {
       fileName: file.name.replace(/\.[^/.]+$/, '') + '.pdf',
     };
   } catch (error) {
+    console.error('Erro no conversor:', error);
     return {
       success: false,
       error: error.message || 'Erro ao converter documento Word para PDF',
     };
   } finally {
-    if (container.parentNode) {
+    // Clean up
+    if (container && container.parentNode) {
       document.body.removeChild(container);
     }
-    if (style.parentNode) {
+    if (style && style.parentNode) {
       document.head.removeChild(style);
     }
   }
