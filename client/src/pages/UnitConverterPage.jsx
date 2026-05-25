@@ -61,7 +61,8 @@ export function UnitConverterPage({ onNavigate }) {
     const baseValue = num * conversions[category].units[inputUnit].toBase;
     const result = baseValue / conversions[category].units[outputUnit].toBase;
     
-    return result.toFixed(10).replace(/\.?0+$/, '');
+    // Arredondar para 3 casas decimais para distâncias, pesos e volumes
+    return parseFloat(result.toFixed(3)).toString();
   }, [inputValue, inputUnit, outputUnit, category]);
 
   const convertTemperature = (value, fromUnit, toUnit) => {
