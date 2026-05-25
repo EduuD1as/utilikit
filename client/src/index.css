@@ -18,6 +18,21 @@
   -webkit-font-smoothing: antialiased;
 }
 
+/* Tema claro */
+[data-theme="light"] {
+  --bg: #fafafa;
+  --surface: #f0f0f2;
+  --surface-elevated: #ffffff;
+  --border: #e5e5e9;
+  --text: #1a1a1c;
+  --text-muted: #6b7280;
+  --accent: #ff0033;
+  --accent-hover: #e6002e;
+  --accent-soft: rgba(255, 0, 51, 0.12);
+  --success: #22c55e;
+  --shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+}
+
 *,
 *::before,
 *::after {
