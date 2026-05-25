@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { ThemeProvider } from './context/ThemeContext.jsx';
 import { CookieConsentProvider } from './context/CookieConsentContext.jsx';
 import { CookieBanner } from './components/CookieBanner.jsx';
 import { HomePage } from './pages/HomePage.jsx';
@@ -9,6 +10,11 @@ import { DocumentConverterPage } from './pages/DocumentConverterPage.jsx';
 import { CurrencyConverterPage } from './pages/CurrencyConverterPage.jsx';
 import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage.jsx';
 import { TermsPage } from './pages/TermsPage.jsx';
+import { CharacterCounterPage } from './pages/CharacterCounterPage.jsx';
+import { SimpleCalculatorPage } from './pages/SimpleCalculatorPage.jsx';
+import { UnitConverterPage } from './pages/UnitConverterPage.jsx';
+import { QRGeneratorPage } from './pages/QRGeneratorPage.jsx';
+import { GeneratorPage } from './pages/GeneratorPage.jsx';
 
 const ROUTES = {
   '/': HomePage,
@@ -17,6 +23,11 @@ const ROUTES = {
   '/formatador-json': JsonFormatterPage,
   '/conversor-documentos': DocumentConverterPage,
   '/conversor-moedas': CurrencyConverterPage,
+  '/contador-caracteres': CharacterCounterPage,
+  '/calculadora': SimpleCalculatorPage,
+  '/conversor-unidades': UnitConverterPage,
+  '/gerador-qr': QRGeneratorPage,
+  '/gerador-id-hash': GeneratorPage,
   '/privacidade': PrivacyPolicyPage,
   '/termos': TermsPage,
 };
@@ -47,9 +58,11 @@ export default function App() {
   const Page = ROUTES[path] ?? HomePage;
 
   return (
-    <CookieConsentProvider>
-      <Page onNavigate={navigate} />
-      <CookieBanner onNavigate={navigate} />
-    </CookieConsentProvider>
+    <ThemeProvider>
+      <CookieConsentProvider>
+        <Page onNavigate={navigate} />
+        <CookieBanner onNavigate={navigate} />
+      </CookieConsentProvider>
+    </ThemeProvider>
   );
 }
