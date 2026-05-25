@@ -11,7 +11,7 @@
   --success: #22c55e;
   --radius: 16px;
   --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
-  font-family: 'DM Sans', system-ui, sans-serif;
+  font-family: "DM Sans", system-ui, sans-serif;
   color: var(--text);
   background: var(--bg);
   line-height: 1.5;
@@ -20,17 +20,17 @@
 
 /* Tema claro */
 [data-theme="light"] {
-  --bg: #fafafa;
-  --surface: #f0f0f2;
+  --bg: #f8f7fc;
+  --surface: #f3f1f8;
   --surface-elevated: #ffffff;
-  --border: #e5e5e9;
-  --text: #1a1a1c;
-  --text-muted: #6b7280;
+  --border: #e8e4f3;
+  --text: #3d3d5c;
+  --text-muted: #8b88a8;
   --accent: #ff0033;
   --accent-hover: #e6002e;
-  --accent-soft: rgba(255, 0, 51, 0.12);
+  --accent-soft: rgba(255, 0, 51, 0.08);
   --success: #22c55e;
-  --shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  --shadow: 0 12px 40px rgba(99, 102, 241, 0.05);
 }
 
 *,
@@ -47,7 +47,11 @@ body {
 
 body:has(.app--youtube) {
   background:
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255, 0, 51, 0.15), transparent),
+    radial-gradient(
+      ellipse 80% 50% at 50% -20%,
+      rgba(255, 0, 51, 0.15),
+      transparent
+    ),
     var(--bg);
 }
 
@@ -87,7 +91,9 @@ body:has(.app--youtube) {
   cursor: pointer;
   flex-shrink: 0;
   border-radius: 14px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .logo-btn:hover {
@@ -189,8 +195,15 @@ body:has(.app--youtube) {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.45; transform: scale(0.85); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.85);
+  }
 }
 
 /* Panel */
@@ -236,7 +249,9 @@ body:has(.app--youtube) {
   border: 1px solid var(--border);
   border-radius: 12px;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .search__input::placeholder {
@@ -268,7 +283,9 @@ body:has(.app--youtube) {
   border: none;
   border-radius: 12px;
   cursor: pointer;
-  transition: background 0.2s, transform 0.15s;
+  transition:
+    background 0.2s,
+    transform 0.15s;
 }
 
 .search__btn:hover:not(:disabled) {
@@ -294,7 +311,9 @@ body:has(.app--youtube) {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Alerts */
@@ -485,23 +504,47 @@ body:has(.app--youtube) {
 }
 
 @keyframes digit-old-up {
-  from { transform: translateY(0); opacity: 1; }
-  to { transform: translateY(-110%); opacity: 0.15; }
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-110%);
+    opacity: 0.15;
+  }
 }
 
 @keyframes digit-new-up {
-  from { transform: translateY(110%); opacity: 0.15; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(110%);
+    opacity: 0.15;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 @keyframes digit-old-down {
-  from { transform: translateY(0); opacity: 1; }
-  to { transform: translateY(110%); opacity: 0.15; }
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(110%);
+    opacity: 0.15;
+  }
 }
 
 @keyframes digit-new-down {
-  from { transform: translateY(-110%); opacity: 0.15; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(-110%);
+    opacity: 0.15;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .counter-card__hidden {
@@ -563,7 +606,9 @@ body:has(.app--youtube) {
   padding: 0.5rem 1rem;
   border-radius: 8px;
   cursor: pointer;
-  transition: color 0.2s, border-color 0.2s;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
 }
 
 .btn-ghost:hover {
@@ -723,7 +768,9 @@ body:has(.app--youtube) {
   background: var(--surface-elevated);
   color: var(--accent);
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
 }
 
 .fx-swap:hover:not(:disabled) {
@@ -945,7 +992,7 @@ body:has(.app--youtube) {
   width: 100%;
   min-height: 0;
   padding: 1.1rem 1.25rem;
-  font-family: 'Cascadia Code', 'Consolas', 'Monaco', monospace;
+  font-family: "Cascadia Code", "Consolas", "Monaco", monospace;
   font-size: clamp(0.85rem, 0.9vw + 0.75rem, 0.95rem);
   line-height: 1.55;
   color: var(--text);
@@ -1059,14 +1106,22 @@ body:has(.app--youtube) {
   padding: 3rem 1.5rem;
   border: 2px dashed rgba(139, 92, 246, 0.3);
   border-radius: 16px;
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(139, 92, 246, 0.02) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(139, 92, 246, 0.05) 0%,
+    rgba(139, 92, 246, 0.02) 100%
+  );
   text-align: center;
   transition: all 0.3s ease;
 }
 
 .doc-upload__zone:hover {
   border-color: rgba(139, 92, 246, 0.6);
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(139, 92, 246, 0.1) 0%,
+    rgba(139, 92, 246, 0.05) 100%
+  );
 }
 
 .doc-upload__icon {

@@ -10,8 +10,16 @@ body {
 
 body:has(.home) {
   background:
-    radial-gradient(ellipse 120% 80% at 0% -20%, rgba(99, 102, 241, 0.25) 0%, transparent 40%),
-    radial-gradient(ellipse 100% 60% at 100% 10%, rgba(236, 72, 153, 0.12) 0%, transparent 50%),
+    radial-gradient(
+      ellipse 120% 80% at 0% -20%,
+      rgba(99, 102, 241, 0.25) 0%,
+      transparent 40%
+    ),
+    radial-gradient(
+      ellipse 100% 60% at 100% 10%,
+      rgba(236, 72, 153, 0.12) 0%,
+      transparent 50%
+    ),
     var(--bg);
   background-attachment: fixed;
 }
@@ -22,8 +30,22 @@ body:has(.home) {
   top: 0;
   z-index: 60;
   backdrop-filter: blur(12px) brightness(1.1);
-  background: linear-gradient(180deg, rgba(10, 10, 12, 0.4) 0%, rgba(10, 10, 12, 0.2) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(10, 10, 12, 0.4) 0%,
+    rgba(10, 10, 12, 0.2) 100%
+  );
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="light"] .site-header {
+  backdrop-filter: blur(12px) brightness(0.98);
+  background: linear-gradient(
+    180deg,
+    rgba(248, 247, 252, 0.8) 0%,
+    rgba(243, 241, 248, 0.6) 100%
+  );
+  border-bottom: 1px solid rgba(99, 102, 241, 0.1);
 }
 
 .site-header__inner {
@@ -81,7 +103,9 @@ body:has(.home) {
   text-decoration: none;
   padding: 0.45rem 0.85rem;
   border-radius: 8px;
-  transition: color 0.2s, background 0.2s;
+  transition:
+    color 0.2s,
+    background 0.2s;
 }
 
 .site-header__link:hover {
@@ -164,6 +188,12 @@ body:has(.home) {
   border: 1px solid rgba(99, 102, 241, 0.25);
 }
 
+[data-theme="light"] .home-hero__eyebrow {
+  color: #5b4dd6;
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
 .home-hero__title {
   font-size: clamp(2rem, 6vw, 3.25rem);
   font-weight: 700;
@@ -174,6 +204,13 @@ body:has(.home) {
 .home-hero__title-accent {
   display: block;
   background: linear-gradient(135deg, #a5b4fc, #6366f1 55%, #c084fc);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+[data-theme="light"] .home-hero__title-accent {
+  background: linear-gradient(135deg, #5b5cd6, #6366f1 55%, #b366f0);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -217,12 +254,29 @@ body:has(.home) {
   border-radius: 14px;
   outline: none;
   box-shadow: var(--shadow);
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .home-hero__search-input:focus {
   border-color: var(--brand);
-  box-shadow: 0 0 0 3px var(--brand-soft), var(--shadow);
+  box-shadow:
+    0 0 0 3px var(--brand-soft),
+    var(--shadow);
+}
+
+[data-theme="light"] .home-hero__search-input {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.04);
+}
+
+[data-theme="light"] .home-hero__search-input:focus {
+  border-color: rgba(99, 102, 241, 0.6);
+  box-shadow:
+    0 0 0 3px rgba(99, 102, 241, 0.1),
+    0 4px 16px rgba(99, 102, 241, 0.04);
 }
 
 .home-hero__stats {
@@ -276,6 +330,12 @@ body:has(.home) {
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+[data-theme="light"] .home-filters {
+  background: rgba(243, 241, 248, 0.6);
+  border: 1px solid rgba(99, 102, 241, 0.15);
+  backdrop-filter: blur(10px);
+}
+
 .home-filter {
   font-family: inherit;
   font-size: 0.85rem;
@@ -289,6 +349,11 @@ body:has(.home) {
   transition: all 0.3s ease;
 }
 
+[data-theme="light"] .home-filter {
+  border: 1px solid rgba(99, 102, 241, 0.15);
+  background: rgba(99, 102, 241, 0.05);
+}
+
 .home-filter:hover {
   color: var(--text);
   background: rgba(255, 255, 255, 0.1);
@@ -298,9 +363,20 @@ body:has(.home) {
 
 .home-filter--active {
   color: #e0e7ff;
-  background: linear-gradient(135deg, var(--brand-soft) 0%, rgba(99, 102, 241, 0.2) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--brand-soft) 0%,
+    rgba(99, 102, 241, 0.2) 100%
+  );
   border-color: rgba(99, 102, 241, 0.6);
   box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+}
+
+[data-theme="light"] .home-filter--active {
+  color: #5b4dd6;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(99, 102, 241, 0.08) 100%);
+  border-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
 }
 
 .home-grid {
@@ -322,18 +398,50 @@ body:has(.home) {
   --tool-accent: var(--brand);
   min-height: 180px;
   border-radius: 20px;
-  background: linear-gradient(135deg, rgba(20, 20, 24, 0.6) 0%, rgba(28, 28, 34, 0.4) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(20, 20, 24, 0.6) 0%,
+    rgba(28, 28, 34, 0.4) 100%
+  );
   border: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
-  transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .tool-card {
+  background: linear-gradient(
+    135deg,
+    rgba(243, 241, 248, 0.8) 0%,
+    rgba(248, 247, 252, 0.6) 100%
+  );
+  border: 1px solid rgba(99, 102, 241, 0.12);
+  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.06);
 }
 
 .tool-card:not(.tool-card--soon):hover {
   border-color: rgba(99, 102, 241, 0.5);
   transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(99, 102, 241, 0.15), 0 0 60px rgba(99, 102, 241, 0.1);
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(28, 28, 34, 0.5) 100%);
+  box-shadow:
+    0 20px 40px rgba(99, 102, 241, 0.15),
+    0 0 60px rgba(99, 102, 241, 0.1);
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.1) 0%,
+    rgba(28, 28, 34, 0.5) 100%
+  );
+}
+
+[data-theme="light"] .tool-card:not(.tool-card--soon):hover {
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow:
+    0 20px 40px rgba(99, 102, 241, 0.1),
+    0 0 60px rgba(99, 102, 241, 0.08);
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.08) 0%,
+    rgba(248, 247, 252, 0.4) 100%
+  );
 }
 
 .tool-card--soon {
@@ -368,7 +476,11 @@ body:has(.home) {
   display: grid;
   place-items: center;
   border-radius: 14px;
-  background: linear-gradient(135deg, color-mix(in srgb, var(--tool-accent) 20%, transparent) 0%, color-mix(in srgb, var(--tool-accent) 10%, transparent) 100%);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--tool-accent) 20%, transparent) 0%,
+    color-mix(in srgb, var(--tool-accent) 10%, transparent) 100%
+  );
   color: var(--tool-accent);
   border: 1px solid rgba(99, 102, 241, 0.2);
 }
