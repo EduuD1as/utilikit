@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Logo } from '../components/Logo.jsx';
 import { SiteFooter } from '../components/SiteFooter.jsx';
 
@@ -93,6 +93,45 @@ export function SimpleCalculatorPage({ onNavigate }) {
     setHistory([]);
   };
 
+  // Suporte a teclado
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key >= '0' && e.key <= '9') {
+        handleNumber(parseInt(e.key));
+      } else if (e.key === '.' || e.key === ',') {
+        e.preventDefault();
+        handleDecimal();
+      } else if (e.key === '+') {
+        e.preventDefault();
+        handleOperation('+');
+      } else if (e.key === '-') {
+        e.preventDefault();
+        handleOperation('-');
+      } else if (e.key === '*') {
+        e.preventDefault();
+        handleOperation('*');
+      } else if (e.key === '/') {
+        e.preventDefault();
+        handleOperation('/');
+      } else if (e.key === '%') {
+        e.preventDefault();
+        handleOperation('%');
+      } else if (e.key === 'Enter' || e.key === '=') {
+        e.preventDefault();
+        handleEquals();
+      } else if (e.key === 'Backspace') {
+        e.preventDefault();
+        handleBackspace();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        handleClear();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [display, previousValue, operation, newNumber]);
+
   return (
     <div className="app">
       <header className="hero">
@@ -115,7 +154,7 @@ export function SimpleCalculatorPage({ onNavigate }) {
       </header>
 
       <main className="panel fx-panel">
-        <div className="calculator-container">
+        <div className="calculator-wrapper">
           <div className="calculator">
             <div className="calc-display">{display}</div>
             
@@ -150,7 +189,7 @@ export function SimpleCalculatorPage({ onNavigate }) {
             <div className="calc-history">
               <div className="calc-history__header">
                 <h3>Histórico</h3>
-                <button className="btn-ghost" onClick={handleClearHistory}>Limpar</button>
+                <button className="btn-ghost calc-history__clear" onClick={handleClearHistory}>Limpar</button>
               </div>
               <div className="calc-history__list">
                 {history.map((entry, idx) => (
@@ -162,7 +201,7 @@ export function SimpleCalculatorPage({ onNavigate }) {
         </div>
 
         <p className="fx-disclaimer">
-          Cálculos realizados localmente no seu navegador.
+          💡 Dica: Você também pode usar seu teclado! (Números, +, -, *, /, Enter, Backspace, Esc)
         </p>
       </main>
 
