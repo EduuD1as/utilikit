@@ -7,7 +7,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { categoryTranslations } from '../i18n/translations';
 
 export function HomePage({ onNavigate }) {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('all');
 
