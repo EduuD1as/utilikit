@@ -5,8 +5,10 @@ import { ChannelCard } from '../components/ChannelCard.jsx';
 import { StatusBadge } from '../components/StatusBadge.jsx';
 import { Logo } from '../components/Logo.jsx';
 import { SiteFooter } from '../components/SiteFooter.jsx';
+import { useLanguage } from '../context/LanguageContext';
 
 export function YouTubeCounterPage({ onNavigate }) {
+  const { t } = useLanguage();
   const {
     channel,
     subscriberCount,
@@ -32,11 +34,11 @@ export function YouTubeCounterPage({ onNavigate }) {
               className="hero__back"
               onClick={() => onNavigate('/')}
             >
-              ← Todas as ferramentas
+              ← {t('backToTools')}
             </button>
-            <h1>Contador de Inscritos</h1>
+            <h1>{t('youtubeCounterTitle')}</h1>
             <p className="hero__subtitle">
-              YouTube em tempo real — cole o link ou digite o nome do canal
+              {t('youtubeCounterSubtitle')}
             </p>
           </div>
         </div>

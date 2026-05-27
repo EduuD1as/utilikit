@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { Logo } from '../components/Logo.jsx';
 import { SiteFooter } from '../components/SiteFooter.jsx';
+import { useLanguage } from '../context/LanguageContext';
 import {
   formatJson,
   minifyJson,
@@ -22,6 +23,7 @@ const EXAMPLE = JSON.stringify({
 });
 
 export function JsonFormatterPage({ onNavigate }) {
+  const { t } = useLanguage();
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
   const [tabWidth, setTabWidth] = useState(2);
@@ -53,7 +55,7 @@ export function JsonFormatterPage({ onNavigate }) {
         setSizeInfo(getSizeInfo(json));
         setError(null);
       } catch (err) {
-        setError(err.message || 'Não foi possível processar o JSON.');
+        setError(err.message || t('errorCouldNotProcessJSON') || 'Não foi possível processar o JSON.');
         setOutput('');
         setSizeInfo(null);
       }
@@ -68,7 +70,7 @@ export function JsonFormatterPage({ onNavigate }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      setError('Não foi possível copiar para a área de transferência.');
+      setError(t('errorCouldNotCopy'));
     }
   };
 
@@ -97,11 +99,11 @@ export function JsonFormatterPage({ onNavigate }) {
               className="hero__back"
               onClick={() => onNavigate('/')}
             >
-              ← Todas as ferramentas
+              ← {t('backToTools')}
             </button>
-            <h1>Formatador de JSON</h1>
+            <h1>{t('jsonFormatterTitle')}</h1>
             <p className="hero__subtitle">
-              Formate, valide e minifique JSON no navegador — sem envios para servidores
+              {t('jsonFormatterSubtitle')}
             </p>
           </div>
         </div>
@@ -149,14 +151,14 @@ export function JsonFormatterPage({ onNavigate }) {
                 className="btn-ghost sql-toolbar__btn"
                 onClick={loadExample}
               >
-                Exemplo
+                {t('exampleButton')}
               </button>
               <button
                 type="button"
                 className="btn-ghost sql-toolbar__btn"
                 onClick={handleClear}
               >
-                Limpar
+                {t('clearButton')}
               </button>
             </div>
           </div>
@@ -183,7 +185,7 @@ export function JsonFormatterPage({ onNavigate }) {
                     className="btn-ghost sql-editor__link"
                     onClick={handleCopy}
                   >
-                    {copied ? '✓ Copiado!' : 'Copiar'}
+                    {copied ? t('copiedButton') : t('copyButton')}
                   </button>
                 )}
               </div>
@@ -199,7 +201,7 @@ export function JsonFormatterPage({ onNavigate }) {
           {sizeInfo && (
             <div className="fx-meta" style={{ marginTop: '1.5rem' }}>
               <span>
-                Original: {sizeInfo.original} bytes | Minificado: {sizeInfo.minified} bytes | 
+                Original: {sizeInfo.original} bytes | Minificado: {sizeInfo.minified} bytes |
                 {sizeInfo.saved > 0 && ` Economia: ${sizeInfo.saved}%`}
               </span>
             </div>

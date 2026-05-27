@@ -34,8 +34,8 @@ export function SiteHeader({ onNavigate, variant = 'home' }) {
             </svg>
           </span>
           <span>
-            <span className="site-header__name">UtiliKit</span>
-            <span className="site-header__tagline">Ferramentas online</span>
+            <span className="site-header__name">{t('brandName')}</span>
+            <span className="site-header__tagline">{t('brandTagline')}</span>
           </span>
         </a>
 
@@ -50,7 +50,7 @@ export function SiteHeader({ onNavigate, variant = 'home' }) {
           >
             {t('navHome')}
           </a>
-          
+
           <button
             className="site-header__lang-toggle"
             onClick={toggleLanguage}
@@ -66,7 +66,7 @@ export function SiteHeader({ onNavigate, variant = 'home' }) {
               {language === 'pt' ? 'EN' : 'PT'}
             </span>
           </button>
-          
+
           <button
             className="site-header__theme-toggle"
             onClick={toggleTheme}

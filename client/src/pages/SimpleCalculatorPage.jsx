@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Logo } from '../components/Logo.jsx';
 import { SiteFooter } from '../components/SiteFooter.jsx';
+import { useLanguage } from '../context/LanguageContext';
 
 export function SimpleCalculatorPage({ onNavigate }) {
+  const { t } = useLanguage();
   const [display, setDisplay] = useState('0');
   const [history, setHistory] = useState([]);
   const [previousValue, setPreviousValue] = useState(null);
@@ -143,11 +145,11 @@ export function SimpleCalculatorPage({ onNavigate }) {
               className="hero__back"
               onClick={() => onNavigate('/')}
             >
-              ← Todas as ferramentas
+              ← {t('backToTools')}
             </button>
-            <h1>Calculadora Simples</h1>
+            <h1>{t('calculatorTitle')}</h1>
             <p className="hero__subtitle">
-              Operações básicas com histórico de cálculos
+              {t('calculatorSubtitle')}
             </p>
           </div>
         </div>
@@ -189,7 +191,7 @@ export function SimpleCalculatorPage({ onNavigate }) {
             <div className="calc-history">
               <div className="calc-history__header">
                 <h3>Histórico</h3>
-                <button className="btn-ghost calc-history__clear" onClick={handleClearHistory}>Limpar</button>
+                <button className="btn-ghost calc-history__clear" onClick={handleClearHistory}>{t('clearButton')}</button>
               </div>
               <div className="calc-history__list">
                 {history.map((entry, idx) => (
@@ -207,7 +209,7 @@ export function SimpleCalculatorPage({ onNavigate }) {
 
       <SiteFooter
         onNavigate={onNavigate}
-        note="Calculadora com histórico."
+        note={t('calculatorDisclaimer')}
       />
     </div>
   );

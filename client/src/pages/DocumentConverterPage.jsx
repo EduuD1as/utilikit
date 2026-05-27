@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Logo } from '../components/Logo.jsx';
 import { SiteFooter } from '../components/SiteFooter.jsx';
+import { useLanguage } from '../context/LanguageContext';
 import {
   wordToPdf,
   pdfToWord,
@@ -9,6 +10,7 @@ import {
 } from '../lib/documentConverter.js';
 
 export function DocumentConverterPage({ onNavigate }) {
+  const { t } = useLanguage();
   const [file, setFile] = useState(null);
   const [mode, setMode] = useState('word-to-pdf');
   const [converting, setConverting] = useState(false);
@@ -84,11 +86,11 @@ export function DocumentConverterPage({ onNavigate }) {
               className="hero__back"
               onClick={() => onNavigate('/')}
             >
-              ← Todas as ferramentas
+              ← {t('backToTools')}
             </button>
-            <h1>Conversor de Documentos</h1>
+            <h1>{t('documentConverterTitle')}</h1>
             <p className="hero__subtitle">
-              Converta entre Word e PDF com suporte local no navegador
+              {t('documentConverterSubtitle')}
             </p>
           </div>
         </div>
@@ -177,7 +179,7 @@ export function DocumentConverterPage({ onNavigate }) {
               onClick={handleConvert}
               disabled={!file || converting}
             >
-              {converting ? 'Convertendo...' : `Converter para ${mode === 'word-to-pdf' ? 'PDF' : 'Word'}`}
+              {converting ? t('converting') : `${t('convertButton')} para ${mode === 'word-to-pdf' ? 'PDF' : 'Word'}`}
             </button>
             {file && (
               <button
@@ -186,7 +188,7 @@ export function DocumentConverterPage({ onNavigate }) {
                 onClick={handleClear}
                 disabled={converting}
               >
-                Limpar
+                {t('clearButton')}
               </button>
             )}
           </div>

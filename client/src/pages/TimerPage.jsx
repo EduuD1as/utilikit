@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Logo } from '../components/Logo.jsx';
 import { SiteFooter } from '../components/SiteFooter.jsx';
+import { useLanguage } from '../context/LanguageContext';
 
 const MODES = {
   pomodoro: { label: 'Pomodoro', minutes: 25, color: '#ef4444' },
@@ -10,6 +11,7 @@ const MODES = {
 };
 
 export function TimerPage({ onNavigate }) {
+  const { t } = useLanguage();
   const [mode, setMode] = useState('pomodoro');
   const [timeLeft, setTimeLeft] = useState(MODES.pomodoro.minutes * 60);
   const [isRunning, setIsRunning] = useState(false);
@@ -34,7 +36,7 @@ export function TimerPage({ onNavigate }) {
 
   const start = useCallback(() => {
     if (timeLeft <= 0) return;
-    
+
     endTimeRef.current = Date.now() + timeLeft * 1000;
     setIsRunning(true);
 
@@ -46,12 +48,12 @@ export function TimerPage({ onNavigate }) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
         setIsRunning(false);
-        
+
         // Tocar som de notificação (vibração se disponível)
         if (navigator.vibrate) {
           navigator.vibrate([200, 100, 200, 100, 200]);
         }
-        
+
         // Incrementar ciclos se for pomodoro
         if (mode === 'pomodoro') {
           setCycles(c => c + 1);
@@ -155,11 +157,11 @@ export function TimerPage({ onNavigate }) {
               className="hero__back"
               onClick={() => onNavigate('/')}
             >
-              ← Todas as ferramentas
+              ← {t('backToTools')}
             </button>
-            <h1>Timer / Pomodoro</h1>
+            <h1>{t('timerTitle')}</h1>
             <p className="hero__subtitle">
-              Temporizador com modo Pomodoro e pausas programadas
+              {t('timerSubtitle') || 'Temporizador com modo Pomodoro e pausas programadas'}
             </p>
           </div>
         </div>
@@ -282,7 +284,7 @@ export function TimerPage({ onNavigate }) {
         </div>
 
         <p className="fx-disclaimer">
-          💡 Dica: Use a barra de espaço para iniciar/pausar, Esc para reiniciar. 
+          💡 Dica: Use a barra de espaço para iniciar/pausar, Esc para reiniciar.
           O timer continua rodando mesmo com a aba em segundo plano.
         </p>
       </main>

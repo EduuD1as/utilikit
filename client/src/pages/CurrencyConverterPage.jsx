@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Logo } from '../components/Logo.jsx';
 import { SiteFooter } from '../components/SiteFooter.jsx';
+import { useLanguage } from '../context/LanguageContext';
 import {
   CURRENCY_NAMES,
   getCurrencyLabel,
@@ -32,6 +33,7 @@ function sortCurrencyCodes(codes, popularSet) {
 }
 
 export function CurrencyConverterPage({ onNavigate }) {
+  const { t } = useLanguage();
   const [amountIn, setAmountIn] = useState('1');
   const [from, setFrom] = useState('BRL');
   const [to, setTo] = useState('USD');
@@ -69,7 +71,7 @@ export function CurrencyConverterPage({ onNavigate }) {
       setRateDate(data.date);
       setRateSource(data.source);
     } catch (err) {
-      setError(err.message || 'Não foi possível carregar as cotações.');
+      setError(err.message || t('errorCouldNotLoadRates'));
       setRates(null);
       setRateDate(null);
       setRateSource(null);
@@ -111,11 +113,11 @@ export function CurrencyConverterPage({ onNavigate }) {
               className="hero__back"
               onClick={() => onNavigate('/')}
             >
-              ← Todas as ferramentas
+              ← {t('backToTools')}
             </button>
-            <h1>Conversor de moedas</h1>
+            <h1>{t('currencyConverterTitle')}</h1>
             <p className="hero__subtitle">
-              Cotações atualizadas — sem cadastro, direto no navegador
+              {t('currencyConverterSubtitle')}
             </p>
           </div>
         </div>
@@ -130,7 +132,7 @@ export function CurrencyConverterPage({ onNavigate }) {
               className="fx-panel__retry"
               onClick={() => loadRates(from, { force: true })}
             >
-              Tentar novamente
+              {t('retryButton')}
             </button>
           </div>
         )}

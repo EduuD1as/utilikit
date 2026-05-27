@@ -1,8 +1,10 @@
 import { useCallback, useState } from 'react';
 import { Logo } from '../components/Logo.jsx';
 import { SiteFooter } from '../components/SiteFooter.jsx';
+import { useLanguage } from '../context/LanguageContext';
 
 export function UnitConverterPage({ onNavigate }) {
+  const { t } = useLanguage();
   const [inputValue, setInputValue] = useState('1');
   const [inputUnit, setInputUnit] = useState('m');
   const [outputUnit, setOutputUnit] = useState('km');
@@ -53,14 +55,14 @@ export function UnitConverterPage({ onNavigate }) {
 
   const convertValue = useCallback(() => {
     const num = parseFloat(inputValue) || 0;
-    
+
     if (category === 'temperature') {
       return convertTemperature(num, inputUnit, outputUnit);
     }
 
     const baseValue = num * conversions[category].units[inputUnit].toBase;
     const result = baseValue / conversions[category].units[outputUnit].toBase;
-    
+
     // Arredondar para 3 casas decimais para distâncias, pesos e volumes
     return parseFloat(result.toFixed(3)).toString();
   }, [inputValue, inputUnit, outputUnit, category]);
@@ -69,12 +71,12 @@ export function UnitConverterPage({ onNavigate }) {
     let celsius;
 
     if (fromUnit === 'c') celsius = value;
-    else if (fromUnit === 'f') celsius = (value - 32) * 5/9;
+    else if (fromUnit === 'f') celsius = (value - 32) * 5 / 9;
     else if (fromUnit === 'k') celsius = value - 273.15;
 
     let result;
     if (toUnit === 'c') result = celsius;
-    else if (toUnit === 'f') result = celsius * 9/5 + 32;
+    else if (toUnit === 'f') result = celsius * 9 / 5 + 32;
     else if (toUnit === 'k') result = celsius + 273.15;
 
     return result.toFixed(2);
@@ -98,11 +100,11 @@ export function UnitConverterPage({ onNavigate }) {
               className="hero__back"
               onClick={() => onNavigate('/')}
             >
-              ← Todas as ferramentas
+              ← {t('backToTools')}
             </button>
-            <h1>Conversor de Unidades</h1>
+            <h1>{t('unitConverterTitle')}</h1>
             <p className="hero__subtitle">
-              Converta entre diferentes unidades de medida instantaneamente
+              {t('unitConverterSubtitle')}
             </p>
           </div>
         </div>

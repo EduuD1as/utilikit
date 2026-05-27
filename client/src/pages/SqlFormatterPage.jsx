@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { Logo } from '../components/Logo.jsx';
 import { SiteFooter } from '../components/SiteFooter.jsx';
+import { useLanguage } from '../context/LanguageContext';
 import {
   SQL_DIALECTS,
   formatSqlQuery,
@@ -10,6 +11,7 @@ import {
 const EXAMPLE = `select u.id,u.name,o.total from users u inner join orders o on o.user_id=u.id where o.status='paid' and o.created_at>=date '2024-01-01' order by o.total desc limit 10;`;
 
 export function SqlFormatterPage({ onNavigate }) {
+  const { t } = useLanguage();
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
   const [dialect, setDialect] = useState('sql');
@@ -22,7 +24,7 @@ export function SqlFormatterPage({ onNavigate }) {
     (mode) => {
       const sql = input.trim();
       if (!sql) {
-        setError('Cole ou digite uma consulta SQL.');
+        setError(t('errorPasteOrTypeSQL'));
         setOutput('');
         return;
       }
@@ -35,7 +37,7 @@ export function SqlFormatterPage({ onNavigate }) {
         setOutput(result);
         setError(null);
       } catch (err) {
-        setError(err.message || 'Não foi possível formatar o SQL.');
+        setError(err.message || t('errorCouldNotFormat'));
         setOutput('');
       }
     },
@@ -49,7 +51,7 @@ export function SqlFormatterPage({ onNavigate }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      setError('Não foi possível copiar para a área de transferência.');
+      setError(t('errorCouldNotCopy'));
     }
   };
 
@@ -76,11 +78,11 @@ export function SqlFormatterPage({ onNavigate }) {
               className="hero__back"
               onClick={() => onNavigate('/')}
             >
-              ← Todas as ferramentas
+              ← {t('backToTools')}
             </button>
-            <h1>Formatador de SQL</h1>
+            <h1>{t('sqlFormatterTitle')}</h1>
             <p className="hero__subtitle">
-              Organize, idente e minifique consultas — tudo no navegador
+              {t('sqlFormatterSubtitle')}
             </p>
           </div>
         </div>
@@ -149,14 +151,14 @@ export function SqlFormatterPage({ onNavigate }) {
               onClick={handleCopy}
               disabled={!output}
             >
-              {copied ? 'Copiado!' : 'Copiar'}
+              {copied ? t('copiedButton') : t('copyButton')}
             </button>
             <button
               type="button"
               className="btn-ghost sql-toolbar__btn"
               onClick={handleClear}
             >
-              Limpar
+              {t('clearButton')}
             </button>
           </div>
         </div>

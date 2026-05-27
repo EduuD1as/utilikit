@@ -1,8 +1,10 @@
 import { useCallback, useState } from "react";
 import { Logo } from "../components/Logo.jsx";
 import { SiteFooter } from "../components/SiteFooter.jsx";
+import { useLanguage } from "../context/LanguageContext";
 
 export function CharacterCounterPage({ onNavigate }) {
+  const { t } = useLanguage();
   const [text, setText] = useState("");
 
   const counts = useCallback(() => {
@@ -45,11 +47,11 @@ export function CharacterCounterPage({ onNavigate }) {
               className="hero__back"
               onClick={() => onNavigate("/")}
             >
-              ← Todas as ferramentas
+              ← {t('backToTools')}
             </button>
-            <h1>Contador de Caracteres</h1>
+            <h1>{t('characterCounterTitle')}</h1>
             <p className="hero__subtitle">
-              Conte caracteres, palavras, linhas e parágrafos em tempo real
+              {t('characterCounterSubtitle')}
             </p>
           </div>
         </div>
@@ -64,14 +66,14 @@ export function CharacterCounterPage({ onNavigate }) {
                 className="btn-ghost sql-toolbar__btn"
                 onClick={handleLoadExample}
               >
-                Exemplo
+                {t('exampleButton')}
               </button>
               <button
                 type="button"
                 className="btn-ghost sql-toolbar__btn"
                 onClick={handleClear}
               >
-                Limpar
+                {t('clearButton')}
               </button>
             </div>
           </div>
@@ -80,14 +82,14 @@ export function CharacterCounterPage({ onNavigate }) {
             <div className="sql-editor__pane sql-editor__pane--full">
               <div className="sql-editor__head">
                 <span className="sql-editor__title">
-                  Digite ou cole seu texto
+                  {t('typeOrPasteText')}
                 </span>
               </div>
               <textarea
                 className="sql-editor__area"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
-                placeholder="Cole seu texto aqui para contar caracteres, palavras e muito mais..."
+                placeholder={t('characterCounterPlaceholder')}
               />
             </div>
           </div>
@@ -95,38 +97,37 @@ export function CharacterCounterPage({ onNavigate }) {
           <div className="stats-grid">
             <div className="stat-card">
               <div className="stat-card__value">{stats.characters}</div>
-              <div className="stat-card__label">Caracteres</div>
+              <div className="stat-card__label">{t('charactersLabel')}</div>
             </div>
             <div className="stat-card">
               <div className="stat-card__value">{stats.charactersNoSpaces}</div>
-              <div className="stat-card__label">Sem espaços</div>
+              <div className="stat-card__label">{t('noSpacesLabel')}</div>
             </div>
             <div className="stat-card">
               <div className="stat-card__value">{stats.words}</div>
-              <div className="stat-card__label">Palavras</div>
+              <div className="stat-card__label">{t('wordsLabel')}</div>
             </div>
             <div className="stat-card">
               <div className="stat-card__value">{stats.lines}</div>
-              <div className="stat-card__label">Linhas</div>
+              <div className="stat-card__label">{t('linesLabel')}</div>
             </div>
             <div className="stat-card">
               <div className="stat-card__value">{stats.paragraphs}</div>
-              <div className="stat-card__label">Parágrafos</div>
+              <div className="stat-card__label">{t('paragraphsLabel')}</div>
             </div>
             <div className="stat-card">
               <div className="stat-card__value">{stats.spaces}</div>
-              <div className="stat-card__label">Espaços</div>
+              <div className="stat-card__label">{t('spacesLabel')}</div>
             </div>
           </div>
         </div>
 
         <p className="fx-disclaimer">
-          Toda contagem é feita localmente no seu navegador. Seus dados não são
-          enviados para servidores.
+          {t('characterCounterDisclaimer')}
         </p>
       </main>
 
-      <SiteFooter onNavigate={onNavigate} note="Contagem em tempo real." />
+      <SiteFooter onNavigate={onNavigate} note={t('realtimeCountingNote')} />
     </div>
   );
 }

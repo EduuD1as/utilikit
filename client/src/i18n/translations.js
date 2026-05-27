@@ -8,7 +8,99 @@ export const translations = {
     themeToggle: 'Mudar para tema',
     themeDark: 'escuro',
     themeLight: 'claro',
-    languageToggle: 'Change to English',
+    languageToggle: 'Mudar para Português',
+
+    // Common
+    backToTools: 'Voltar para todas as ferramentas',
+    backToHome: 'Voltar ao início',
+    clearButton: 'Limpar',
+    copyButton: 'Copiar',
+    copiedButton: '✓ Copiado!',
+    generateButton: 'Gerar',
+    exampleButton: 'Exemplo',
+    convertButton: 'Converter',
+    deleteButton: 'Deletar',
+    retryButton: 'Tentar novamente',
+
+    // Character Counter
+    characterCounterTitle: 'Contador de Caracteres',
+    characterCounterSubtitle: 'Conte caracteres, palavras, linhas e parágrafos em tempo real',
+    typeOrPasteText: 'Digite ou cole seu texto',
+    characterCounterPlaceholder: 'Cole seu texto aqui para contar caracteres, palavras e muito mais...',
+    charactersLabel: 'Caracteres',
+    noSpacesLabel: 'Sem espaços',
+    wordsLabel: 'Palavras',
+    linesLabel: 'Linhas',
+    paragraphsLabel: 'Parágrafos',
+    spacesLabel: 'Espaços',
+    characterCounterDisclaimer: 'Toda contagem é feita localmente no seu navegador. Seus dados não são enviados para servidores.',
+    realtimeCountingNote: 'Contagem em tempo real.',
+
+    // Generator
+    generatorTitle: 'Gerador UUID e Hash',
+    generatorSubtitle: 'Gere IDs aleatórios e calcule hashes de textos',
+    idGeneratorTitle: 'Gerador de IDs',
+    hashGeneratorTitle: 'Gerador de Hash',
+    generateUUID: 'Gerar UUID',
+    generateRandomString: 'Gerar String Aleatória',
+    generateHash: 'Gerar Hash',
+    quantity: 'Quantidade',
+    allGeneratedIds: 'Todos os IDs gerados',
+    textForHash: 'Texto',
+    hashType: 'Tipo de Hash',
+    generatedLocallyDisclaimer: 'Todos os IDs e hashes são gerados localmente no seu navegador. Seus dados não são enviados para servidores.',
+    generatorDisclaimer: 'Gerador de IDs e hashes.',
+
+    // Currency Converter
+    currencyConverterTitle: 'Conversor de moedas',
+    currencyConverterSubtitle: 'Converta entre principais moedas com cotação atualizada.',
+
+    // Document Converter
+    documentConverterTitle: 'Conversor de Documentos',
+    documentConverterSubtitle: 'Converta entre Word e PDF com suporte local no navegador',
+    convertToPdf: 'Converter para PDF',
+    convertToWord: 'Converter para Word',
+    converting: 'Convertendo...',
+    documentConverterDisclaimer: 'Word → PDF: Converte documentos Word para PDF preservando o layout e formatação.',
+
+    // SQL Formatter
+    sqlFormatterTitle: 'Formatador de SQL',
+    sqlFormatterSubtitle: 'Indente, organize e minifique consultas SQL',
+
+    // JSON Formatter
+    jsonFormatterTitle: 'Formatador de JSON',
+    jsonFormatterSubtitle: 'Formate e minifique código JSON',
+
+    // QR Generator
+    qrGeneratorTitle: 'Gerador de QR Code',
+    qrGeneratorSubtitle: 'Crie QR codes para links, Wi-Fi e textos',
+    copyUrl: '📋 Copiar URL',
+    qrGeneratorDisclaimer: 'Gerador de QR code online.',
+
+    // Simple Calculator
+    calculatorTitle: 'Calculadora Simples',
+    calculatorSubtitle: 'Operações básicas com histórico de cálculos',
+    calculatorDisclaimer: 'Calculadora com histórico.',
+    clearHistory: 'Limpar',
+
+    // Unit Converter
+    unitConverterTitle: 'Conversor de Unidades',
+    unitConverterSubtitle: 'Converta entre diferentes unidades de medida instantaneamente',
+
+    // YouTube Counter
+    youtubeCounterTitle: 'Contador de Inscritos',
+    youtubeCounterSubtitle: 'Acompanhe inscritos do YouTube em tempo real',
+
+    // Timer
+    timerTitle: 'Timer / Pomodoro',
+    timerSubtitle: 'Temporizador com modo Pomodoro e pausas programadas',
+
+    // Common Errors and Messages
+    errorCouldNotLoadRates: 'Não foi possível carregar as cotações.',
+    errorCouldNotFormat: 'Não foi possível formatar o SQL.',
+    errorPasteOrTypeSQL: 'Cole ou digite uma consulta SQL.',
+    errorCouldNotCopy: 'Não foi possível copiar para a área de transferência.',
+    deleteButton: 'Deletar',
 
     // HomePage
     homeHeroEyebrow: 'Grátis · Sem cadastro · No navegador',
@@ -106,6 +198,98 @@ export const translations = {
     themeDark: 'dark',
     themeLight: 'light',
     languageToggle: 'Mudar para Português',
+
+    // Common
+    backToTools: 'Back to all tools',
+    backToHome: 'Back to home',
+    clearButton: 'Clear',
+    copyButton: 'Copy',
+    copiedButton: '✓ Copied!',
+    generateButton: 'Generate',
+    exampleButton: 'Example',
+    convertButton: 'Convert',
+    deleteButton: 'Delete',
+    retryButton: 'Try again',
+
+    // Character Counter
+    characterCounterTitle: 'Character Counter',
+    characterCounterSubtitle: 'Count characters, words, lines and paragraphs in real time',
+    typeOrPasteText: 'Type or paste your text',
+    characterCounterPlaceholder: 'Paste your text here to count characters, words and much more...',
+    charactersLabel: 'Characters',
+    noSpacesLabel: 'Without spaces',
+    wordsLabel: 'Words',
+    linesLabel: 'Lines',
+    paragraphsLabel: 'Paragraphs',
+    spacesLabel: 'Spaces',
+    characterCounterDisclaimer: 'All counting is done locally on your browser. Your data is not sent to servers.',
+    realtimeCountingNote: 'Real-time counting.',
+
+    // Generator
+    generatorTitle: 'UUID and Hash Generator',
+    generatorSubtitle: 'Generate random IDs and calculate text hashes',
+    idGeneratorTitle: 'ID Generator',
+    hashGeneratorTitle: 'Hash Generator',
+    generateUUID: 'Generate UUID',
+    generateRandomString: 'Generate Random String',
+    generateHash: 'Generate Hash',
+    quantity: 'Quantity',
+    allGeneratedIds: 'All generated IDs',
+    textForHash: 'Text',
+    hashType: 'Hash Type',
+    generatedLocallyDisclaimer: 'All IDs and hashes are generated locally in your browser. Your data is not sent to servers.',
+    generatorDisclaimer: 'Generator of IDs and hashes.',
+
+    // Currency Converter
+    currencyConverterTitle: 'Currency Converter',
+    currencyConverterSubtitle: 'Convert between currencies with real-time exchange rates.',
+
+    // Document Converter
+    documentConverterTitle: 'Document Converter',
+    documentConverterSubtitle: 'Convert between Word and PDF with local browser support',
+    convertToPdf: 'Convert to PDF',
+    convertToWord: 'Convert to Word',
+    converting: 'Converting...',
+    documentConverterDisclaimer: 'Word → PDF: Converts Word documents to PDF preserving layout and formatting.',
+
+    // SQL Formatter
+    sqlFormatterTitle: 'SQL Formatter',
+    sqlFormatterSubtitle: 'Indent, organize and minify SQL queries',
+
+    // JSON Formatter
+    jsonFormatterTitle: 'JSON Formatter',
+    jsonFormatterSubtitle: 'Format and minify JSON code',
+
+    // QR Generator
+    qrGeneratorTitle: 'QR Code Generator',
+    qrGeneratorSubtitle: 'Create QR codes for links, Wi-Fi and texts',
+    copyUrl: '📋 Copy URL',
+    qrGeneratorDisclaimer: 'QR code generator online.',
+
+    // Simple Calculator
+    calculatorTitle: 'Simple Calculator',
+    calculatorSubtitle: 'Basic operations with calculation history',
+    calculatorDisclaimer: 'Calculator with history.',
+    clearHistory: 'Clear',
+
+    // Unit Converter
+    unitConverterTitle: 'Unit Converter',
+    unitConverterSubtitle: 'Convert between different units of measurement instantly',
+
+    // YouTube Counter
+    youtubeCounterTitle: 'Subscriber Counter',
+    youtubeCounterSubtitle: 'Track YouTube subscribers in real time',
+
+    // Timer
+    timerTitle: 'Timer / Pomodoro',
+    timerSubtitle: 'Timer with Pomodoro mode and scheduled breaks',
+
+    // Common Errors and Messages
+    errorCouldNotLoadRates: 'Could not load exchange rates.',
+    errorCouldNotFormat: 'Could not format SQL.',
+    errorPasteOrTypeSQL: 'Paste or type a SQL query.',
+    errorCouldNotCopy: 'Could not copy to clipboard.',
+    deleteButton: 'Delete',
 
     // HomePage
     homeHeroEyebrow: 'Free · No signup · In browser',

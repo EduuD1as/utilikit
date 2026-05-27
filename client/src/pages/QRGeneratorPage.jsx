@@ -1,8 +1,10 @@
 import { useCallback, useState } from 'react';
 import { Logo } from '../components/Logo.jsx';
 import { SiteFooter } from '../components/SiteFooter.jsx';
+import { useLanguage } from '../context/LanguageContext';
 
 export function QRGeneratorPage({ onNavigate }) {
+  const { t } = useLanguage();
   const [input, setInput] = useState('https://utilikit.com');
   const [qrUrl, setQrUrl] = useState('');
   const [copied, setCopied] = useState(false);
@@ -50,11 +52,11 @@ export function QRGeneratorPage({ onNavigate }) {
               className="hero__back"
               onClick={() => onNavigate('/')}
             >
-              ← Todas as ferramentas
+              ← {t('backToTools')}
             </button>
-            <h1>Gerador de QR Code</h1>
+            <h1>{t('qrGeneratorTitle')}</h1>
             <p className="hero__subtitle">
-              Gere QR codes para URLs, textos e dados instantaneamente
+              {t('qrGeneratorSubtitle')}
             </p>
           </div>
         </div>
@@ -104,7 +106,7 @@ export function QRGeneratorPage({ onNavigate }) {
             </div>
 
             <button className="search__btn" onClick={generateQR}>
-              Gerar QR Code
+              {t('generateButton')} QR Code
             </button>
           </div>
 
@@ -133,7 +135,7 @@ export function QRGeneratorPage({ onNavigate }) {
 
       <SiteFooter
         onNavigate={onNavigate}
-        note="Gerador de QR code online."
+        note={t('qrGeneratorDisclaimer') || 'Gerador de QR code online.'}
       />
     </div>
   );

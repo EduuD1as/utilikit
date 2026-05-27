@@ -1,9 +1,11 @@
 import { useCallback, useState } from 'react';
 import { Logo } from '../components/Logo.jsx';
 import { SiteFooter } from '../components/SiteFooter.jsx';
+import { useLanguage } from '../context/LanguageContext';
 import crypto from 'crypto';
 
 export function GeneratorPage({ onNavigate }) {
+  const { t } = useLanguage();
   const [generatedId, setGeneratedId] = useState('');
   const [generatedHash, setGeneratedHash] = useState('');
   const [hashInput, setHashInput] = useState('');
@@ -14,7 +16,7 @@ export function GeneratorPage({ onNavigate }) {
   const [generatedIds, setGeneratedIds] = useState([]);
 
   const generateUUID = () => {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
       const r = Math.random() * 16 | 0;
       const v = c === 'x' ? r : (r & 0x3 | 0x8);
       return v.toString(16);
@@ -46,13 +48,13 @@ export function GeneratorPage({ onNavigate }) {
     // Simulated hash since crypto is browser-based
     const encoder = new TextEncoder();
     const data = encoder.encode(text);
-    
+
     // For browser, we'll use a simple approach with SHA-256 via SubtleCrypto
     // or fallback to a basic hash
     if (typeof window !== 'undefined' && window.crypto && window.crypto.subtle) {
       return hashWithSubtleCrypto(text, type);
     }
-    
+
     return simpleHash(text);
   };
 
@@ -79,7 +81,7 @@ export function GeneratorPage({ onNavigate }) {
 
   const handleComputeHash = async () => {
     if (!hashInput.trim()) return;
-    
+
     const hash = await computeHash(hashInput, hashType);
     setGeneratedHash(hash);
   };
@@ -110,11 +112,11 @@ export function GeneratorPage({ onNavigate }) {
               className="hero__back"
               onClick={() => onNavigate('/')}
             >
-              ← Todas as ferramentas
+              ← {t('backToTools')}
             </button>
-            <h1>Gerador UUID e Hash</h1>
+            <h1>{t('generatorTitle')}</h1>
             <p className="hero__subtitle">
-              Gere IDs aleatórios e calcule hashes de textos
+              {t('generatorSubtitle')}
             </p>
           </div>
         </div>
@@ -124,7 +126,7 @@ export function GeneratorPage({ onNavigate }) {
         <div className="generator-container">
           <div className="generator-section">
             <h2 className="generator-title">Gerador de IDs</h2>
-            
+
             <div className="generator-form">
               <div className="generator-form__group">
                 <label className="generator-form__label">Quantidade: {idCount}</label>
@@ -191,7 +193,7 @@ export function GeneratorPage({ onNavigate }) {
 
           <div className="generator-section">
             <h2 className="generator-title">Gerador de Hash</h2>
-            
+
             <div className="generator-form">
               <div className="generator-form__group">
                 <label className="generator-form__label">Texto</label>

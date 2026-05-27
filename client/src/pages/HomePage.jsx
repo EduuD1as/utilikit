@@ -70,7 +70,7 @@ export function HomePage({ onNavigate }) {
       <main className="home-main">
         <div className="home-filters" role="tablist" aria-label={t('homeFiltersLabel')}>
           {CATEGORIES.map((cat) => {
-            const translatedLabel = categoryTranslations['pt'][cat.id] || cat.label;
+            const translatedLabel = categoryTranslations[language][cat.id] || cat.label;
             return (
               <button
                 key={cat.id}
