@@ -8,7 +8,7 @@ import { SiteFooter } from '../components/SiteFooter.jsx';
 import { useLanguage } from '../context/LanguageContext';
 
 export function YouTubeCounterPage({ onNavigate }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const {
     channel,
     subscriberCount,
@@ -73,8 +73,8 @@ export function YouTubeCounterPage({ onNavigate }) {
             <div className="result__actions">
               {lastUpdate && (
                 <time className="result__time" dateTime={lastUpdate.toISOString()}>
-                  Última atualização:{' '}
-                  {lastUpdate.toLocaleTimeString('pt-BR')}
+                  {t('youtubeLastUpdate')}{' '}
+                  {lastUpdate.toLocaleTimeString(language === 'pt' ? 'pt-BR' : 'en-US')}
                 </time>
               )}
               <button
@@ -82,7 +82,7 @@ export function YouTubeCounterPage({ onNavigate }) {
                 className="btn-ghost"
                 onClick={stopMonitoring}
               >
-                Monitorar outro canal
+                {t('youtubeMonitorAnother')}
               </button>
             </div>
           </section>
@@ -96,9 +96,9 @@ export function YouTubeCounterPage({ onNavigate }) {
                 />
               </svg>
             </div>
-            <p>Informe um canal para começar a acompanhar os inscritos.</p>
+            <p>{t('youtubeEnterChannel')}</p>
             <p className="empty__examples">
-              <span>Ex.:</span>
+              <span>{t('youtubeExample')}</span>
               <code>@MrBeast</code>
               <code>MrBeast</code>
               <code>youtube.com/@MrBeast</code>
@@ -109,7 +109,7 @@ export function YouTubeCounterPage({ onNavigate }) {
 
       <SiteFooter
         onNavigate={onNavigate}
-        note="Contador com SocialCounts, YouTube Data API opcional e fallback publico."
+        note={t('youtubeFooterNote')}
       />
     </div>
   );

@@ -42,8 +42,7 @@ export function CookieBanner({ onNavigate }) {
             <label className="cookie-banner__option cookie-banner__option--locked">
               <input type="checkbox" checked disabled />
               <span>
-                <strong>Essenciais</strong> — necessários para o site funcionar
-                (ex.: salvar esta escolha)
+                <strong>{t('cookieEssential')}</strong>
               </span>
             </label>
             <label className="cookie-banner__option">
@@ -53,7 +52,7 @@ export function CookieBanner({ onNavigate }) {
                 onChange={(e) => setAnalytics(e.target.checked)}
               />
               <span>
-                <strong>Análise</strong> — métricas de uso para melhorar o site
+                <strong>{t('cookieAnalytics')}</strong>
               </span>
             </label>
             <label className="cookie-banner__option">
@@ -63,7 +62,7 @@ export function CookieBanner({ onNavigate }) {
                 onChange={(e) => setMarketing(e.target.checked)}
               />
               <span>
-                <strong>Publicidade</strong> — anúncios (Google AdSense)
+                <strong>{t('cookieMarketing')}</strong>
               </span>
             </label>
           </div>
@@ -90,7 +89,7 @@ export function CookieBanner({ onNavigate }) {
               className="btn-ghost cookie-banner__btn"
               onClick={() => setShowDetails(true)}
             >
-              Personalizar
+              {t('cookieCustomize')}
             </button>
           ) : (
             <button
@@ -98,7 +97,7 @@ export function CookieBanner({ onNavigate }) {
               className="btn-ghost cookie-banner__btn"
               onClick={handleSaveCustom}
             >
-              Salvar preferências
+              {t('cookieSavePreferences')}
             </button>
           )}
         </div>

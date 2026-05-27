@@ -3,15 +3,16 @@ import { Logo } from '../components/Logo.jsx';
 import { SiteFooter } from '../components/SiteFooter.jsx';
 import { useLanguage } from '../context/LanguageContext';
 
-const MODES = {
-  pomodoro: { label: 'Pomodoro', minutes: 25, color: '#ef4444' },
-  shortBreak: { label: 'Pausa curta', minutes: 5, color: '#22c55e' },
-  longBreak: { label: 'Pausa longa', minutes: 15, color: '#3b82f6' },
-  custom: { label: 'Personalizado', minutes: 10, color: '#8b5cf6' },
-};
+const getModes = (t) => ({
+  pomodoro: { label: t('timerPomodoro'), minutes: 25, color: '#ef4444' },
+  shortBreak: { label: t('timerShortBreak'), minutes: 5, color: '#22c55e' },
+  longBreak: { label: t('timerLongBreak'), minutes: 15, color: '#3b82f6' },
+  custom: { label: t('timerCustom'), minutes: 10, color: '#8b5cf6' },
+});
 
 export function TimerPage({ onNavigate }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const MODES = getModes(t);
   const [mode, setMode] = useState('pomodoro');
   const [timeLeft, setTimeLeft] = useState(MODES.pomodoro.minutes * 60);
   const [isRunning, setIsRunning] = useState(false);
@@ -23,7 +24,7 @@ export function TimerPage({ onNavigate }) {
   const totalSeconds = useCallback(() => {
     if (mode === 'custom') return customMinutes * 60;
     return MODES[mode].minutes * 60;
-  }, [mode, customMinutes]);
+  }, [mode, customMinutes, MODES]);
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -190,7 +191,7 @@ export function TimerPage({ onNavigate }) {
           {/* Input personalizado */}
           {mode === 'custom' && (
             <div className="fx-field">
-              <label className="fx-field__label">Minutos (1-180)</label>
+              <label className="fx-field__label">{t('timerMinutesLabel')}</label>
               <input
                 type="number"
                 className="fx-field__amount"
@@ -240,7 +241,7 @@ export function TimerPage({ onNavigate }) {
                 <svg viewBox="0 0 24 24" width="24" height="24">
                   <path fill="currentColor" d="M8 5v14l11-7z" />
                 </svg>
-                {timeLeft === totalSeconds() ? 'Iniciar' : 'Continuar'}
+                {timeLeft === totalSeconds() ? t('timerStart') : t('timerContinue')}
               </button>
             ) : (
               <button
@@ -251,7 +252,7 @@ export function TimerPage({ onNavigate }) {
                 <svg viewBox="0 0 24 24" width="24" height="24">
                   <path fill="currentColor" d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
                 </svg>
-                Pausar
+                {t('timerPause')}
               </button>
             )}
             <button
@@ -262,7 +263,7 @@ export function TimerPage({ onNavigate }) {
               <svg viewBox="0 0 24 24" width="20" height="20">
                 <path fill="currentColor" d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
               </svg>
-              Reiniciar
+              {t('timerReset')}
             </button>
           </div>
 
@@ -270,12 +271,12 @@ export function TimerPage({ onNavigate }) {
           <div className="timer-info">
             {mode === 'pomodoro' && cycles > 0 && (
               <div className="timer-info__item">
-                <span className="timer-info__label">Ciclos completados:</span>
+                <span className="timer-info__label">{t('timerCyclesCompleted')}</span>
                 <span className="timer-info__value">{cycles}</span>
               </div>
             )}
             <div className="timer-info__item">
-              <span className="timer-info__label">Modo atual:</span>
+              <span className="timer-info__label">{t('timerCurrentMode')}</span>
               <span className="timer-info__value" style={{ color: currentColor }}>
                 {MODES[mode].label} ({MODES[mode].minutes}min)
               </span>
@@ -284,14 +285,13 @@ export function TimerPage({ onNavigate }) {
         </div>
 
         <p className="fx-disclaimer">
-          💡 Dica: Use a barra de espaço para iniciar/pausar, Esc para reiniciar.
-          O timer continua rodando mesmo com a aba em segundo plano.
+          {t('timerTip')}
         </p>
       </main>
 
       <SiteFooter
         onNavigate={onNavigate}
-        note="Timer com suporte a Pomodoro e notificação por vibração."
+        note={t('timerFooterNote')}
       />
     </div>
   );

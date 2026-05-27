@@ -4,7 +4,7 @@ import { SiteFooter } from '../components/SiteFooter.jsx';
 import { useLanguage } from '../context/LanguageContext';
 
 export function UnitConverterPage({ onNavigate }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [inputValue, setInputValue] = useState('1');
   const [inputUnit, setInputUnit] = useState('m');
   const [outputUnit, setOutputUnit] = useState('km');
@@ -12,43 +12,43 @@ export function UnitConverterPage({ onNavigate }) {
 
   const conversions = {
     length: {
-      name: 'Comprimento',
+      name: t('unitLength'),
       units: {
-        mm: { name: 'Milímetro (mm)', toBase: 0.001 },
-        cm: { name: 'Centímetro (cm)', toBase: 0.01 },
-        m: { name: 'Metro (m)', toBase: 1 },
-        km: { name: 'Quilômetro (km)', toBase: 1000 },
-        in: { name: 'Polegada (in)', toBase: 0.0254 },
-        ft: { name: 'Pé (ft)', toBase: 0.3048 },
-        mi: { name: 'Milha (mi)', toBase: 1609.34 },
+        mm: { name: t('unitMillimeter'), toBase: 0.001 },
+        cm: { name: t('unitCentimeter'), toBase: 0.01 },
+        m: { name: t('unitMeter'), toBase: 1 },
+        km: { name: t('unitKilometer'), toBase: 1000 },
+        in: { name: t('unitInch'), toBase: 0.0254 },
+        ft: { name: t('unitFoot'), toBase: 0.3048 },
+        mi: { name: t('unitMile'), toBase: 1609.34 },
       },
     },
     weight: {
-      name: 'Peso',
+      name: t('unitWeight'),
       units: {
-        mg: { name: 'Miligrama (mg)', toBase: 0.001 },
-        g: { name: 'Grama (g)', toBase: 1 },
-        kg: { name: 'Quilograma (kg)', toBase: 1000 },
-        oz: { name: 'Onça (oz)', toBase: 28.35 },
-        lb: { name: 'Libra (lb)', toBase: 453.59 },
-        ton: { name: 'Tonelada (ton)', toBase: 1000000 },
+        mg: { name: t('unitMilligram'), toBase: 0.001 },
+        g: { name: t('unitGram'), toBase: 1 },
+        kg: { name: t('unitKilogram'), toBase: 1000 },
+        oz: { name: t('unitOunce'), toBase: 28.35 },
+        lb: { name: t('unitPound'), toBase: 453.59 },
+        ton: { name: t('unitTon'), toBase: 1000000 },
       },
     },
     temperature: {
-      name: 'Temperatura',
+      name: t('unitTemperature'),
       units: {
-        c: { name: 'Celsius (°C)', toBase: null },
-        f: { name: 'Fahrenheit (°F)', toBase: null },
-        k: { name: 'Kelvin (K)', toBase: null },
+        c: { name: t('unitCelsius'), toBase: null },
+        f: { name: t('unitFahrenheit'), toBase: null },
+        k: { name: t('unitKelvin'), toBase: null },
       },
     },
     volume: {
-      name: 'Volume',
+      name: t('unitVolume'),
       units: {
-        ml: { name: 'Mililitro (ml)', toBase: 0.001 },
-        l: { name: 'Litro (l)', toBase: 1 },
-        gal: { name: 'Galão (gal)', toBase: 3.785 },
-        pt: { name: 'Pinta (pt)', toBase: 0.473 },
+        ml: { name: t('unitMilliliter'), toBase: 0.001 },
+        l: { name: t('unitLiter'), toBase: 1 },
+        gal: { name: t('unitGallon'), toBase: 3.785 },
+        pt: { name: t('unitPint'), toBase: 0.473 },
       },
     },
   };
@@ -130,7 +130,7 @@ export function UnitConverterPage({ onNavigate }) {
 
           <div className="converter-box">
             <div className="converter-side">
-              <label className="converter-label">De</label>
+              <label className="converter-label">{t('unitFrom')}</label>
               <input
                 type="number"
                 className="converter-input"
@@ -151,12 +151,12 @@ export function UnitConverterPage({ onNavigate }) {
               </select>
             </div>
 
-            <button className="converter-swap" onClick={handleSwap} title="Trocar">
+            <button className="converter-swap" onClick={handleSwap} title={t('unitSwap')}>
               ⇄
             </button>
 
             <div className="converter-side">
-              <label className="converter-label">Para</label>
+              <label className="converter-label">{t('unitTo')}</label>
               <div className="converter-output">{output}</div>
               <select
                 className="converter-select"
@@ -174,13 +174,13 @@ export function UnitConverterPage({ onNavigate }) {
         </div>
 
         <p className="fx-disclaimer">
-          Conversões realizadas localmente no seu navegador.
+          {t('unitDisclaimer')}
         </p>
       </main>
 
       <SiteFooter
         onNavigate={onNavigate}
-        note="Conversor de unidades instantâneo."
+        note={t('unitFooterNote')}
       />
     </div>
   );
