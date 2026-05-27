@@ -145,7 +145,7 @@ export function TimerPage({ onNavigate }) {
   }, [timeLeft, isRunning]);
 
   return (
-    <div className="app">
+    <div className="app app--timer">
       <header className="hero">
         <div className="hero__brand">
           <Logo size={52} className="hero__logo" onNavigate={onNavigate} />

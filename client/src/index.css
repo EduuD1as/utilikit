@@ -55,6 +55,16 @@ body:has(.app--youtube) {
     var(--bg);
 }
 
+body:has(.app--timer) {
+  background:
+    radial-gradient(
+      ellipse 80% 50% at 50% -20%,
+      rgba(239, 68, 68, 0.12),
+      transparent
+    ),
+    var(--bg);
+}
+
 .app {
   max-width: 640px;
   margin: 0 auto;
