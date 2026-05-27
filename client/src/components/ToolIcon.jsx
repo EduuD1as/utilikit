@@ -109,6 +109,24 @@ const ICONS = {
       d="M4 6c0 2.2 3.6 4 8 4s8-1.8 8-4-3.6-4-8-4-8 1.8-8 4Zm0 6c0 2.2 3.6 4 8 4s8-1.8 8-4M4 18c0 2.2 3.6 4 8 4s8-1.8 8-4"
     />
   ),
+  clock: (
+    <path
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10ZM12 6v6l4 2"
+    />
+  ),
+  file: (
+    <path
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6ZM14 2v6h6M16 13H8M16 17H8M10 9H8"
+    />
+  ),
 };
 
 export function ToolIcon({ name, className = '' }) {

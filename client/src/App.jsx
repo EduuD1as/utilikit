@@ -15,6 +15,7 @@ import { SimpleCalculatorPage } from './pages/SimpleCalculatorPage.jsx';
 import { UnitConverterPage } from './pages/UnitConverterPage.jsx';
 import { QRGeneratorPage } from './pages/QRGeneratorPage.jsx';
 import { GeneratorPage } from './pages/GeneratorPage.jsx';
+import { TimerPage } from './pages/TimerPage.jsx';
 
 const ROUTES = {
   '/': HomePage,
@@ -28,6 +29,7 @@ const ROUTES = {
   '/conversor-unidades': UnitConverterPage,
   '/gerador-qr': QRGeneratorPage,
   '/gerador-id-hash': GeneratorPage,
+  '/timer-pomodoro': TimerPage,
   '/privacidade': PrivacyPolicyPage,
   '/termos': TermsPage,
 };

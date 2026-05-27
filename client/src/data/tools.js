@@ -164,4 +164,14 @@ export const TOOLS = [
     accent: '#6366f1',
     icon: 'text',
   },
+  {
+    id: 'timer-pomodoro',
+    title: 'Timer / Pomodoro',
+    description: 'Temporizador com modo Pomodoro e pausas programadas.',
+    category: 'counters',
+    path: '/timer-pomodoro',
+    available: true,
+    accent: '#ef4444',
+    icon: 'clock',
+  },
 ];

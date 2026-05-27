@@ -846,6 +846,197 @@ body:has(.app--youtube) {
   color: #fbbf24;
 }
 
+/* Timer / Pomodoro */
+.timer-modes {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.timer-mode-btn {
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.75rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-elevated);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.timer-mode-btn:hover:not(:disabled) {
+  border-color: var(--mode-color, var(--accent));
+  color: var(--mode-color, var(--accent));
+  background: color-mix(in srgb, var(--mode-color, var(--accent)) 10%, transparent);
+}
+
+.timer-mode-btn--active {
+  border-color: var(--mode-color, var(--accent));
+  color: white;
+  background: var(--mode-color, var(--accent));
+}
+
+.timer-mode-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.timer-display {
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem 0;
+}
+
+.timer-display__ring {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+
+.timer-display__svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.timer-display__bg {
+  fill: none;
+  stroke: var(--surface-elevated);
+  stroke-width: 8;
+}
+
+.timer-display__progress {
+  fill: none;
+  stroke: var(--timer-color);
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.3s ease;
+}
+
+.timer-display__time {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+
+.timer-controls {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin: 1.5rem 0;
+}
+
+.timer-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.85rem 1.5rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 140px;
+}
+
+.timer-btn--primary {
+  background: var(--timer-color);
+  color: white;
+}
+
+.timer-btn--primary:hover:not(:disabled) {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+}
+
+.timer-btn--primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.timer-btn--pause {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.timer-btn--pause:hover {
+  background: rgba(245, 158, 11, 0.25);
+}
+
+.timer-btn--secondary {
+  background: var(--surface-elevated);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.timer-btn--secondary:hover {
+  color: var(--text);
+  border-color: var(--text-muted);
+}
+
+.timer-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  margin-top: 0.5rem;
+}
+
+.timer-info__item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+}
+
+.timer-info__label {
+  color: var(--text-muted);
+}
+
+.timer-info__value {
+  font-weight: 600;
+  color: var(--text);
+}
+
+@media (max-width: 480px) {
+  .timer-modes {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .timer-display__ring {
+    width: 160px;
+    height: 160px;
+  }
+
+  .timer-display__time {
+    font-size: 2.25rem;
+  }
+
+  .timer-controls {
+    flex-direction: column;
+  }
+
+  .timer-btn {
+    width: 100%;
+  }
+}
+
 @media (max-width: 480px) {
   .fx-row {
     flex-wrap: wrap;
