@@ -16,14 +16,16 @@ export function SiteHeader({ onNavigate, variant = 'home' }) {
         >
           <span className="site-header__mark" aria-hidden="true">
             <svg viewBox="0 0 32 32" width="32" height="32">
-              <rect width="32" height="32" rx="9" fill="url(#brand-grad)" />
-              <path
-                fill="#fff"
-                d="M10 10h5v12h-5V10Zm7 0h5l-3 6 3 6h-5l-3-6 3-6Z"
-              />
+              <rect width="32" height="32" rx="7" fill="url(#brand-grad)" />
+              <g fill="#fff">
+                <rect x="7.5" y="7.5" width="7" height="7" rx="2" />
+                <rect x="17.5" y="7.5" width="7" height="7" rx="2" />
+                <rect x="7.5" y="17.5" width="7" height="7" rx="2" />
+                <rect x="17.5" y="17.5" width="7" height="7" rx="2" />
+              </g>
               <defs>
                 <linearGradient id="brand-grad" x1="0" y1="0" x2="32" y2="32">
-                  <stop stopColor="#818cf8" />
+                  <stop stopColor="#a78bfa" />
                   <stop offset="1" stopColor="#6366f1" />
                 </linearGradient>
               </defs>
