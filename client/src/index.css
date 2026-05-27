@@ -20,17 +20,17 @@
 
 /* Tema claro */
 [data-theme="light"] {
-  --bg: #f8f7fc;
-  --surface: #f3f1f8;
-  --surface-elevated: #ffffff;
-  --border: #e8e4f3;
-  --text: #3d3d5c;
-  --text-muted: #8b88a8;
+  --bg: #e8e6ed;
+  --surface: #e0dce8;
+  --surface-elevated: #f5f3f9;
+  --border: #d4d0dc;
+  --text: #2d2d4a;
+  --text-muted: #6b6888;
   --accent: #ff0033;
   --accent-hover: #e6002e;
   --accent-soft: rgba(255, 0, 51, 0.08);
   --success: #22c55e;
-  --shadow: 0 12px 40px rgba(99, 102, 241, 0.05);
+  --shadow: 0 12px 40px rgba(99, 102, 241, 0.08);
 }
 
 *,
