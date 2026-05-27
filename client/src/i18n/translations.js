@@ -217,6 +217,14 @@ export const translations = {
     loadingRates: 'Carregando cotações…',
     subscribers: 'Inscritos',
     countHidden: 'Contagem oculta pelo canal',
+    memoryGameTitle: 'Jogo da Memória',
+    memoryGameSubtitle: 'Encontre os pares de cartas iguais!',
+    moves: 'Movimentos',
+    bestScore: 'Melhor Pontuação',
+    restart: 'Reiniciar',
+    gameOver: 'Parabéns!',
+    gameComplete: 'Você completou o jogo em {{moves}} movimentos!',
+    playAgain: 'Jogar Novamente',
     live: 'Ao vivo',
     spaces2: '2 espaços',
     spaces4: '4 espaços',
@@ -260,6 +268,8 @@ export const translations = {
     toolWordCountDesc: 'Conte palavras, caracteres e linhas em textos longos.',
     toolTimerPomodoroTitle: 'Timer / Pomodoro',
     toolTimerPomodoroDesc: 'Temporizador com modo Pomodoro e pausas programadas.',
+    toolMemoryGameTitle: 'Jogo da Memória',
+    toolMemoryGameDesc: 'Teste sua memória com este jogo clássico.',
     toolAvailable: 'DISPONÍVEL',
     toolSoon: 'EM BREVE',
 
@@ -289,6 +299,7 @@ export const translations = {
     catFormatters: 'Formatadores',
     catGenerators: 'Geradores',
     catCounters: 'Contadores',
+    catGames: 'Jogos',
     catSoon: 'Em breve',
 
     // CookieBanner
@@ -580,6 +591,14 @@ export const translations = {
     loadingRates: 'Loading rates…',
     subscribers: 'Subscribers',
     countHidden: 'Count hidden by channel',
+    memoryGameTitle: 'Memory Game',
+    memoryGameSubtitle: 'Find matching pairs of cards!',
+    moves: 'Moves',
+    bestScore: 'Best Score',
+    restart: 'Restart',
+    gameOver: 'Congratulations!',
+    gameComplete: 'You completed the game in {{moves}} moves!',
+    playAgain: 'Play Again',
     live: 'Live',
     spaces2: '2 spaces',
     spaces4: '4 spaces',
@@ -623,6 +642,8 @@ export const translations = {
     toolWordCountDesc: 'Count words, characters and lines in long texts.',
     toolTimerPomodoroTitle: 'Timer / Pomodoro',
     toolTimerPomodoroDesc: 'Timer with Pomodoro mode and scheduled breaks.',
+    toolMemoryGameTitle: 'Memory Game',
+    toolMemoryGameDesc: 'Test your memory with this classic game.',
     toolAvailable: 'AVAILABLE',
     toolSoon: 'COMING SOON',
 
@@ -652,6 +673,7 @@ export const translations = {
     catFormatters: 'Formatters',
     catGenerators: 'Generators',
     catCounters: 'Counters',
+    catGames: 'Games',
     catSoon: 'Soon',
 
     // CookieBanner

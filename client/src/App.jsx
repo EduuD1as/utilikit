@@ -17,6 +17,7 @@ import { UnitConverterPage } from './pages/UnitConverterPage.jsx';
 import { QRGeneratorPage } from './pages/QRGeneratorPage.jsx';
 import { GeneratorPage } from './pages/GeneratorPage.jsx';
 import { TimerPage } from './pages/TimerPage.jsx';
+import MemoryGamePage from './pages/MemoryGamePage.jsx';
 
 const ROUTES = {
   '/': HomePage,
@@ -31,6 +32,7 @@ const ROUTES = {
   '/gerador-qr': QRGeneratorPage,
   '/gerador-id-hash': GeneratorPage,
   '/timer-pomodoro': TimerPage,
+  '/jogo-memoria': MemoryGamePage,
   '/privacidade': PrivacyPolicyPage,
   '/termos': TermsPage,
 };

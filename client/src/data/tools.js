@@ -6,6 +6,7 @@ export const CATEGORIES = [
   { id: 'converters', label: 'catConverters' },
   { id: 'generators', label: 'catGenerators' },
   { id: 'counters', label: 'catCounters' },
+  { id: 'games', label: 'catGames' },
 ];
 
 export const TOOLS = [
@@ -173,5 +174,15 @@ export const TOOLS = [
     available: true,
     accent: '#ef4444',
     icon: 'clock',
+  },
+  {
+    id: 'memory-game',
+    titleKey: 'toolMemoryGameTitle',
+    descKey: 'toolMemoryGameDesc',
+    category: 'games',
+    path: '/jogo-memoria',
+    available: true,
+    accent: '#ec4899',
+    icon: 'game',
   },
 ];
