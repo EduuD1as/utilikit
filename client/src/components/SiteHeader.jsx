@@ -1,7 +1,9 @@
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export function SiteHeader({ onNavigate, variant = 'home' }) {
   const { theme, toggleTheme } = useTheme();
+  const { language, toggleLanguage, t } = useLanguage();
 
   return (
     <header className={`site-header site-header--${variant}`}>
@@ -46,14 +48,30 @@ export function SiteHeader({ onNavigate, variant = 'home' }) {
               onNavigate('/');
             }}
           >
-            Início
+            {t('navHome')}
           </a>
+          
+          <button
+            className="site-header__lang-toggle"
+            onClick={toggleLanguage}
+            aria-label={t('languageToggle')}
+            title={t('languageToggle')}
+          >
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="2" y1="12" x2="22" y2="12" />
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+            </svg>
+            <span className="site-header__lang-text">
+              {language === 'pt' ? 'EN' : 'PT'}
+            </span>
+          </button>
           
           <button
             className="site-header__theme-toggle"
             onClick={toggleTheme}
-            aria-label={`Mudar para tema ${theme === 'dark' ? 'claro' : 'escuro'}`}
-            title={`Tema ${theme === 'dark' ? 'claro' : 'escuro'}`}
+            aria-label={`${t('themeToggle')} ${theme === 'dark' ? t('themeDark') : t('themeLight')}`}
+            title={`${t('themeToggle')} ${theme === 'dark' ? t('themeDark') : t('themeLight')}`}
           >
             {theme === 'dark' ? (
               <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">

@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useCookieConsent } from '../context/CookieConsentContext.jsx';
+import { useLanguage } from '../context/LanguageContext';
 
 export function CookieBanner({ onNavigate }) {
+  const { t } = useLanguage();
   const {
     bannerOpen,
     acceptAll,
@@ -29,13 +31,10 @@ export function CookieBanner({ onNavigate }) {
     >
       <div className="cookie-banner__panel">
         <h2 id="cookie-banner-title" className="cookie-banner__title">
-          Privacidade e cookies
+          {t('cookieTitle')}
         </h2>
         <p id="cookie-banner-desc" className="cookie-banner__text">
-          Usamos cookies essenciais para lembrar suas preferências. Com seu
-          consentimento, também podemos usar cookies para análise e publicidade
-          (Google AdSense). Você pode recusar os opcionais sem perder o uso das
-          ferramentas.
+          {t('cookieMessage')}
         </p>
 
         {showDetails && (
@@ -76,14 +75,14 @@ export function CookieBanner({ onNavigate }) {
             className="search__btn cookie-banner__btn"
             onClick={acceptAll}
           >
-            Aceitar todos
+            {t('cookieAccept')}
           </button>
           <button
             type="button"
             className="btn-ghost cookie-banner__btn"
             onClick={rejectNonEssential}
           >
-            Apenas essenciais
+            {t('cookieDecline')}
           </button>
           {!showDetails ? (
             <button
@@ -113,7 +112,7 @@ export function CookieBanner({ onNavigate }) {
               onNavigate('/privacidade');
             }}
           >
-            Política de Privacidade
+            {t('footerPrivacy')}
           </button>
           <span aria-hidden="true">·</span>
           <button
@@ -124,7 +123,7 @@ export function CookieBanner({ onNavigate }) {
               onNavigate('/termos');
             }}
           >
-            Termos de Uso
+            {t('footerTerms')}
           </button>
         </p>
       </div>

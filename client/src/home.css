@@ -123,6 +123,39 @@ body:has(.home) {
   background: rgba(99, 102, 241, 0.22);
 }
 
+.site-header__lang-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  height: 40px;
+  padding: 0 0.65rem;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.site-header__lang-toggle:hover {
+  color: var(--text);
+  background: var(--surface-elevated);
+}
+
+.site-header__lang-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.site-header__lang-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
 .site-header__theme-toggle {
   display: flex;
   align-items: center;

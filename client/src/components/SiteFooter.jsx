@@ -1,8 +1,10 @@
 import { useCookieConsent } from '../context/CookieConsentContext.jsx';
 import { LEGAL } from '../data/legal.js';
+import { useLanguage } from '../context/LanguageContext';
 
 export function SiteFooter({ onNavigate, note }) {
   const { openBanner } = useCookieConsent();
+  const { t } = useLanguage();
 
   return (
     <footer className="site-footer">
@@ -12,21 +14,21 @@ export function SiteFooter({ onNavigate, note }) {
           className="site-footer__link"
           onClick={() => onNavigate('/privacidade')}
         >
-          Privacidade
+          {t('footerPrivacy')}
         </button>
         <button
           type="button"
           className="site-footer__link"
           onClick={() => onNavigate('/termos')}
         >
-          Termos de Uso
+          {t('footerTerms')}
         </button>
         <button
           type="button"
           className="site-footer__link"
           onClick={openBanner}
         >
-          Preferências de cookies
+          {t('cookieDecline')}
         </button>
       </nav>
       <p className="site-footer__note">

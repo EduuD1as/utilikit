@@ -3,8 +3,11 @@ import { CATEGORIES, TOOLS } from '../data/tools.js';
 import { SiteHeader } from '../components/SiteHeader.jsx';
 import { SiteFooter } from '../components/SiteFooter.jsx';
 import { ToolCard } from '../components/ToolCard.jsx';
+import { useLanguage } from '../context/LanguageContext';
+import { categoryTranslations } from '../i18n/translations';
 
 export function HomePage({ onNavigate }) {
+  const { t } = useLanguage();
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('all');
 
@@ -35,15 +38,12 @@ export function HomePage({ onNavigate }) {
       <section className="home-hero">
         <div className="home-hero__glow" aria-hidden="true" />
         <div className="home-hero__content">
-          <p className="home-hero__eyebrow">Grátis · Sem cadastro · No navegador</p>
+          <p className="home-hero__eyebrow">{t('homeHeroEyebrow')}</p>
           <h1 className="home-hero__title">
-            Ferramentas úteis,
-            <span className="home-hero__title-accent"> num só lugar</span>
+            {t('homeHeroTitle')}
+            <span className="home-hero__title-accent">{t('homeHeroTitleAccent')}</span>
           </h1>
-          <p className="home-hero__lead">
-            Calculadoras, conversores, geradores e contadores para o dia a dia —
-            rápidos, modernos e feitos para funcionar no celular.
-          </p>
+          <p className="home-hero__lead">{t('homeHeroLead')}</p>
 
           <div className="home-hero__search">
             <svg className="home-hero__search-icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -58,36 +58,39 @@ export function HomePage({ onNavigate }) {
             <input
               type="search"
               className="home-hero__search-input"
-              placeholder="Buscar ferramenta…"
+              placeholder={t('homeHeroSearchPlaceholder')}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              aria-label="Buscar ferramentas"
+              aria-label={t('homeHeroSearchLabel')}
             />
           </div>
         </div>
       </section>
 
       <main className="home-main">
-        <div className="home-filters" role="tablist" aria-label="Categorias">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat.id}
-              type="button"
-              role="tab"
-              aria-selected={category === cat.id}
-              className={`home-filter${category === cat.id ? ' home-filter--active' : ''}`}
-              onClick={() => setCategory(cat.id)}
-            >
-              {cat.label}
-            </button>
-          ))}
+        <div className="home-filters" role="tablist" aria-label={t('homeFiltersLabel')}>
+          {CATEGORIES.map((cat) => {
+            const translatedLabel = categoryTranslations['pt'][cat.id] || cat.label;
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                role="tab"
+                aria-selected={category === cat.id}
+                className={`home-filter${category === cat.id ? ' home-filter--active' : ''}`}
+                onClick={() => setCategory(cat.id)}
+              >
+                {translatedLabel}
+              </button>
+            );
+          })}
         </div>
 
         {filtered.length === 0 ? (
           <p className="home-empty">
             {category === 'soon'
-              ? 'Nenhuma ferramenta em breve encontrada para essa busca.'
-              : 'Nenhuma ferramenta encontrada. Tente outro termo ou categoria.'}
+              ? t('homeEmptySoon')
+              : t('homeEmpty')}
           </p>
         ) : (
           <div className="home-grid">

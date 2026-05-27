@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ThemeProvider } from './context/ThemeContext.jsx';
+import { LanguageProvider } from './context/LanguageContext.jsx';
 import { CookieConsentProvider } from './context/CookieConsentContext.jsx';
 import { CookieBanner } from './components/CookieBanner.jsx';
 import { HomePage } from './pages/HomePage.jsx';
@@ -61,10 +62,12 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      <CookieConsentProvider>
-        <Page onNavigate={navigate} />
-        <CookieBanner onNavigate={navigate} />
-      </CookieConsentProvider>
+      <LanguageProvider>
+        <CookieConsentProvider>
+          <Page onNavigate={navigate} />
+          <CookieBanner onNavigate={navigate} />
+        </CookieConsentProvider>
+      </LanguageProvider>
     </ThemeProvider>
   );
 }
