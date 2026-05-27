@@ -1,6 +1,8 @@
 import { ToolIcon } from './ToolIcon.jsx';
+import { useLanguage } from '../context/LanguageContext';
 
 export function ToolCard({ tool, onOpen }) {
+  const { t } = useLanguage();
   const handleClick = () => {
     if (tool.available) onOpen(tool.path);
   };
@@ -17,8 +19,8 @@ export function ToolCard({ tool, onOpen }) {
         disabled={!tool.available}
         aria-label={
           tool.available
-            ? `Abrir ${tool.title}`
-            : `${tool.title} — em breve`
+            ? `Open ${t(tool.titleKey)}`
+            : `${t(tool.titleKey)} — ${t('toolSoon')}`
         }
       >
         <span className="tool-card__icon" aria-hidden="true">
@@ -26,12 +28,12 @@ export function ToolCard({ tool, onOpen }) {
         </span>
         <span className="tool-card__body">
           <span className="tool-card__title-row">
-            <h3 className="tool-card__title">{tool.title}</h3>
+            <h3 className="tool-card__title">{t(tool.titleKey)}</h3>
             <span className={`tool-card__badge${tool.available ? ' tool-card__badge--live' : ''}`}>
-              {tool.available ? 'Disponível' : 'Em breve'}
+              {tool.available ? t('toolAvailable') : t('toolSoon')}
             </span>
           </span>
-          <p className="tool-card__desc">{tool.description}</p>
+          <p className="tool-card__desc">{t(tool.descKey)}</p>
         </span>
         {tool.available && (
           <span className="tool-card__arrow" aria-hidden="true">

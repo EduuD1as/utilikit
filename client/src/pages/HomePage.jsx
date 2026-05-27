@@ -4,10 +4,9 @@ import { SiteHeader } from '../components/SiteHeader.jsx';
 import { SiteFooter } from '../components/SiteFooter.jsx';
 import { ToolCard } from '../components/ToolCard.jsx';
 import { useLanguage } from '../context/LanguageContext';
-import { categoryTranslations } from '../i18n/translations';
 
 export function HomePage({ onNavigate }) {
-  const { language, t } = useLanguage();
+  const { t } = useLanguage();
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('all');
 
@@ -70,7 +69,7 @@ export function HomePage({ onNavigate }) {
       <main className="home-main">
         <div className="home-filters" role="tablist" aria-label={t('homeFiltersLabel')}>
           {CATEGORIES.map((cat) => {
-            const translatedLabel = categoryTranslations[language][cat.id] || cat.label;
+            const translatedLabel = t(cat.label) || cat.label;
             return (
               <button
                 key={cat.id}
