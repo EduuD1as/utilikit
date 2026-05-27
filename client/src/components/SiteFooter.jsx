@@ -34,7 +34,7 @@ export function SiteFooter({ onNavigate, note }) {
       <p className="site-footer__note">
         {note ?? (
           <>
-            {LEGAL.siteName} — ferramentas em evolução. Dúvidas sobre dados:{' '}
+            {LEGAL.siteName} — {t('footerDefaultNote')}{' '}
             <a href={`mailto:${LEGAL.contactEmail}`}>{LEGAL.contactEmail}</a>
           </>
         )}

@@ -146,7 +146,7 @@ export function CurrencyConverterPage({ onNavigate }) {
               className="fx-field__amount"
               value={amountIn}
               onChange={(e) => setAmountIn(e.target.value)}
-              placeholder="0,00"
+              placeholder={t('placeholderCurrency')}
               disabled={loading}
             />
           </label>

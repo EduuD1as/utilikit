@@ -136,7 +136,7 @@ export function UnitConverterPage({ onNavigate }) {
                 className="converter-input"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder="0"
+                placeholder={t('placeholderZero')}
               />
               <select
                 className="converter-select"

@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 export function SearchForm({ onSearch, loading, disabled }) {
+  const { t } = useLanguage();
   const [query, setQuery] = useState('');
 
   function handleSubmit(e) {
@@ -20,7 +22,7 @@ export function SearchForm({ onSearch, loading, disabled }) {
         <input
           type="text"
           className="search__input"
-          placeholder="Link, @handle ou nome do canal"
+          placeholder={t('placeholderSearch')}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           disabled={loading || disabled}
@@ -36,10 +38,10 @@ export function SearchForm({ onSearch, loading, disabled }) {
         {loading ? (
           <>
             <span className="spinner" aria-hidden="true" />
-            Buscando…
+            {t('searching')}
           </>
         ) : (
-          'Buscar inscritos'
+          t('searchSubscribers')
         )}
       </button>
     </form>

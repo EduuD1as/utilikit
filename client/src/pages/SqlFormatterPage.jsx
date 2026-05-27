@@ -172,7 +172,7 @@ export function SqlFormatterPage({ onNavigate }) {
         <div className="sql-editor">
           <div className="sql-editor__pane">
             <div className="sql-editor__head">
-              <span className="sql-editor__title">Entrada</span>
+              <span className="sql-editor__title">{t('input')}</span>
               <button
                 type="button"
                 className="btn-ghost sql-editor__link"
@@ -185,23 +185,23 @@ export function SqlFormatterPage({ onNavigate }) {
               className="sql-editor__area"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="SELECT * FROM tabela WHERE id = 1;"
+              placeholder={t('placeholderSqlInput')}
               spellCheck={false}
             />
           </div>
 
           <div className="sql-editor__pane">
             <div className="sql-editor__head">
-              <span className="sql-editor__title">Saída</span>
+              <span className="sql-editor__title">{t('output')}</span>
               <span className="sql-editor__head-spacer" aria-hidden="true">
-                Carregar exemplo
+                {t('loadExample')}
               </span>
             </div>
             <textarea
               className="sql-editor__area sql-editor__area--output"
               value={output}
               readOnly
-              placeholder="O SQL formatado aparecerá aqui."
+              placeholder={t('placeholderSqlOutput')}
               spellCheck={false}
             />
           </div>
@@ -210,7 +210,7 @@ export function SqlFormatterPage({ onNavigate }) {
 
       <SiteFooter
         onNavigate={onNavigate}
-        note="SQL formatado localmente no seu navegador — nada é enviado ao servidor."
+        note={t('sqlFormatterFooterNote')}
       />
     </div>
   );

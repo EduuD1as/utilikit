@@ -192,22 +192,22 @@ export function GeneratorPage({ onNavigate }) {
           <div className="generator-divider"></div>
 
           <div className="generator-section">
-            <h2 className="generator-title">Gerador de Hash</h2>
+            <h2 className="generator-title">{t('hashGeneratorTitle')}</h2>
 
             <div className="generator-form">
               <div className="generator-form__group">
-                <label className="generator-form__label">Texto</label>
+                <label className="generator-form__label">{t('text')}</label>
                 <textarea
                   className="generator-form__textarea"
                   value={hashInput}
                   onChange={(e) => setHashInput(e.target.value)}
-                  placeholder="Digite o texto para gerar hash..."
+                  placeholder={t('placeholderHashInput')}
                   rows={3}
                 />
               </div>
 
               <div className="generator-form__group">
-                <label className="generator-form__label">Tipo de Hash</label>
+                <label className="generator-form__label">{t('hashType')}</label>
                 <select
                   className="generator-form__select"
                   value={hashType}

@@ -66,19 +66,19 @@ export function QRGeneratorPage({ onNavigate }) {
         <div className="qr-container">
           <div className="qr-form">
             <div className="qr-form__group">
-              <label className="qr-form__label">Texto ou URL</label>
+              <label className="qr-form__label">{t('textOrUrl')}</label>
               <textarea
                 className="qr-form__input"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Digite uma URL, texto ou dados..."
+                placeholder={t('placeholderQrInput')}
                 rows={3}
               />
             </div>
 
             <div className="qr-form__row">
               <div className="qr-form__group">
-                <label className="qr-form__label">Tamanho: {size}px</label>
+                <label className="qr-form__label">{t('size')}: {size}px</label>
                 <input
                   type="range"
                   className="qr-form__range"

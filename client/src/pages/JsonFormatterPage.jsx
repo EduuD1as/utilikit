@@ -166,26 +166,26 @@ export function JsonFormatterPage({ onNavigate }) {
           <div className="sql-editor">
             <div className="sql-editor__pane">
               <div className="sql-editor__head">
-                <span className="sql-editor__title">Entrada</span>
+                <span className="sql-editor__title">{t('input')}</span>
               </div>
               <textarea
                 className="sql-editor__area"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Cole seu JSON aqui..."
+                placeholder={t('placeholderJsonInput')}
               />
             </div>
 
             <div className="sql-editor__pane">
               <div className="sql-editor__head">
-                <span className="sql-editor__title">Saída</span>
+                <span className="sql-editor__title">{t('output')}</span>
                 {output && (
                   <button
                     type="button"
                     className="btn-ghost sql-editor__link"
                     onClick={handleCopy}
                   >
-                    {copied ? t('copiedButton') : t('copyButton')}
+                    {copied ? t('copied') : t('copy')}
                   </button>
                 )}
               </div>
@@ -193,7 +193,7 @@ export function JsonFormatterPage({ onNavigate }) {
                 className="sql-editor__area sql-editor__area--output"
                 value={output}
                 readOnly
-                placeholder="O JSON formatado aparecerá aqui..."
+                placeholder={t('placeholderJsonOutput')}
               />
             </div>
           </div>
@@ -201,8 +201,8 @@ export function JsonFormatterPage({ onNavigate }) {
           {sizeInfo && (
             <div className="fx-meta" style={{ marginTop: '1.5rem' }}>
               <span>
-                Original: {sizeInfo.original} bytes | Minificado: {sizeInfo.minified} bytes |
-                {sizeInfo.saved > 0 && ` Economia: ${sizeInfo.saved}%`}
+                Original: {sizeInfo.original} bytes | {t('minified')}: {sizeInfo.minified} bytes |
+                {sizeInfo.saved > 0 && ` ${t('economy')}: ${sizeInfo.saved}%`}
               </span>
             </div>
           )}
