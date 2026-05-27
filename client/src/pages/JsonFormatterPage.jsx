@@ -209,13 +209,13 @@ export function JsonFormatterPage({ onNavigate }) {
         </div>
 
         <p className="fx-disclaimer">
-          Todo processamento ocorre localmente no seu navegador. Seus dados não são enviados para servidores.
+          {t('jsonFormatterDisclaimer')}
         </p>
       </main>
 
       <SiteFooter
         onNavigate={onNavigate}
-        note="Formatação de JSON executada no navegador."
+        note={t('jsonFormatterFooterNote')}
       />
     </div>
   );

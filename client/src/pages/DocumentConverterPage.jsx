@@ -203,7 +203,7 @@ export function DocumentConverterPage({ onNavigate }) {
                 <strong>PDF → Word:</strong> Extrai o texto do PDF e cria um documento Word. O layout pode não ser 100% preservado.
               </li>
               <li>
-                <strong>Privacidade:</strong> Todo processamento ocorre localmente no seu navegador.
+                <strong>{t('documentConverterPrivacy')}</strong> {t('documentConverterPrivacyText')}
               </li>
               <li>
                 <strong>Tamanho máximo:</strong> 50MB por arquivo.
@@ -216,13 +216,13 @@ export function DocumentConverterPage({ onNavigate }) {
         </div>
 
         <p className="fx-disclaimer">
-          Todo processamento ocorre localmente no seu navegador. Seus dados não são enviados para servidores.
+          {t('localProcessingDisclaimer')}
         </p>
       </main>
 
       <SiteFooter
         onNavigate={onNavigate}
-        note="Conversão de documentos executada no navegador."
+        note={t('documentConverterFooterNote')}
       />
     </div>
   );

@@ -66,7 +66,7 @@ export function SimpleCalculatorPage({ onNavigate }) {
       const currentValue = parseFloat(display);
       const result = calculate(previousValue, currentValue, operation);
       const entry = `${previousValue} ${operation} ${currentValue} = ${result}`;
-      
+
       setHistory([entry, ...history.slice(0, 9)]);
       setDisplay(String(result));
       setPreviousValue(null);
@@ -159,7 +159,7 @@ export function SimpleCalculatorPage({ onNavigate }) {
         <div className="calculator-wrapper">
           <div className="calculator">
             <div className="calc-display">{display}</div>
-            
+
             <div className="calc-buttons">
               <button className="calc-btn calc-btn--func" onClick={handleClear}>AC</button>
               <button className="calc-btn calc-btn--func" onClick={handleBackspace}>← Del</button>
@@ -203,7 +203,7 @@ export function SimpleCalculatorPage({ onNavigate }) {
         </div>
 
         <p className="fx-disclaimer">
-          💡 Dica: Você também pode usar seu teclado! (Números, +, -, *, /, Enter, Backspace, Esc)
+          {t('calculatorTip')}
         </p>
       </main>
 

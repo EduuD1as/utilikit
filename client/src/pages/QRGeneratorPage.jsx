@@ -21,7 +21,7 @@ export function QRGeneratorPage({ onNavigate }) {
 
   const downloadQR = () => {
     if (!qrUrl) return;
-    
+
     const a = document.createElement('a');
     a.href = qrUrl;
     a.download = 'qr-code.png';
@@ -118,10 +118,10 @@ export function QRGeneratorPage({ onNavigate }) {
 
               <div className="qr-result__actions">
                 <button className="search__btn" onClick={downloadQR}>
-                  ⬇️ Baixar
+                  {t('download')}
                 </button>
                 <button className="search__btn" onClick={copyQRUrl}>
-                  {copied ? '✓ Copiado!' : '📋 Copiar URL'}
+                  {copied ? t('copied') : t('copyUrl')}
                 </button>
               </div>
             </div>
@@ -129,13 +129,13 @@ export function QRGeneratorPage({ onNavigate }) {
         </div>
 
         <p className="fx-disclaimer">
-          Geração de QR code realizada usando o serviço QR Server (API remota). Seus dados são processados com segurança.
+          {t('qrGeneratorDisclaimer')}
         </p>
       </main>
 
       <SiteFooter
         onNavigate={onNavigate}
-        note={t('qrGeneratorDisclaimer') || 'Gerador de QR code online.'}
+        note={t('qrGeneratorDisclaimer')}
       />
     </div>
   );

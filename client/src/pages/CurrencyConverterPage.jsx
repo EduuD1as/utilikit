@@ -224,7 +224,7 @@ export function CurrencyConverterPage({ onNavigate }) {
           <div className="fx-meta">
             {rateDate && !loading && (
               <span>
-                {rateSource === 'fallback' ? 'Cotação estimada de ' : 'Cotação de '}
+                {rateSource === 'fallback' ? t('estimatedRate') : t('rateOf')}
                 {rateDate.split('-').reverse().join('/')}
               </span>
             )}
@@ -234,13 +234,13 @@ export function CurrencyConverterPage({ onNavigate }) {
               onClick={() => loadRates(from, { force: true })}
               disabled={loading || refreshing}
             >
-              {refreshing ? 'Atualizando…' : 'Atualizar cotação'}
+              {refreshing ? t('currencyUpdating') : t('currencyUpdateRate')}
             </button>
           </div>
         </div>
 
         <p className="fx-disclaimer">
-          Dados via{' '}
+          {t('currencyDisclaimer')}{' '}
           <a
             href="https://www.frankfurter.app"
             target="_blank"
@@ -248,14 +248,13 @@ export function CurrencyConverterPage({ onNavigate }) {
           >
             Frankfurter
           </a>{' '}
-          (referência do BCE). Valores informativos — confira no banco antes de
-          transações.
+          {t('currencyReference')}
         </p>
       </main>
 
       <SiteFooter
         onNavigate={onNavigate}
-        note="Conversão feita no navegador com cotações de mercado."
+        note={t('currencyFooterNote')}
       />
     </div>
   );

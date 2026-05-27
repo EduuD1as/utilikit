@@ -237,7 +237,7 @@ export function GeneratorPage({ onNavigate }) {
                     className="search__btn"
                     onClick={() => copyToClipboard(generatedHash, 'hash')}
                   >
-                    {copiedHash ? '✓ Copiado!' : 'Copiar'}
+                    {copiedHash ? t('copied') : t('copy')}
                   </button>
                 </div>
               </div>
@@ -246,13 +246,13 @@ export function GeneratorPage({ onNavigate }) {
         </div>
 
         <p className="fx-disclaimer">
-          Todos os IDs e hashes são gerados localmente no seu navegador. Seus dados não são enviados para servidores.
+          {t('generatorDisclaimer')}
         </p>
       </main>
 
       <SiteFooter
         onNavigate={onNavigate}
-        note="Gerador de IDs e hashes."
+        note={t('generatorFooterNote')}
       />
     </div>
   );
