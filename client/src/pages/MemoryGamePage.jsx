@@ -12,10 +12,14 @@ export default function MemoryGamePage({ onNavigate }) {
   const [matched, setMatched] = useState([]);
   const [moves, setMoves] = useState(0);
   const [gameOver, setGameOver] = useState(false);
-  const [bestScore, setBestScore] = useState(() => {
+  const [bestScore, setBestScore] = useState(null);
+
+  useEffect(() => {
     const saved = localStorage.getItem('memoryGameBestScore');
-    return saved ? parseInt(saved, 10) : null;
-  });
+    if (saved) {
+      setBestScore(parseInt(saved, 10));
+    }
+  }, []);
 
   useEffect(() => {
     initializeGame();
