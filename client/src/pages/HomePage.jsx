@@ -34,7 +34,7 @@ export function HomePage({ onNavigate }) {
     <div className="home">
       <SiteHeader onNavigate={onNavigate} />
 
-      <section className="home-hero">
+      <header className="home-hero">
         <div className="home-hero__glow" aria-hidden="true" />
         <div className="home-hero__content">
           <p className="home-hero__eyebrow">{t('homeHeroEyebrow')}</p>
@@ -64,18 +64,17 @@ export function HomePage({ onNavigate }) {
             />
           </div>
         </div>
-      </section>
+      </header>
 
       <main className="home-main">
-        <div className="home-filters" role="tablist" aria-label={t('homeFiltersLabel')}>
+        <nav className="home-filters" role="navigation" aria-label={t('homeFiltersLabel')}>
           {CATEGORIES.map((cat) => {
             const translatedLabel = t(cat.label) || cat.label;
             return (
               <button
                 key={cat.id}
                 type="button"
-                role="tab"
-                aria-selected={category === cat.id}
+                aria-current={category === cat.id ? 'page' : undefined}
                 className={`home-filter${category === cat.id ? ' home-filter--active' : ''}`}
                 onClick={() => setCategory(cat.id)}
               >
@@ -83,20 +82,20 @@ export function HomePage({ onNavigate }) {
               </button>
             );
           })}
-        </div>
+        </nav>
 
         {filtered.length === 0 ? (
-          <p className="home-empty">
+          <p className="home-empty" role="status">
             {category === 'soon'
               ? t('homeEmptySoon')
               : t('homeEmpty')}
           </p>
         ) : (
-          <div className="home-grid">
+          <section className="home-grid" aria-label="Ferramentas disponíveis">
             {filtered.map((tool) => (
               <ToolCard key={tool.id} tool={tool} onOpen={onNavigate} />
             ))}
-          </div>
+          </section>
         )}
       </main>
 
