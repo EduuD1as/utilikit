@@ -43,11 +43,11 @@ export default function MemoryGamePage({ onNavigate }) {
     if (newFlipped.length === 2) {
       setMoves(moves + 1);
       const [first, second] = newFlipped;
-      
+
       if (cards[first].emoji === cards[second].emoji) {
         setMatched([...matched, first, second]);
         setFlipped([]);
-        
+
         if (matched.length + 2 === cards.length) {
           setTimeout(() => {
             setGameOver(true);
@@ -71,7 +71,7 @@ export default function MemoryGamePage({ onNavigate }) {
   return (
     <div className="app app--memory">
       <SiteHeader onNavigate={onNavigate} variant="tool" />
-      
+
       <header className="hero">
         <div className="hero__content">
           <h1>{t('memoryGameTitle')}</h1>
@@ -99,9 +99,8 @@ export default function MemoryGamePage({ onNavigate }) {
             {cards.map((card) => (
               <button
                 key={card.id}
-                className={`memory-card ${
-                  flipped.includes(card.id) || matched.includes(card.id) ? 'memory-card--flipped' : ''
-                }`}
+                className={`memory-card ${flipped.includes(card.id) || matched.includes(card.id) ? 'memory-card--flipped' : ''
+                  }`}
                 onClick={() => handleCardClick(card.id)}
                 disabled={matched.includes(card.id) || gameOver}
               >
@@ -117,7 +116,7 @@ export default function MemoryGamePage({ onNavigate }) {
             <div className="memory-game__overlay">
               <div className="memory-game__result">
                 <h2>{t('gameOver')}</h2>
-                <p>{t('gameComplete', { moves })}</p>
+                <p>{t('gameComplete').replace('{{moves}}', moves)}</p>
                 <button className="search__btn" onClick={handleRestart}>
                   {t('playAgain')}
                 </button>
