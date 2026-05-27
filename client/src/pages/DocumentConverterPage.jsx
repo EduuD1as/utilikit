@@ -121,7 +121,7 @@ export function DocumentConverterPage({ onNavigate }) {
               }}
             >
               <span className="doc-mode-icon">📄</span>
-              <span>Word para PDF</span>
+              <span>{t('wordToPdf')}</span>
             </button>
             <button
               type="button"
@@ -132,7 +132,7 @@ export function DocumentConverterPage({ onNavigate }) {
               }}
             >
               <span className="doc-mode-icon">📋</span>
-              <span>PDF para Word</span>
+              <span>{t('pdfToWord')}</span>
             </button>
           </div>
 
@@ -194,22 +194,22 @@ export function DocumentConverterPage({ onNavigate }) {
           </div>
 
           <div className="doc-info">
-            <p className="doc-info__title">ℹ️ Informações</p>
+            <p className="doc-info__title">{t('information')}</p>
             <ul className="doc-info__list">
               <li>
-                <strong>Word → PDF:</strong> Converte documentos Word para PDF preservando o layout e formatação.
+                <strong>Word → PDF:</strong> {t('wordToPdfDesc')}
               </li>
               <li>
-                <strong>PDF → Word:</strong> Extrai o texto do PDF e cria um documento Word. O layout pode não ser 100% preservado.
+                <strong>PDF → Word:</strong> {t('pdfToWordDesc')}
               </li>
               <li>
                 <strong>{t('documentConverterPrivacy')}</strong> {t('documentConverterPrivacyText')}
               </li>
               <li>
-                <strong>Tamanho máximo:</strong> 50MB por arquivo.
+                <strong>{t('maxSize')}</strong> 50MB por arquivo.
               </li>
               <li>
-                <strong>Compatibilidade:</strong> Funciona com .docx, .doc, .odt e .pdf.
+                <strong>{t('compatibility')}</strong> Funciona com .docx, .doc, .odt e .pdf.
               </li>
             </ul>
           </div>

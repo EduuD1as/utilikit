@@ -28,18 +28,18 @@ export function SubscriberCounter({ count, delta, hidden }) {
     <div className="counter-card">
       <div className="counter-card__inner">
         <div className="counter-card__header">
-          <span className="counter-card__label">Inscritos</span>
+          <span className="counter-card__label">{t('subscribers')}</span>
           {!hidden && count != null && (
             <span className="counter-card__live" aria-hidden="true">
               <span className="counter-card__live-dot" />
-              Ao vivo
+              {t('live')}
             </span>
           )}
         </div>
 
         <div className="counter-card__row" aria-live="polite" aria-atomic="true">
           {hidden ? (
-            <p className="counter-card__hidden">Contagem oculta pelo canal</p>
+            <p className="counter-card__hidden">{t('countHidden')}</p>
           ) : (
             <div className="counter-card__main">
               <span
@@ -74,9 +74,8 @@ export function SubscriberCounter({ count, delta, hidden }) {
               </span>
               {showDelta && (
                 <span
-                  className={`counter-card__delta ${
-                    delta > 0 ? 'counter-card__delta--up' : 'counter-card__delta--down'
-                  }`}
+                  className={`counter-card__delta ${delta > 0 ? 'counter-card__delta--up' : 'counter-card__delta--down'
+                    }`}
                 >
                   {delta > 0 ? '+' : ''}
                   {formatCount(delta)}

@@ -125,11 +125,11 @@ export function GeneratorPage({ onNavigate }) {
       <main className="panel fx-panel">
         <div className="generator-container">
           <div className="generator-section">
-            <h2 className="generator-title">Gerador de IDs</h2>
+            <h2 className="generator-title">{t('idGeneratorTitle')}</h2>
 
             <div className="generator-form">
               <div className="generator-form__group">
-                <label className="generator-form__label">Quantidade: {idCount}</label>
+                <label className="generator-form__label">{t('quantity')}: {idCount}</label>
                 <input
                   type="range"
                   className="generator-form__range"
@@ -163,13 +163,13 @@ export function GeneratorPage({ onNavigate }) {
                     className="search__btn"
                     onClick={() => copyToClipboard(generatedId, 'id')}
                   >
-                    {copiedId ? '✓ Copiado!' : 'Copiar'}
+                    {copiedId ? t('copied') : t('copy')}
                   </button>
                 </div>
 
                 {generatedIds.length > 1 && (
                   <div className="generator-result__list">
-                    <h3>Todos os IDs gerados</h3>
+                    <h3>{t('allIdsGenerated')}</h3>
                     <div className="generator-result__items">
                       {generatedIds.map((id, idx) => (
                         <div key={idx} className="generator-result__item">

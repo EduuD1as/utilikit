@@ -91,16 +91,16 @@ export function QRGeneratorPage({ onNavigate }) {
               </div>
 
               <div className="qr-form__group">
-                <label className="qr-form__label">Nível de Correção</label>
+                <label className="qr-form__label">{t('correctionLevel')}</label>
                 <select
                   className="qr-form__select"
                   value={level}
                   onChange={(e) => setLevel(e.target.value)}
                 >
-                  <option value="L">Baixa (7%)</option>
-                  <option value="M">Médio (15%)</option>
-                  <option value="Q">Elevado (25%)</option>
-                  <option value="H">Alto (30%)</option>
+                  <option value="L">{t('low')}</option>
+                  <option value="M">{t('medium')}</option>
+                  <option value="Q">{t('high')}</option>
+                  <option value="H">{t('veryHigh')}</option>
                 </select>
               </div>
             </div>

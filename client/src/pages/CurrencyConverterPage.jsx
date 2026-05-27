@@ -139,7 +139,7 @@ export function CurrencyConverterPage({ onNavigate }) {
 
         <div className="fx-converter">
           <label className="fx-field">
-            <span className="fx-field__label">Valor</span>
+            <span className="fx-field__label">{t('value')}</span>
             <input
               type="text"
               inputMode="decimal"
@@ -153,7 +153,7 @@ export function CurrencyConverterPage({ onNavigate }) {
 
           <div className="fx-row">
             <label className="fx-field fx-field--grow">
-              <span className="fx-field__label">De</span>
+              <span className="fx-field__label">{t('from')}</span>
               <select
                 className="fx-field__select"
                 value={from}
@@ -188,7 +188,7 @@ export function CurrencyConverterPage({ onNavigate }) {
             </button>
 
             <label className="fx-field fx-field--grow">
-              <span className="fx-field__label">Para</span>
+              <span className="fx-field__label">{t('to')}</span>
               <select
                 className="fx-field__select"
                 value={to}
@@ -206,7 +206,7 @@ export function CurrencyConverterPage({ onNavigate }) {
 
           <div className="fx-result" aria-live="polite">
             {loading ? (
-              <p className="fx-result__loading">Carregando cotações…</p>
+              <p className="fx-result__loading">{t('loadingRates')}</p>
             ) : (
               <>
                 <p className="fx-result__value">

@@ -190,7 +190,7 @@ export function SimpleCalculatorPage({ onNavigate }) {
           {history.length > 0 && (
             <div className="calc-history">
               <div className="calc-history__header">
-                <h3>Histórico</h3>
+                <h3>{t('history')}</h3>
                 <button className="btn-ghost calc-history__clear" onClick={handleClearHistory}>{t('clearButton')}</button>
               </div>
               <div className="calc-history__list">

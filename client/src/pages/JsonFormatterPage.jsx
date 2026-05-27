@@ -119,15 +119,15 @@ export function JsonFormatterPage({ onNavigate }) {
         <div className="fx-converter">
           <div className="sql-toolbar">
             <div className="sql-toolbar__field">
-              <label className="sql-toolbar__label">Espaçamento</label>
+              <label className="sql-toolbar__label">{t('spacing')}</label>
               <select
                 className="sql-toolbar__select"
                 value={tabWidth}
                 onChange={(e) => setTabWidth(Number(e.target.value))}
               >
-                <option value={2}>2 espaços</option>
-                <option value={4}>4 espaços</option>
-                <option value={8}>8 espaços</option>
+                <option value={2}>{t('spaces2')}</option>
+                <option value={4}>{t('spaces4')}</option>
+                <option value={8}>{t('spaces8')}</option>
               </select>
             </div>
 
@@ -137,14 +137,14 @@ export function JsonFormatterPage({ onNavigate }) {
                 className="search__btn"
                 onClick={() => runFormat('format')}
               >
-                Formatar
+                {t('formatButton')}
               </button>
               <button
                 type="button"
                 className="search__btn"
                 onClick={() => runFormat('minify')}
               >
-                Minificar
+                {t('minifyButton')}
               </button>
               <button
                 type="button"

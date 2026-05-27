@@ -91,7 +91,7 @@ export function SqlFormatterPage({ onNavigate }) {
       <main className="panel">
         <div className="sql-toolbar">
           <label className="sql-toolbar__field">
-            <span className="sql-toolbar__label">Dialeto</span>
+            <span className="sql-toolbar__label">{t('dialect')}</span>
             <select
               className="sql-toolbar__select"
               value={dialect}
@@ -106,27 +106,27 @@ export function SqlFormatterPage({ onNavigate }) {
           </label>
 
           <label className="sql-toolbar__field">
-            <span className="sql-toolbar__label">Palavras-chave</span>
+            <span className="sql-toolbar__label">{t('keywords')}</span>
             <select
               className="sql-toolbar__select"
               value={keywordCase}
               onChange={(e) => setKeywordCase(e.target.value)}
             >
-              <option value="upper">MAIÚSCULAS</option>
-              <option value="lower">minúsculas</option>
-              <option value="preserve">Preservar</option>
+              <option value="upper">{t('uppercase')}</option>
+              <option value="lower">{t('lowercase')}</option>
+              <option value="preserve">{t('preserve')}</option>
             </select>
           </label>
 
           <label className="sql-toolbar__field">
-            <span className="sql-toolbar__label">Indentação</span>
+            <span className="sql-toolbar__label">{t('indentation')}</span>
             <select
               className="sql-toolbar__select"
               value={tabWidth}
               onChange={(e) => setTabWidth(Number(e.target.value))}
             >
-              <option value={2}>2 espaços</option>
-              <option value={4}>4 espaços</option>
+              <option value={2}>{t('spaces2')}</option>
+              <option value={4}>{t('spaces4')}</option>
             </select>
           </label>
 
@@ -136,14 +136,14 @@ export function SqlFormatterPage({ onNavigate }) {
               className="search__btn"
               onClick={() => runFormat('format')}
             >
-              Formatar
+              {t('formatButton')}
             </button>
             <button
               type="button"
               className="btn-ghost sql-toolbar__btn"
               onClick={() => runFormat('minify')}
             >
-              Minificar
+              {t('minifyButton')}
             </button>
             <button
               type="button"
