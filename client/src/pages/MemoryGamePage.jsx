@@ -54,10 +54,10 @@ export default function MemoryGamePage({ onNavigate }) {
         setMatched([...matched, first, second]);
         setFlipped([]);
 
-        // Remove as cartas após um pequeno delay para animação
+        // Remove as cartas após um delay para animação
         setTimeout(() => {
           setRemoved([...removed, first, second]);
-        }, 300);
+        }, 1200);
 
         if (matched.length + 2 === cards.length) {
           setTimeout(() => {
