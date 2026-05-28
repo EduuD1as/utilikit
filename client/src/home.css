@@ -794,7 +794,7 @@ body:has(.home) {
 }
 
 .memory-card--matched {
-  animation: fadeOut 0.6s ease forwards;
+  animation: fadeOut 1.3s ease forwards;
 }
 
 @keyframes fadeOut {
