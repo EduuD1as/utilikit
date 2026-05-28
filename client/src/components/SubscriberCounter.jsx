@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 function formatCount(n) {
   if (n == null) return '-';
@@ -6,6 +7,7 @@ function formatCount(n) {
 }
 
 export function SubscriberCounter({ count, delta, hidden }) {
+  const { t } = useLanguage();
   const prevCount = useRef(count);
   const previous = prevCount.current;
   const formatted = formatCount(count);
