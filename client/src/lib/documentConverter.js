@@ -16,7 +16,20 @@ export async function wordToPdf(file) {
 
   try {
     const buffer = await file.arrayBuffer();
-    const result = await mammoth.convertToHtml({ arrayBuffer: buffer });
+    const result = await mammoth.convertToHtml({
+      arrayBuffer: buffer,
+      styleMap: [
+        "p[style-name='Heading 1'] => h1:fresh",
+        "p[style-name='Heading 2'] => h2:fresh",
+        "p[style-name='Heading 3'] => h3:fresh",
+        "p[style-name='Title'] => h1:fresh",
+        "p[style-name='Subtitle'] => h2:fresh",
+        "r[style-name='Strong'] => strong",
+        "r[style-name='Emphasis'] => em",
+        "r[style-name='Hyperlink'] => a",
+      ],
+      includeDefaultStyleMap: true,
+    });
     const html = result.html;
 
     if (!html || html.trim() === '') {
@@ -192,25 +205,53 @@ export async function pdfToWord(file) {
 
     const paragraphs = [];
 
-    // Extract text from all pages
+    // Extract text from all pages with formatting
     for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
       const page = await pdf.getPage(pageNum);
       const textContent = await page.getTextContent();
 
-      // Extract text items and preserve some structure
-      const pageText = textContent.items
-        .map(item => item.str)
-        .filter(text => text.trim())
-        .join(' ');
+      // Group text items by Y position to preserve paragraphs
+      const itemsByY = {};
+      textContent.items.forEach(item => {
+        const y = Math.round(item.transform[5]);
+        if (!itemsByY[y]) {
+          itemsByY[y] = [];
+        }
+        itemsByY[y].push(item);
+      });
 
-      if (pageText.trim()) {
-        paragraphs.push(
-          new Paragraph({
-            text: pageText,
-            spacing: { after: 200 },
-          })
-        );
-      }
+      // Sort by Y position (top to bottom)
+      const sortedY = Object.keys(itemsByY).map(Number).sort((a, b) => b - a);
+
+      // Create paragraphs from grouped items
+      sortedY.forEach(y => {
+        const items = itemsByY[y].sort((a, b) => a.transform[4] - b.transform[4]); // Sort by X position
+
+        const textRuns = items.map(item => {
+          const text = item.str.trim();
+          if (!text) return null;
+
+          // Check for formatting from PDF
+          const isBold = item.fontName && (item.fontName.includes('Bold') || item.fontName.includes('bold'));
+          const isItalic = item.fontName && (item.fontName.includes('Italic') || item.fontName.includes('italic'));
+
+          return new TextRun({
+            text: text,
+            bold: isBold,
+            italics: isItalic,
+            size: item.height ? Math.round(item.height * 24) : 24, // Approximate font size
+          });
+        }).filter(Boolean);
+
+        if (textRuns.length > 0) {
+          paragraphs.push(
+            new Paragraph({
+              children: textRuns,
+              spacing: { after: 200 },
+            })
+          );
+        }
+      });
     }
 
     if (paragraphs.length === 0) {
