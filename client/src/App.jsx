@@ -18,6 +18,7 @@ import { QRGeneratorPage } from './pages/QRGeneratorPage.jsx';
 import { GeneratorPage } from './pages/GeneratorPage.jsx';
 import { TimerPage } from './pages/TimerPage.jsx';
 import MemoryGamePage from './pages/MemoryGamePage.jsx';
+import RandomPickerPage from './pages/RandomPickerPage.jsx';
 
 const ROUTES = {
   '/': HomePage,
@@ -33,6 +34,7 @@ const ROUTES = {
   '/gerador-id-hash': GeneratorPage,
   '/timer-pomodoro': TimerPage,
   '/jogo-memoria': MemoryGamePage,
+  '/roleta-sorteador': RandomPickerPage,
   '/privacidade': PrivacyPolicyPage,
   '/termos': TermsPage,
 };

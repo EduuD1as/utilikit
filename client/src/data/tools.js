@@ -185,4 +185,14 @@ export const TOOLS = [
     accent: '#ec4899',
     icon: 'game',
   },
+  {
+    id: 'random-picker',
+    titleKey: 'toolRandomPickerTitle',
+    descKey: 'toolRandomPickerDesc',
+    category: 'generators',
+    path: '/roleta-sorteador',
+    available: true,
+    accent: '#f59e0b',
+    icon: 'wheel',
+  },
 ];
