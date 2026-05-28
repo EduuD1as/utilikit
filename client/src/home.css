@@ -138,7 +138,7 @@ body:has(.home) {
   cursor: pointer;
   transition: all 0.2s;
   font-family: inherit;
-  font-size: 0.78rem;
+  font-size: 0.9rem;
   font-weight: 600;
 }
 
@@ -153,16 +153,16 @@ body:has(.home) {
 }
 
 .site-header__lang-toggle svg {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
 }
 
 .site-header__theme-toggle {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   border: none;
   border-radius: 8px;
@@ -439,7 +439,7 @@ body:has(.home) {
   );
   border: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
-  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
@@ -451,11 +451,12 @@ body:has(.home) {
   );
   border: 1px solid rgba(99, 102, 241, 0.12);
   box-shadow: 0 8px 32px rgba(99, 102, 241, 0.06);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .tool-card:not(.tool-card--soon):hover {
   border-color: rgba(99, 102, 241, 0.5);
-  transform: translateY(-8px);
+  transform: translateY(-6px);
   box-shadow:
     0 20px 40px rgba(99, 102, 241, 0.15),
     0 0 60px rgba(99, 102, 241, 0.1);
@@ -464,6 +465,7 @@ body:has(.home) {
     rgba(99, 102, 241, 0.1) 0%,
     rgba(28, 28, 34, 0.5) 100%
   );
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 [data-theme="light"] .tool-card:not(.tool-card--soon):hover {
@@ -476,6 +478,7 @@ body:has(.home) {
     rgba(99, 102, 241, 0.08) 0%,
     rgba(248, 247, 252, 0.4) 100%
   );
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .tool-card--soon {

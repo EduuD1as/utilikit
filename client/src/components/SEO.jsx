@@ -1,0 +1,299 @@
+import { useEffect } from 'react';
+import { useLanguage } from '../context/LanguageContext';
+
+const SEO_DATA = {
+  '/': {
+    pt: {
+      title: 'UtiliKit — Ferramentas online gratuitas',
+      description: 'Calculadoras, conversores, geradores e contadores online gratuitos. Ferramentas úteis para o dia a dia, rápidas, modernas e funcionam no navegador sem cadastro.',
+      keywords: 'calculadora, conversor, gerador, contador, ferramentas online, utilitários, ferramentas gratuitas, calculadora online, conversor de moedas, gerador de QR code, contador de caracteres, timer pomodoro',
+    },
+    en: {
+      title: 'UtiliKit — Free online tools',
+      description: 'Free online calculators, converters, generators and counters. Useful tools for daily life, fast, modern and work in the browser without registration.',
+      keywords: 'calculator, converter, generator, counter, online tools, utilities, free tools, online calculator, currency converter, QR code generator, character counter, pomodoro timer',
+    },
+  },
+  '/contador-youtube': {
+    pt: {
+      title: 'Contador de Inscritos YouTube — UtiliKit',
+      description: 'Contador de inscritos do YouTube em tempo real. Monitore o crescimento do seu canal com atualizações automáticas via SSE.',
+      keywords: 'contador inscritos youtube, monitor youtube, inscritos em tempo real, crescimento canal youtube, youtube analytics',
+    },
+    en: {
+      title: 'YouTube Subscriber Counter — UtiliKit',
+      description: 'Real-time YouTube subscriber counter. Monitor your channel growth with automatic SSE updates.',
+      keywords: 'youtube subscriber counter, youtube monitor, real-time subscribers, youtube channel growth, youtube analytics',
+    },
+  },
+  '/formatador-sql': {
+    pt: {
+      title: 'Formatador SQL — UtiliKit',
+      description: 'Formate e organize código SQL automaticamente. Melhore a legibilidade e manutenção das suas queries.',
+      keywords: 'formatador sql, sql formatter, organizar sql, indentar sql, sql beautifier',
+    },
+    en: {
+      title: 'SQL Formatter — UtiliKit',
+      description: 'Automatically format and organize SQL code. Improve readability and maintenance of your queries.',
+      keywords: 'sql formatter, format sql, organize sql, indent sql, sql beautifier',
+    },
+  },
+  '/formatador-json': {
+    pt: {
+      title: 'Formatador JSON — UtiliKit',
+      description: 'Formate, valide e minifique código JSON. Ferramenta essencial para desenvolvedores.',
+      keywords: 'formatador json, json formatter, validar json, minificar json, json beautifier',
+    },
+    en: {
+      title: 'JSON Formatter — UtiliKit',
+      description: 'Format, validate and minify JSON code. Essential tool for developers.',
+      keywords: 'json formatter, format json, validate json, minify json, json beautifier',
+    },
+  },
+  '/conversor-documentos': {
+    pt: {
+      title: 'Conversor de Documentos — UtiliKit',
+      description: 'Converta documentos entre diferentes formatos. Word para PDF, PDF para Word e mais.',
+      keywords: 'conversor documentos, word para pdf, pdf para word, converter arquivo, conversor online',
+    },
+    en: {
+      title: 'Document Converter — UtiliKit',
+      description: 'Convert documents between different formats. Word to PDF, PDF to Word and more.',
+      keywords: 'document converter, word to pdf, pdf to word, file converter, online converter',
+    },
+  },
+  '/conversor-moedas': {
+    pt: {
+      title: 'Conversor de Moedas — UtiliKit',
+      description: 'Converta moedas em tempo real com taxas atualizadas. Dólar, Euro, Real e mais.',
+      keywords: 'conversor moedas, câmbio, converter dólar, converter euro, taxa de câmbio',
+    },
+    en: {
+      title: 'Currency Converter — UtiliKit',
+      description: 'Convert currencies in real-time with updated rates. Dollar, Euro, Real and more.',
+      keywords: 'currency converter, exchange rate, convert dollar, convert euro, exchange rate',
+    },
+  },
+  '/contador-caracteres': {
+    pt: {
+      title: 'Contador de Caracteres — UtiliKit',
+      description: 'Conte caracteres, palavras, linhas e parágrafos em tempo real. Ferramenta essencial para escritores e desenvolvedores.',
+      keywords: 'contador caracteres, contador palavras, contar texto, contador online, word counter',
+    },
+    en: {
+      title: 'Character Counter — UtiliKit',
+      description: 'Count characters, words, lines and paragraphs in real-time. Essential tool for writers and developers.',
+      keywords: 'character counter, word counter, count text, online counter, word counter',
+    },
+  },
+  '/calculadora': {
+    pt: {
+      title: 'Calculadora Online — UtiliKit',
+      description: 'Calculadora simples e funcional para operações básicas. Rápida e fácil de usar.',
+      keywords: 'calculadora online, calculadora simples, calculadora grátis, calculadora básica',
+    },
+    en: {
+      title: 'Online Calculator — UtiliKit',
+      description: 'Simple and functional calculator for basic operations. Fast and easy to use.',
+      keywords: 'online calculator, simple calculator, free calculator, basic calculator',
+    },
+  },
+  '/conversor-unidades': {
+    pt: {
+      title: 'Conversor de Unidades — UtiliKit',
+      description: 'Converta unidades de medida facilmente. Comprimento, peso, temperatura e mais.',
+      keywords: 'conversor unidades, converter medidas, conversor comprimento, conversor peso',
+    },
+    en: {
+      title: 'Unit Converter — UtiliKit',
+      description: 'Easily convert units of measurement. Length, weight, temperature and more.',
+      keywords: 'unit converter, convert measurements, length converter, weight converter',
+    },
+  },
+  '/gerador-qr': {
+    pt: {
+      title: 'Gerador de QR Code — UtiliKit',
+      description: 'Gere códigos QR gratuitos para URLs, texto e mais. Personalize cores e tamanhos.',
+      keywords: 'gerador qr code, qr code generator, criar qr code, qr code grátis',
+    },
+    en: {
+      title: 'QR Code Generator — UtiliKit',
+      description: 'Generate free QR codes for URLs, text and more. Customize colors and sizes.',
+      keywords: 'qr code generator, create qr code, qr code free, make qr code',
+    },
+  },
+  '/gerador-id-hash': {
+    pt: {
+      title: 'Gerador de ID e Hash — UtiliKit',
+      description: 'Gere UUIDs, strings aleatórias e hashes MD5, SHA-1, SHA-256. Ferramenta para desenvolvedores.',
+      keywords: 'gerador uuid, gerador hash, md5 generator, sha256 generator, random string',
+    },
+    en: {
+      title: 'ID and Hash Generator — UtiliKit',
+      description: 'Generate UUIDs, random strings and MD5, SHA-1, SHA-256 hashes. Tool for developers.',
+      keywords: 'uuid generator, hash generator, md5 generator, sha256 generator, random string',
+    },
+  },
+  '/timer-pomodoro': {
+    pt: {
+      title: 'Timer e Pomodoro — UtiliKit',
+      description: 'Timer e técnica Pomodoro para aumentar produtividade. Gerencie seu tempo eficientemente.',
+      keywords: 'timer pomodoro, técnica pomodoro, timer online, cronômetro, produtividade',
+    },
+    en: {
+      title: 'Timer and Pomodoro — UtiliKit',
+      description: 'Timer and Pomodoro technique to increase productivity. Manage your time efficiently.',
+      keywords: 'pomodoro timer, pomodoro technique, online timer, stopwatch, productivity',
+    },
+  },
+  '/jogo-memoria': {
+    pt: {
+      title: 'Jogo da Memória — UtiliKit',
+      description: 'Jogo da memória para treinar o cérebro. Divirta-se enquanto exercita a mente.',
+      keywords: 'jogo memória, memory game, jogo online, treinar cérebro, jogo grátis',
+    },
+    en: {
+      title: 'Memory Game — UtiliKit',
+      description: 'Memory game to train your brain. Have fun while exercising your mind.',
+      keywords: 'memory game, brain training, online game, train brain, free game',
+    },
+  },
+  '/roleta-sorteador': {
+    pt: {
+      title: 'Sorteador de Roleta — UtiliKit',
+      description: 'Sorteador de roleta aleatória. Adicione opções e deixe a roleta escolher por você.',
+      keywords: 'sorteador roleta, roleta aleatória, wheel spinner, sorteador online, escolher aleatório',
+    },
+    en: {
+      title: 'Random Wheel Picker — UtiliKit',
+      description: 'Random wheel picker. Add options and let the wheel choose for you.',
+      keywords: 'wheel picker, random wheel, spinner, online picker, random choice',
+    },
+  },
+  '/calculadora-imc': {
+    pt: {
+      title: 'Calculadora de IMC — UtiliKit',
+      description: 'Calcule seu Índice de Massa Corporal (IMC) facilmente. Verifique sua categoria de peso.',
+      keywords: 'calculadora imc, índice massa corporal, bmi calculator, calcular peso, saúde',
+    },
+    en: {
+      title: 'BMI Calculator — UtiliKit',
+      description: 'Calculate your Body Mass Index (BMI) easily. Check your weight category.',
+      keywords: 'bmi calculator, body mass index, calculate weight, health',
+    },
+  },
+  '/privacidade': {
+    pt: {
+      title: 'Política de Privacidade — UtiliKit',
+      description: 'Política de privacidade do UtiliKit. Saiba como protegemos seus dados.',
+      keywords: 'política privacidade, privacidade, proteção dados, lgpd',
+    },
+    en: {
+      title: 'Privacy Policy — UtiliKit',
+      description: 'UtiliKit privacy policy. Learn how we protect your data.',
+      keywords: 'privacy policy, privacy, data protection, gdpr',
+    },
+  },
+  '/termos': {
+    pt: {
+      title: 'Termos de Uso — UtiliKit',
+      description: 'Termos de uso do UtiliKit. Conheça as regras de uso da plataforma.',
+      keywords: 'termos uso, termos de serviço, regras, legal',
+    },
+    en: {
+      title: 'Terms of Use — UtiliKit',
+      description: 'UtiliKit terms of use. Know the platform usage rules.',
+      keywords: 'terms of use, terms of service, rules, legal',
+    },
+  },
+};
+
+export function SEO({ path }) {
+  const { language } = useLanguage();
+  const seoData = SEO_DATA[path] || SEO_DATA['/'];
+  const data = seoData[language] || seoData['pt'];
+
+  useEffect(() => {
+    // Update document title
+    document.title = data.title;
+
+    // Update meta description
+    let metaDescription = document.querySelector('meta[name="description"]');
+    if (!metaDescription) {
+      metaDescription = document.createElement('meta');
+      metaDescription.name = 'description';
+      document.head.appendChild(metaDescription);
+    }
+    metaDescription.setAttribute('content', data.description);
+
+    // Update meta keywords
+    let metaKeywords = document.querySelector('meta[name="keywords"]');
+    if (!metaKeywords) {
+      metaKeywords = document.createElement('meta');
+      metaKeywords.name = 'keywords';
+      document.head.appendChild(metaKeywords);
+    }
+    metaKeywords.setAttribute('content', data.keywords);
+
+    // Update canonical URL
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.rel = 'canonical';
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute('href', `https://utilikit.com.br${path}`);
+
+    // Update Open Graph
+    let ogTitle = document.querySelector('meta[property="og:title"]');
+    if (!ogTitle) {
+      ogTitle = document.createElement('meta');
+      ogTitle.property = 'og:title';
+      document.head.appendChild(ogTitle);
+    }
+    ogTitle.setAttribute('content', data.title);
+
+    let ogDescription = document.querySelector('meta[property="og:description"]');
+    if (!ogDescription) {
+      ogDescription = document.createElement('meta');
+      ogDescription.property = 'og:description';
+      document.head.appendChild(ogDescription);
+    }
+    ogDescription.setAttribute('content', data.description);
+
+    let ogUrl = document.querySelector('meta[property="og:url"]');
+    if (!ogUrl) {
+      ogUrl = document.createElement('meta');
+      ogUrl.property = 'og:url';
+      document.head.appendChild(ogUrl);
+    }
+    ogUrl.setAttribute('href', `https://utilikit.com.br${path}`);
+
+    // Update Twitter
+    let twitterTitle = document.querySelector('meta[name="twitter:title"]');
+    if (!twitterTitle) {
+      twitterTitle = document.createElement('meta');
+      twitterTitle.name = 'twitter:title';
+      document.head.appendChild(twitterTitle);
+    }
+    twitterTitle.setAttribute('content', data.title);
+
+    let twitterDescription = document.querySelector('meta[name="twitter:description"]');
+    if (!twitterDescription) {
+      twitterDescription = document.createElement('meta');
+      twitterDescription.name = 'twitter:description';
+      document.head.appendChild(twitterDescription);
+    }
+    twitterDescription.setAttribute('content', data.description);
+
+    let twitterUrl = document.querySelector('meta[name="twitter:url"]');
+    if (!twitterUrl) {
+      twitterUrl = document.createElement('meta');
+      twitterUrl.name = 'twitter:url';
+      document.head.appendChild(twitterUrl);
+    }
+    twitterUrl.setAttribute('href', `https://utilikit.com.br${path}`);
+  }, [path, language, data]);
+
+  return null;
+}

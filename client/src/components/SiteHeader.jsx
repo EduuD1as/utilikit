@@ -35,21 +35,22 @@ export function SiteHeader({ onNavigate, variant = 'home' }) {
           </span>
           <span>
             <span className="site-header__name">{t('brandName')}</span>
-            <span className="site-header__tagline">{t('brandTagline')}</span>
           </span>
         </a>
 
         <nav className="site-header__nav" aria-label="Principal">
-          <a
-            href="/"
-            className="site-header__link"
-            onClick={(e) => {
-              e.preventDefault();
-              onNavigate('/');
-            }}
-          >
-            {t('navHome')}
-          </a>
+          {variant !== 'home' && (
+            <a
+              href="/"
+              className="site-header__link"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigate('/');
+              }}
+            >
+              {t('navHome')}
+            </a>
+          )}
 
           <button
             className="site-header__lang-toggle"
@@ -63,7 +64,7 @@ export function SiteHeader({ onNavigate, variant = 'home' }) {
               <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
             </svg>
             <span className="site-header__lang-text">
-              {language === 'pt' ? 'EN' : 'PT'}
+              {language === 'pt' ? 'EN' : 'PT-BR'}
             </span>
           </button>
 

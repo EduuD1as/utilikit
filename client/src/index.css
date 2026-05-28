@@ -18,6 +18,16 @@
   -webkit-font-smoothing: antialiased;
 }
 
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  font-size: 1.25rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
 /* Tema claro */
 [data-theme="light"] {
   --bg: #d4d2d9;

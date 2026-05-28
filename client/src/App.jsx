@@ -3,6 +3,7 @@ import { ThemeProvider } from './context/ThemeContext.jsx';
 import { LanguageProvider } from './context/LanguageContext.jsx';
 import { CookieConsentProvider } from './context/CookieConsentContext.jsx';
 import { CookieBanner } from './components/CookieBanner.jsx';
+import { SEO } from './components/SEO.jsx';
 import { HomePage } from './pages/HomePage.jsx';
 import { YouTubeCounterPage } from './pages/YouTubeCounterPage.jsx';
 import { SqlFormatterPage } from './pages/SqlFormatterPage.jsx';
@@ -70,6 +71,7 @@ export default function App() {
     <ThemeProvider>
       <LanguageProvider>
         <CookieConsentProvider>
+          <SEO path={path} />
           <Page onNavigate={navigate} />
           <CookieBanner onNavigate={navigate} />
         </CookieConsentProvider>
