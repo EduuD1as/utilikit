@@ -2,6 +2,10 @@ import { Document, Packer, Paragraph, TextRun } from 'docx';
 import mammoth from 'mammoth';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import * as pdfjsLib from 'pdfjs-dist';
+
+// Configure PDF.js worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
 export async function wordToPdf(file) {
   let container = null;
@@ -20,7 +24,7 @@ export async function wordToPdf(file) {
     container = document.createElement('div');
     container.id = 'pdf-converter-container-' + Date.now();
     container.innerHTML = html;
-    
+
     // Set inline styles for proper rendering
     Object.assign(container.style, {
       position: 'fixed',
@@ -177,25 +181,55 @@ export async function wordToPdf(file) {
 
 export async function pdfToWord(file) {
   try {
-    const buffer = await file.arrayBuffer();
-    
+    const arrayBuffer = await file.arrayBuffer();
+
+    // Load PDF document
+    const loadingTask = pdfjsLib.getDocument(arrayBuffer);
+    const pdf = await loadingTask.promise;
+
+    const paragraphs = [];
+
+    // Extract text from all pages
+    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+      const page = await pdf.getPage(pageNum);
+      const textContent = await page.getTextContent();
+
+      // Extract text items and preserve some structure
+      const pageText = textContent.items
+        .map(item => item.str)
+        .filter(text => text.trim())
+        .join(' ');
+
+      if (pageText.trim()) {
+        paragraphs.push(
+          new Paragraph({
+            text: pageText,
+            spacing: { after: 200 },
+          })
+        );
+      }
+    }
+
+    if (paragraphs.length === 0) {
+      throw new Error('PDF vazio ou não foi possível extrair texto');
+    }
+
+    // Create Word document
     const doc = new Document({
       sections: [
         {
           children: [
             new Paragraph({
-              text: 'Conversão de PDF para Word',
+              text: `Arquivo original: ${file.name}`,
               spacing: { after: 200 },
               run: new TextRun({ bold: true, size: 24 }),
             }),
             new Paragraph({
-              text: `Arquivo original: ${file.name}`,
+              text: 'Conteúdo extraído do PDF:',
               spacing: { after: 200 },
+              run: new TextRun({ bold: true }),
             }),
-            new Paragraph({
-              text: 'Para uma conversão mais robusta de PDF para Word com preservação de layout, use ferramentas online especializadas.',
-              spacing: { after: 200 },
-            }),
+            ...paragraphs,
           ],
         },
       ],
@@ -208,9 +242,10 @@ export async function pdfToWord(file) {
       fileName: file.name.replace(/\.[^/.]+$/, '') + '.docx',
     };
   } catch (error) {
+    console.error('Erro na conversão PDF para Word:', error);
     return {
       success: false,
-      error: error.message,
+      error: error.message || 'Erro ao converter PDF para Word',
     };
   }
 }
