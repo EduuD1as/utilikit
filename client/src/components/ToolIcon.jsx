@@ -17,7 +17,8 @@ const ICONS = {
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
-      d="M19 5 5 19M6.5 6.5a2 2 0 1 1 0 2.8 2 2 0 0 1 0-2.8Zm11 11a2 2 0 1 1 0 2.8 2 2 0 0 1 0-2.8Z"
+      strokeLinejoin="round"
+      d="M8 8l8 8M12 5a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm0 8a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z"
     />
   ),
   scale: (
@@ -26,7 +27,8 @@ const ICONS = {
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
-      d="M12 3v18M5 8h14M7 14h10"
+      strokeLinejoin="round"
+      d="M3 12h18M12 3v18M7 7c0-1.1.9-2 2-2h6c1.1 0 2 .9 2 2v10H7V7Zm1 0h8v2H8V7Z"
     />
   ),
   chart: (
@@ -35,7 +37,8 @@ const ICONS = {
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
-      d="M4 19V5M10 19V9M16 19v-6M22 19V3"
+      strokeLinejoin="round"
+      d="M3 3v18h18M7 14v4M12 9v9M17 5v13"
     />
   ),
   currency: (
@@ -44,7 +47,8 @@ const ICONS = {
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
-      d="M12 3v18M8 7.5c0-1.7 1.8-3 4-3s4 1.3 4 3-1.8 3-4 3-4 1.3-4 3 1.8 3 4 3 4 1.3 4 3-1.8 3-4 3-4-1.3-4-3"
+      strokeLinejoin="round"
+      d="M12 3v18M6 7h12c1.1 0 2 .9 2 2v6c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V9c0-1.1.9-2 2-2Z"
     />
   ),
   ruler: (
@@ -53,7 +57,8 @@ const ICONS = {
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
-      d="M4 8h16M6 12h2M10 12h2M14 12h2M18 12h2M6 16h2M10 16h2M14 16h2"
+      strokeLinejoin="round"
+      d="M3 10h18M5 6h2M9 6h2M13 6h2M17 6h2M5 14h2M9 14h2M13 14h2M17 14h2M3 6v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6"
     />
   ),
   code: (
@@ -62,7 +67,8 @@ const ICONS = {
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
-      d="m8 9-3 3 3 3m8-6 3 3-3 3M14 5l-4 14"
+      strokeLinejoin="round"
+      d="m7 8-3 3 3 3m10-6 3 3-3 3M14 4l-4 16"
     />
   ),
   lock: (
@@ -71,7 +77,8 @@ const ICONS = {
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
-      d="M7 11V8a5 5 0 0 1 10 0v3M6 11h12v10H6V11Z"
+      strokeLinejoin="round"
+      d="M6 10V8c0-2.8 2.2-5 5-5s5 2.2 5 5v2m-10 2h14c1.1 0 2 .9 2 2v8c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2v-8c0-1.1.9-2 2-2Zm7 4c0 .6-.4 1-1 1s-1-.4-1-1 .4-1 1-1 1 .4 1 1Z"
     />
   ),
   hash: (
@@ -80,7 +87,8 @@ const ICONS = {
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
-      d="M10 4 8 20M16 4l-2 16M4 9h16M3 15h16"
+      strokeLinejoin="round"
+      d="M9 3l-1 18M16 3l-1 18M3 8h18M3 16h18"
     />
   ),
   qr: (
@@ -88,7 +96,9 @@ const ICONS = {
       fill="none"
       stroke="currentColor"
       strokeWidth="2"
-      d="M4 4h6v6H4V4Zm10 0h6v6h-6V4ZM4 14h6v6H4v-6Zm14 0h2v2h-2v-2Zm-4 4h2v2h-2v-2Zm4-4h2v2h-2v-2Z"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M3 3h6v6H3V3Zm10 0h6v6h-6V3ZM3 13h6v6H3v-6Zm7 2h2v2h-2v-2Zm3-2h2v2h-2v-2Zm2 3h2v2h-2v-2Zm0-6h2v2h-2v-2Z"
     />
   ),
   text: (
@@ -97,7 +107,8 @@ const ICONS = {
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
-      d="M4 6h16M4 12h10M4 18h14"
+      strokeLinejoin="round"
+      d="M3 6h18M3 12h12M3 18h16"
     />
   ),
   database: (
@@ -106,7 +117,8 @@ const ICONS = {
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
-      d="M4 6c0 2.2 3.6 4 8 4s8-1.8 8-4-3.6-4-8-4-8 1.8-8 4Zm0 6c0 2.2 3.6 4 8 4s8-1.8 8-4M4 18c0 2.2 3.6 4 8 4s8-1.8 8-4"
+      strokeLinejoin="round"
+      d="M3 6c0 1.7 3.6 3 8 3s8-1.3 8-3m0 5c0 1.7-3.6 3-8 3s-8-1.3-8-3m0 5c0 1.7 3.6 3 8 3s8-1.3 8-3M3 6v10c0 1.7 3.6 3 8 3s8-1.3 8-3V6"
     />
   ),
   clock: (
@@ -115,7 +127,8 @@ const ICONS = {
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
-      d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10ZM12 6v6l4 2"
+      strokeLinejoin="round"
+      d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2Zm0 5v5l3 2"
     />
   ),
   file: (
@@ -124,7 +137,38 @@ const ICONS = {
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
-      d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6ZM14 2v6h6M16 13H8M16 17H8M10 9H8"
+      strokeLinejoin="round"
+      d="M13 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V9l-7-7ZM13 2v7h7M8 13h8M8 17h8M10 9H8"
+    />
+  ),
+  game: (
+    <path
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M6 9c0-1.1.9-2 2-2h8c1.1 0 2 .9 2 2v6c0 1.1-.9 2-2 2H8c-1.1 0-2-.9-2-2V9Zm4-3h4M9 15h6M10 6c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1Zm2 8c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1Z"
+    />
+  ),
+  wheel: (
+    <path
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M12 2c5.5 0 10 4.5 10 10s-4.5 10-10 10S2 17.5 2 12 6.5 2 12 2Zm0 3c3.9 0 7 3.1 7 7s-3.1 7-7 7-7-3.1-7-7 3.1-7 7-7ZM12 8c2.2 0 4 1.8 4 4s-1.8 4-4 4-4-1.8-4-4 1.8-4 4-4ZM12 2v3M12 19v3M21 12h-3M6 12H3"
+    />
+  ),
+  activity: (
+    <path
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M3 12h6l2 4 2-6 2 4h6M3 6h18M3 18h18"
     />
   ),
 };
