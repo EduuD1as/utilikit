@@ -2,8 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { fetchLiveSubscriberCount } from '../lib/fetchLiveSubscriberCount.js';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
-const LIVE_POLL_MS = 5000;
-const LIVE_POLL_BACKOFF_MS = 15000;
+const LIVE_POLL_MS = 2000;
+const LIVE_POLL_BACKOFF_MS = 5000;
 
 export function useChannelMonitor() {
   const [channel, setChannel] = useState(null);
