@@ -192,7 +192,7 @@ body:has(.home) {
 
 .home-hero {
   position: relative;
-  padding: var(--space-3xl) var(--space-lg) var(--space-2xl);
+  padding: 1.5rem var(--space-lg) 1.25rem;
   overflow: visible;
   z-index: 1;
 }
@@ -210,13 +210,13 @@ body:has(.home) {
 
 .home-hero__eyebrow {
   display: inline-block;
-  font-size: var(--text-xs);
+  font-size: 0.65rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: #a5b4fc;
-  margin-bottom: var(--space-md);
-  padding: var(--space-sm) var(--space-md);
+  margin-bottom: 0.75rem;
+  padding: 0.4rem 0.8rem;
   border-radius: var(--radius-full);
   background: var(--brand-soft);
   border: var(--border-sm) solid rgba(99, 102, 241, 0.25);
@@ -229,7 +229,7 @@ body:has(.home) {
 }
 
 .home-hero__title {
-  font-size: clamp(var(--text-2xl), 6vw, var(--text-3xl));
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
   font-weight: 700;
   letter-spacing: -0.04em;
   line-height: 1.1;
@@ -251,19 +251,19 @@ body:has(.home) {
 }
 
 .home-hero__lead {
-  margin-top: var(--space-md);
+  margin-top: 0.75rem;
   color: var(--text-muted);
-  font-size: var(--text-lg);
+  font-size: 0.95rem;
   max-width: 540px;
   margin-left: auto;
   margin-right: auto;
-  line-height: 1.65;
+  line-height: 1.5;
 }
 
 .home-hero__search {
   position: relative;
   max-width: 440px;
-  margin: 2rem auto 0;
+  margin: 1.25rem auto 0;
 }
 
 .home-hero__search-icon {
@@ -638,11 +638,11 @@ body:has(.home) {
 
 @media (max-width: 768px) {
   .home-hero {
-    padding: 3rem 1.25rem 2.5rem;
+    padding: 1.25rem 1.25rem 1rem;
   }
 
   .home-main {
-    padding: 2.5rem 1.25rem 3rem;
+    padding: 1.5rem 1.25rem 2rem;
   }
 
   .home-filters {
@@ -673,16 +673,16 @@ body:has(.home) {
 
 @media (max-width: 480px) {
   .home-hero {
-    padding: 2rem 1rem 1.5rem;
+    padding: 1rem 1rem 0.75rem;
   }
 
   .home-main {
-    padding: 1.5rem 1rem 2rem;
+    padding: 1rem 1rem 1.5rem;
   }
 
   .home-filters {
     padding: 0.75rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
   }
 
   .home-filter {
