@@ -195,4 +195,14 @@ export const TOOLS = [
     accent: '#f59e0b',
     icon: 'wheel',
   },
+  {
+    id: 'bmi-calculator',
+    titleKey: 'toolBmiCalculatorTitle',
+    descKey: 'toolBmiCalculatorDesc',
+    category: 'calculators',
+    path: '/calculadora-imc',
+    available: true,
+    accent: '#10b981',
+    icon: 'activity',
+  },
 ];

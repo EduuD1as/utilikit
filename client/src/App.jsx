@@ -19,6 +19,7 @@ import { GeneratorPage } from './pages/GeneratorPage.jsx';
 import { TimerPage } from './pages/TimerPage.jsx';
 import MemoryGamePage from './pages/MemoryGamePage.jsx';
 import RandomPickerPage from './pages/RandomPickerPage.jsx';
+import IMCCalculatorPage from './pages/IMCCalculatorPage.jsx';
 
 const ROUTES = {
   '/': HomePage,
@@ -35,6 +36,7 @@ const ROUTES = {
   '/timer-pomodoro': TimerPage,
   '/jogo-memoria': MemoryGamePage,
   '/roleta-sorteador': RandomPickerPage,
+  '/calculadora-imc': IMCCalculatorPage,
   '/privacidade': PrivacyPolicyPage,
   '/termos': TermsPage,
 };
