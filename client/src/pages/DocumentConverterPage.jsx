@@ -18,7 +18,7 @@ export function DocumentConverterPage({ onNavigate }) {
   const [success, setSuccess] = useState(false);
 
   const acceptTypes = mode === 'word-to-pdf' ? '.docx,.doc,.odt' : '.pdf';
-  const modeLabel = mode === 'word-to-pdf' ? 'Word → PDF' : 'PDF → Word';
+  const modeLabel = mode === 'word-to-pdf' ? t('wordToPdfMode') : t('pdfToWordMode');
 
   const handleFileSelect = (e) => {
     const selectedFile = e.target.files?.[0];
@@ -26,7 +26,7 @@ export function DocumentConverterPage({ onNavigate }) {
 
     const validSize = selectedFile.size <= 50 * 1024 * 1024; // 50MB
     if (!validSize) {
-      setError('Arquivo muito grande. Máximo: 50MB');
+      setError(t('fileTooLarge'));
       setFile(null);
       return;
     }
@@ -38,7 +38,7 @@ export function DocumentConverterPage({ onNavigate }) {
 
   const handleConvert = async () => {
     if (!file) {
-      setError('Selecione um arquivo para converter.');
+      setError(t('selectFileToConvert'));
       return;
     }
 
@@ -60,10 +60,10 @@ export function DocumentConverterPage({ onNavigate }) {
         setFile(null);
         setError(null);
       } else {
-        setError(`Erro: ${result.error}`);
+        setError(`${t('errorPrefix')} ${result.error}`);
       }
     } catch (err) {
-      setError(`Erro ao converter: ${err.message}`);
+      setError(`${t('convertError')} ${err.message}`);
     } finally {
       setConverting(false);
     }
@@ -105,7 +105,7 @@ export function DocumentConverterPage({ onNavigate }) {
 
         {success && (
           <div className="alert alert--success" role="alert">
-            <span>✓ Arquivo convertido e baixado com sucesso!</span>
+            <span>{t('fileConvertedSuccess')}</span>
           </div>
         )}
 
@@ -149,12 +149,12 @@ export function DocumentConverterPage({ onNavigate }) {
                 />
               </svg>
               <h3 className="doc-upload__title">
-                {file ? file.name : `Arraste um arquivo ${modeLabel.split(' ')[0]}`}
+                {file ? file.name : `${t('dragFile')} ${modeLabel.split(' ')[0]}`}
               </h3>
               <p className="doc-upload__hint">
                 {file
                   ? `${formatFileSize(file.size)} • ${mode === 'word-to-pdf' ? '.docx, .doc, .odt' : '.pdf'}`
-                  : 'Máximo 50MB'}
+                  : t('maxFileSize')}
               </p>
               <label className="doc-upload__input-wrapper">
                 <input
@@ -165,7 +165,7 @@ export function DocumentConverterPage({ onNavigate }) {
                   className="doc-upload__input"
                 />
                 <span className="search__btn">
-                  {file ? 'Trocar arquivo' : 'Selecionar arquivo'}
+                  {file ? t('changeFile') : t('selectFile')}
                 </span>
               </label>
             </div>
@@ -179,7 +179,7 @@ export function DocumentConverterPage({ onNavigate }) {
               onClick={handleConvert}
               disabled={!file || converting}
             >
-              {converting ? t('converting') : `${t('convertButton')} para ${mode === 'word-to-pdf' ? 'PDF' : 'Word'}`}
+              {converting ? t('converting') : `${t('convertTo')} ${mode === 'word-to-pdf' ? t('pdf') : t('word')}`}
             </button>
             {file && (
               <button
@@ -206,10 +206,10 @@ export function DocumentConverterPage({ onNavigate }) {
                 <strong>{t('documentConverterPrivacy')}</strong> {t('documentConverterPrivacyText')}
               </li>
               <li>
-                <strong>{t('maxSize')}</strong> 50MB por arquivo.
+                <strong>{t('maxSize')}</strong> {t('maxFileSizeValue')}
               </li>
               <li>
-                <strong>{t('compatibility')}</strong> Funciona com .docx, .doc, .odt e .pdf.
+                <strong>{t('compatibility')}</strong> {t('compatibilityValue')}
               </li>
             </ul>
           </div>
