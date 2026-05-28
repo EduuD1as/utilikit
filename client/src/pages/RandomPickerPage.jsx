@@ -96,7 +96,11 @@ export default function RandomPickerPage({ onNavigate }) {
                     style={{
                       transform: `rotate(${angle}deg) skewY(-${90 - 360 / items.length}deg)`,
                       backgroundColor: color,
-                      transformOrigin: 'center',\n                      width: '50%',\n                      height: '50%',\n                      top: '0',\n                      left: '50%',
+                      transformOrigin: 'center',
+                      width: '50%',
+                      height: '50%',
+                      top: '0',
+                      left: '50%',
                     }}
                   >
                     <span
