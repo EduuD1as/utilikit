@@ -89,6 +89,7 @@ export default function MemoryGamePage({ onNavigate }) {
               type="button"
               className="hero__back"
               onClick={() => onNavigate('/')}
+              aria-label={t('backToTools')}
             >
               ← {t('backToTools')}
             </button>
@@ -100,7 +101,7 @@ export default function MemoryGamePage({ onNavigate }) {
         </div>
       </header>
 
-      <main className="panel">
+      <main className="panel generator-panel">
         <div className="memory-game">
           <div className="memory-game__stats">
             <div className="memory-game__stat">
@@ -111,7 +112,7 @@ export default function MemoryGamePage({ onNavigate }) {
               <span className="memory-game__stat-label">{t('bestScore')}</span>
               <span className="memory-game__stat-value">{bestScore || '-'}</span>
             </div>
-            <button className="btn-ghost" onClick={handleRestart}>
+            <button className="btn-outline btn-outline--danger" onClick={handleRestart} aria-label={t('restart')}>
               {t('restart')}
             </button>
           </div>
@@ -124,6 +125,7 @@ export default function MemoryGamePage({ onNavigate }) {
                   } ${matched.includes(card.id) ? 'memory-card--matched' : ''} ${removed.includes(card.id) ? 'memory-card--removed' : ''}`}
                 onClick={() => handleCardClick(card.id)}
                 disabled={matched.includes(card.id) || gameOver || removed.includes(card.id)}
+                aria-label={`Card ${card.id}`}
               >
                 <div className="memory-card__inner">
                   <div className="memory-card__front">?</div>
@@ -138,7 +140,12 @@ export default function MemoryGamePage({ onNavigate }) {
               <div className="memory-game__result">
                 <h2>{t('gameOver')}</h2>
                 <p>{t('gameComplete').replace('{{moves}}', moves)}</p>
-                <button className="search__btn" onClick={handleRestart}>
+                <button className="btn-primary" onClick={handleRestart} aria-label={t('playAgain')}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="23 4 23 10 17 10" />
+                    <polyline points="1 20 1 14 7 14" />
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                  </svg>
                   {t('playAgain')}
                 </button>
               </div>

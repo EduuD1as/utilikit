@@ -66,6 +66,7 @@ export default function IMCCalculatorPage({ onNavigate }) {
               type="button"
               className="hero__back"
               onClick={() => onNavigate('/')}
+              aria-label={t('backToTools')}
             >
               ← {t('backToTools')}
             </button>
@@ -77,7 +78,7 @@ export default function IMCCalculatorPage({ onNavigate }) {
         </div>
       </header>
 
-      <main className="panel">
+      <main className="panel generator-panel">
         <div className="bmi-calculator">
           <div className="bmi-calculator__input-group">
             <div className="bmi-calculator__input-wrapper">
@@ -89,6 +90,7 @@ export default function IMCCalculatorPage({ onNavigate }) {
                 placeholder={t('weightPlaceholder')}
                 value={weight}
                 onChange={(e) => setWeight(e.target.value)}
+                aria-label={t('weight')}
               />
               <span className="bmi-calculator__unit">kg</span>
             </div>
@@ -102,16 +104,22 @@ export default function IMCCalculatorPage({ onNavigate }) {
                 placeholder={t('heightPlaceholder')}
                 value={height}
                 onChange={(e) => setHeight(e.target.value)}
+                aria-label={t('height')}
               />
               <span className="bmi-calculator__unit">cm</span>
             </div>
           </div>
 
           <div className="bmi-calculator__buttons">
-            <button className="search__btn" onClick={calculateBMI} disabled={!weight || !height}>
+            <button className="btn-primary" onClick={calculateBMI} disabled={!weight || !height} aria-label={t('calculate')}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="23 4 23 10 17 10" />
+                <polyline points="1 20 1 14 7 14" />
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+              </svg>
               {t('calculate')}
             </button>
-            <button className="btn-ghost" onClick={clearForm}>
+            <button className="btn-outline btn-outline--danger" onClick={clearForm} aria-label={t('clear')}>
               {t('clear')}
             </button>
           </div>

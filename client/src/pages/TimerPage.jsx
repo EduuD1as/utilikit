@@ -157,6 +157,7 @@ export function TimerPage({ onNavigate }) {
               type="button"
               className="hero__back"
               onClick={() => onNavigate('/')}
+              aria-label={t('backToTools')}
             >
               ← {t('backToTools')}
             </button>
@@ -168,7 +169,7 @@ export function TimerPage({ onNavigate }) {
         </div>
       </header>
 
-      <main className="panel fx-panel">
+      <main className="panel generator-panel">
         <div className="fx-converter">
           {/* Seletor de modo */}
           <div className="timer-modes">
@@ -182,6 +183,7 @@ export function TimerPage({ onNavigate }) {
                 style={{
                   '--mode-color': config.color,
                 }}
+                aria-label={config.label}
               >
                 {config.label}
               </button>
@@ -200,6 +202,7 @@ export function TimerPage({ onNavigate }) {
                 min="1"
                 max="180"
                 disabled={isRunning}
+                aria-label={t('timerMinutesLabel')}
               />
             </div>
           )}
@@ -234,9 +237,10 @@ export function TimerPage({ onNavigate }) {
             {!isRunning ? (
               <button
                 type="button"
-                className="timer-btn timer-btn--primary"
+                className="btn-primary timer-btn--primary"
                 onClick={start}
                 disabled={timeLeft <= 0}
+                aria-label={timeLeft === totalSeconds() ? t('timerStart') : t('timerContinue')}
               >
                 <svg viewBox="0 0 24 24" width="24" height="24">
                   <path fill="currentColor" d="M8 5v14l11-7z" />
@@ -246,8 +250,9 @@ export function TimerPage({ onNavigate }) {
             ) : (
               <button
                 type="button"
-                className="timer-btn timer-btn--pause"
+                className="btn-outline timer-btn--pause"
                 onClick={pause}
+                aria-label={t('timerPause')}
               >
                 <svg viewBox="0 0 24 24" width="24" height="24">
                   <path fill="currentColor" d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
@@ -257,8 +262,9 @@ export function TimerPage({ onNavigate }) {
             )}
             <button
               type="button"
-              className="timer-btn timer-btn--secondary"
+              className="btn-outline btn-outline--danger timer-btn--secondary"
               onClick={reset}
+              aria-label={t('timerReset')}
             >
               <svg viewBox="0 0 24 24" width="20" height="20">
                 <path fill="currentColor" d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />

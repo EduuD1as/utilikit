@@ -135,7 +135,7 @@ export function SimpleCalculatorPage({ onNavigate }) {
   }, [display, previousValue, operation, newNumber]);
 
   return (
-    <div className="app">
+    <div className="app app--calculator">
       <header className="hero">
         <div className="hero__brand">
           <Logo size={52} className="hero__logo" onNavigate={onNavigate} />
@@ -144,6 +144,7 @@ export function SimpleCalculatorPage({ onNavigate }) {
               type="button"
               className="hero__back"
               onClick={() => onNavigate('/')}
+              aria-label={t('backToTools')}
             >
               ← {t('backToTools')}
             </button>
@@ -155,35 +156,35 @@ export function SimpleCalculatorPage({ onNavigate }) {
         </div>
       </header>
 
-      <main className="panel fx-panel">
+      <main className="panel generator-panel">
         <div className="calculator-wrapper">
           <div className="calculator">
             <div className="calc-display">{display}</div>
 
             <div className="calc-buttons">
-              <button className="calc-btn calc-btn--func" onClick={handleClear}>AC</button>
-              <button className="calc-btn calc-btn--func" onClick={handleBackspace}>← Del</button>
-              <button className="calc-btn calc-btn--op" onClick={() => handleOperation('%')}>%</button>
-              <button className="calc-btn calc-btn--op" onClick={() => handleOperation('/')}>÷</button>
+              <button className="calc-btn calc-btn--func" onClick={handleClear} aria-label="Clear all">AC</button>
+              <button className="calc-btn calc-btn--func" onClick={handleBackspace} aria-label="Delete last digit">← Del</button>
+              <button className="calc-btn calc-btn--op" onClick={() => handleOperation('%')} aria-label="Percent">%</button>
+              <button className="calc-btn calc-btn--op" onClick={() => handleOperation('/')} aria-label="Divide">÷</button>
 
-              <button className="calc-btn" onClick={() => handleNumber(7)}>7</button>
-              <button className="calc-btn" onClick={() => handleNumber(8)}>8</button>
-              <button className="calc-btn" onClick={() => handleNumber(9)}>9</button>
-              <button className="calc-btn calc-btn--op" onClick={() => handleOperation('*')}>×</button>
+              <button className="calc-btn" onClick={() => handleNumber(7)} aria-label="7">7</button>
+              <button className="calc-btn" onClick={() => handleNumber(8)} aria-label="8">8</button>
+              <button className="calc-btn" onClick={() => handleNumber(9)} aria-label="9">9</button>
+              <button className="calc-btn calc-btn--op" onClick={() => handleOperation('*')} aria-label="Multiply">×</button>
 
-              <button className="calc-btn" onClick={() => handleNumber(4)}>4</button>
-              <button className="calc-btn" onClick={() => handleNumber(5)}>5</button>
-              <button className="calc-btn" onClick={() => handleNumber(6)}>6</button>
-              <button className="calc-btn calc-btn--op" onClick={() => handleOperation('-')}>−</button>
+              <button className="calc-btn" onClick={() => handleNumber(4)} aria-label="4">4</button>
+              <button className="calc-btn" onClick={() => handleNumber(5)} aria-label="5">5</button>
+              <button className="calc-btn" onClick={() => handleNumber(6)} aria-label="6">6</button>
+              <button className="calc-btn calc-btn--op" onClick={() => handleOperation('-')} aria-label="Subtract">−</button>
 
-              <button className="calc-btn" onClick={() => handleNumber(1)}>1</button>
-              <button className="calc-btn" onClick={() => handleNumber(2)}>2</button>
-              <button className="calc-btn" onClick={() => handleNumber(3)}>3</button>
-              <button className="calc-btn calc-btn--op" onClick={() => handleOperation('+')}>+</button>
+              <button className="calc-btn" onClick={() => handleNumber(1)} aria-label="1">1</button>
+              <button className="calc-btn" onClick={() => handleNumber(2)} aria-label="2">2</button>
+              <button className="calc-btn" onClick={() => handleNumber(3)} aria-label="3">3</button>
+              <button className="calc-btn calc-btn--op" onClick={() => handleOperation('+')} aria-label="Add">+</button>
 
-              <button className="calc-btn calc-btn--zero" onClick={() => handleNumber(0)}>0</button>
-              <button className="calc-btn" onClick={handleDecimal}>,</button>
-              <button className="calc-btn calc-btn--equals" onClick={handleEquals}>=</button>
+              <button className="calc-btn calc-btn--zero" onClick={() => handleNumber(0)} aria-label="0">0</button>
+              <button className="calc-btn" onClick={handleDecimal} aria-label="Decimal point">,</button>
+              <button className="calc-btn calc-btn--equals" onClick={handleEquals} aria-label="Equals">=</button>
             </div>
           </div>
 
@@ -191,7 +192,7 @@ export function SimpleCalculatorPage({ onNavigate }) {
             <div className="calc-history">
               <div className="calc-history__header">
                 <h3>{t('history')}</h3>
-                <button className="btn-ghost calc-history__clear" onClick={handleClearHistory}>{t('clearButton')}</button>
+                <button className="btn-outline btn-outline--danger calc-history__clear" onClick={handleClearHistory} aria-label={t('clearButton')}>{t('clearButton')}</button>
               </div>
               <div className="calc-history__list">
                 {history.map((entry, idx) => (

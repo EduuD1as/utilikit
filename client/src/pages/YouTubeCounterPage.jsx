@@ -33,6 +33,7 @@ export function YouTubeCounterPage({ onNavigate }) {
               type="button"
               className="hero__back"
               onClick={() => onNavigate('/')}
+              aria-label={t('backToTools')}
             >
               ← {t('backToTools')}
             </button>
@@ -45,7 +46,7 @@ export function YouTubeCounterPage({ onNavigate }) {
         <StatusBadge status={status} />
       </header>
 
-      <main className="panel">
+      <main className="panel generator-panel">
         <SearchForm
           onSearch={searchChannel}
           loading={loading}
@@ -54,6 +55,11 @@ export function YouTubeCounterPage({ onNavigate }) {
 
         {error && (
           <div className="alert alert--error" role="alert">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '18px', height: '18px', marginRight: '0.5rem' }}>
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
             {error.split('\n').map((line, i) => (
               <div key={i} style={{ marginBottom: line ? '0.5rem' : 0 }}>
                 {line}
@@ -79,8 +85,9 @@ export function YouTubeCounterPage({ onNavigate }) {
               )}
               <button
                 type="button"
-                className="btn-ghost"
+                className="btn-outline btn-outline--danger"
                 onClick={stopMonitoring}
+                aria-label={t('youtubeMonitorAnother')}
               >
                 {t('youtubeMonitorAnother')}
               </button>

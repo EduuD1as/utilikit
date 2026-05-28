@@ -90,7 +90,7 @@ export function UnitConverterPage({ onNavigate }) {
   };
 
   return (
-    <div className="app">
+    <div className="app app--unit">
       <header className="hero">
         <div className="hero__brand">
           <Logo size={52} className="hero__logo" onNavigate={onNavigate} />
@@ -99,6 +99,7 @@ export function UnitConverterPage({ onNavigate }) {
               type="button"
               className="hero__back"
               onClick={() => onNavigate('/')}
+              aria-label={t('backToTools')}
             >
               ← {t('backToTools')}
             </button>
@@ -110,7 +111,7 @@ export function UnitConverterPage({ onNavigate }) {
         </div>
       </header>
 
-      <main className="panel fx-panel">
+      <main className="panel generator-panel">
         <div className="converter-container">
           <div className="converter-categories">
             {Object.entries(conversions).map(([key, data]) => (
@@ -122,6 +123,7 @@ export function UnitConverterPage({ onNavigate }) {
                   setInputUnit(Object.keys(data.units)[0]);
                   setOutputUnit(Object.keys(data.units)[1] || Object.keys(data.units)[0]);
                 }}
+                aria-label={data.name}
               >
                 {data.name}
               </button>
@@ -137,38 +139,53 @@ export function UnitConverterPage({ onNavigate }) {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder={t('placeholderZero')}
+                aria-label={t('unitFrom')}
               />
-              <select
-                className="converter-select"
-                value={inputUnit}
-                onChange={(e) => setInputUnit(e.target.value)}
-              >
-                {Object.entries(conversions[category].units).map(([key, unit]) => (
-                  <option key={key} value={key}>
-                    {unit.name}
-                  </option>
-                ))}
-              </select>
+              <div className="custom-select-wrapper">
+                <select
+                  className="converter-select"
+                  value={inputUnit}
+                  onChange={(e) => setInputUnit(e.target.value)}
+                  aria-label={t('unitFrom')}
+                >
+                  {Object.entries(conversions[category].units).map(([key, unit]) => (
+                    <option key={key} value={key}>
+                      {unit.name}
+                    </option>
+                  ))}
+                </select>
+                <svg className="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
             </div>
 
-            <button className="converter-swap" onClick={handleSwap} title={t('unitSwap')}>
-              ⇄
+            <button className="converter-swap" onClick={handleSwap} title={t('unitSwap')} aria-label={t('unitSwap')}>
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M7 16V4M7 4 3 8m4-4 4 4M17 8v12m0 0 4-4m-4 4-4-4" />
+              </svg>
             </button>
 
             <div className="converter-side">
               <label className="converter-label">{t('unitTo')}</label>
               <div className="converter-output">{output}</div>
-              <select
-                className="converter-select"
-                value={outputUnit}
-                onChange={(e) => setOutputUnit(e.target.value)}
-              >
-                {Object.entries(conversions[category].units).map(([key, unit]) => (
-                  <option key={key} value={key}>
-                    {unit.name}
-                  </option>
-                ))}
-              </select>
+              <div className="custom-select-wrapper">
+                <select
+                  className="converter-select"
+                  value={outputUnit}
+                  onChange={(e) => setOutputUnit(e.target.value)}
+                  aria-label={t('unitTo')}
+                >
+                  {Object.entries(conversions[category].units).map(([key, unit]) => (
+                    <option key={key} value={key}>
+                      {unit.name}
+                    </option>
+                  ))}
+                </select>
+                <svg className="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
             </div>
           </div>
         </div>

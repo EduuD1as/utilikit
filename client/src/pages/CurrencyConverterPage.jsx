@@ -112,6 +112,7 @@ export function CurrencyConverterPage({ onNavigate }) {
               type="button"
               className="hero__back"
               onClick={() => onNavigate('/')}
+              aria-label={t('backToTools')}
             >
               ← {t('backToTools')}
             </button>
@@ -123,14 +124,20 @@ export function CurrencyConverterPage({ onNavigate }) {
         </div>
       </header>
 
-      <main className="panel fx-panel">
+      <main className="panel generator-panel">
         {error && (
           <div className="alert alert--error" role="alert">
-            <span>{error}</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '18px', height: '18px', marginRight: '0.5rem' }}>
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            {error}
             <button
               type="button"
-              className="fx-panel__retry"
+              className="btn-outline"
               onClick={() => loadRates(from, { force: true })}
+              aria-label={t('retryButton')}
             >
               {t('retryButton')}
             </button>
@@ -148,24 +155,31 @@ export function CurrencyConverterPage({ onNavigate }) {
               onChange={(e) => setAmountIn(e.target.value)}
               placeholder={t('placeholderCurrency')}
               disabled={loading}
+              aria-label={t('value')}
             />
           </label>
 
           <div className="fx-row">
             <label className="fx-field fx-field--grow">
               <span className="fx-field__label">{t('from')}</span>
-              <select
-                className="fx-field__select"
-                value={from}
-                onChange={(e) => setFrom(e.target.value)}
-                disabled={loading}
-              >
-                {sortedCodes.map((code) => (
-                  <option key={`from-${code}`} value={code}>
-                    {getCurrencyLabel(code)}
-                  </option>
-                ))}
-              </select>
+              <div className="custom-select-wrapper">
+                <select
+                  className="fx-field__select"
+                  value={from}
+                  onChange={(e) => setFrom(e.target.value)}
+                  disabled={loading}
+                  aria-label={t('from')}
+                >
+                  {sortedCodes.map((code) => (
+                    <option key={`from-${code}`} value={code}>
+                      {getCurrencyLabel(code)}
+                    </option>
+                  ))}
+                </select>
+                <svg className="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
             </label>
 
             <button
@@ -189,18 +203,24 @@ export function CurrencyConverterPage({ onNavigate }) {
 
             <label className="fx-field fx-field--grow">
               <span className="fx-field__label">{t('to')}</span>
-              <select
-                className="fx-field__select"
-                value={to}
-                onChange={(e) => setTo(e.target.value)}
-                disabled={loading}
-              >
-                {sortedCodes.map((code) => (
-                  <option key={`to-${code}`} value={code}>
-                    {getCurrencyLabel(code)}
-                  </option>
-                ))}
-              </select>
+              <div className="custom-select-wrapper">
+                <select
+                  className="fx-field__select"
+                  value={to}
+                  onChange={(e) => setTo(e.target.value)}
+                  disabled={loading}
+                  aria-label={t('to')}
+                >
+                  {sortedCodes.map((code) => (
+                    <option key={`to-${code}`} value={code}>
+                      {getCurrencyLabel(code)}
+                    </option>
+                  ))}
+                </select>
+                <svg className="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
             </label>
           </div>
 
@@ -230,11 +250,26 @@ export function CurrencyConverterPage({ onNavigate }) {
             )}
             <button
               type="button"
-              className="btn-ghost fx-meta__refresh"
+              className="btn-outline fx-meta__refresh"
               onClick={() => loadRates(from, { force: true })}
               disabled={loading || refreshing}
+              aria-label={t('currencyUpdateRate')}
             >
-              {refreshing ? t('currencyUpdating') : t('currencyUpdateRate')}
+              {refreshing ? (
+                <>
+                  <span className="spinner"></span>
+                  {t('currencyUpdating')}
+                </>
+              ) : (
+                <>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="23 4 23 10 17 10" />
+                    <polyline points="1 20 1 14 7 14" />
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                  </svg>
+                  {t('currencyUpdateRate')}
+                </>
+              )}
             </button>
           </div>
         </div>

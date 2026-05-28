@@ -85,6 +85,7 @@ export function DocumentConverterPage({ onNavigate }) {
               type="button"
               className="hero__back"
               onClick={() => onNavigate('/')}
+              aria-label={t('backToTools')}
             >
               ← {t('backToTools')}
             </button>
@@ -96,16 +97,24 @@ export function DocumentConverterPage({ onNavigate }) {
         </div>
       </header>
 
-      <main className="panel fx-panel">
+      <main className="panel generator-panel">
         {error && (
           <div className="alert alert--error" role="alert">
-            <span>{error}</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '18px', height: '18px', marginRight: '0.5rem' }}>
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            {error}
           </div>
         )}
 
         {success && (
           <div className="alert alert--success" role="alert">
-            <span>{t('fileConvertedSuccess')}</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '18px', height: '18px', marginRight: '0.5rem' }}>
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            {t('fileConvertedSuccess')}
           </div>
         )}
 
@@ -119,6 +128,7 @@ export function DocumentConverterPage({ onNavigate }) {
                 setMode('word-to-pdf');
                 handleClear();
               }}
+              aria-label={t('wordToPdf')}
             >
               <span className="doc-mode-icon">📄</span>
               <span>{t('wordToPdf')}</span>
@@ -130,6 +140,7 @@ export function DocumentConverterPage({ onNavigate }) {
                 setMode('pdf-to-word');
                 handleClear();
               }}
+              aria-label={t('pdfToWord')}
             >
               <span className="doc-mode-icon">📋</span>
               <span>{t('pdfToWord')}</span>
@@ -164,7 +175,7 @@ export function DocumentConverterPage({ onNavigate }) {
                   disabled={converting}
                   className="doc-upload__input"
                 />
-                <span className="search__btn">
+                <span className="btn-primary">
                   {file ? t('changeFile') : t('selectFile')}
                 </span>
               </label>
@@ -175,18 +186,34 @@ export function DocumentConverterPage({ onNavigate }) {
           <div className="doc-actions">
             <button
               type="button"
-              className="search__btn"
+              className="btn-primary"
               onClick={handleConvert}
               disabled={!file || converting}
+              aria-label={t('convertTo')}
             >
-              {converting ? t('converting') : `${t('convertTo')} ${mode === 'word-to-pdf' ? t('pdf') : t('word')}`}
+              {converting ? (
+                <>
+                  <span className="spinner"></span>
+                  {t('converting')}
+                </>
+              ) : (
+                <>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="23 4 23 10 17 10" />
+                    <polyline points="1 20 1 14 7 14" />
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                  </svg>
+                  {t('convertTo')} {mode === 'word-to-pdf' ? t('pdf') : t('word')}
+                </>
+              )}
             </button>
             {file && (
               <button
                 type="button"
-                className="btn-ghost"
+                className="btn-outline btn-outline--danger"
                 onClick={handleClear}
                 disabled={converting}
+                aria-label={t('clearButton')}
               >
                 {t('clearButton')}
               </button>

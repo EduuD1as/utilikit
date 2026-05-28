@@ -37,7 +37,7 @@ export function CharacterCounterPage({ onNavigate }) {
   };
 
   return (
-    <div className="app">
+    <div className="app app--wordcount">
       <header className="hero">
         <div className="hero__brand">
           <Logo size={52} className="hero__logo" onNavigate={onNavigate} />
@@ -46,6 +46,7 @@ export function CharacterCounterPage({ onNavigate }) {
               type="button"
               className="hero__back"
               onClick={() => onNavigate("/")}
+              aria-label={t('backToTools')}
             >
               ← {t('backToTools')}
             </button>
@@ -57,21 +58,23 @@ export function CharacterCounterPage({ onNavigate }) {
         </div>
       </header>
 
-      <main className="panel fx-panel">
+      <main className="panel generator-panel">
         <div className="fx-converter">
           <div className="sql-toolbar">
             <div className="sql-toolbar__actions">
               <button
                 type="button"
-                className="btn-ghost sql-toolbar__btn"
+                className="btn-outline"
                 onClick={handleLoadExample}
+                aria-label={t('exampleButton')}
               >
                 {t('exampleButton')}
               </button>
               <button
                 type="button"
-                className="btn-ghost sql-toolbar__btn"
+                className="btn-outline btn-outline--danger"
                 onClick={handleClear}
+                aria-label={t('clearButton')}
               >
                 {t('clearButton')}
               </button>
@@ -90,6 +93,7 @@ export function CharacterCounterPage({ onNavigate }) {
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 placeholder={t('characterCounterPlaceholder')}
+                aria-label={t('typeOrPasteText')}
               />
             </div>
           </div>
