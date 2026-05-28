@@ -19,13 +19,15 @@ export function HomePage({ onNavigate }) {
           : category === 'all'
             ? tool.available
             : tool.available && tool.category === category;
+      const title = t(tool.titleKey) || '';
+      const description = t(tool.descKey) || '';
       const matchesQuery =
         !q ||
-        tool.title.toLowerCase().includes(q) ||
-        tool.description.toLowerCase().includes(q);
+        title.toLowerCase().includes(q) ||
+        description.toLowerCase().includes(q);
       return matchesAvailability && matchesQuery;
     });
-  }, [query, category]);
+  }, [query, category, t]);
 
   const availableCount = TOOLS.filter((t) => t.available).length;
   const soonCount = TOOLS.length - availableCount;

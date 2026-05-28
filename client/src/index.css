@@ -30,17 +30,17 @@
 
 /* Tema claro */
 [data-theme="light"] {
-  --bg: #d4d2d9;
-  --surface: #c8c5d0;
-  --surface-elevated: #e0dde8;
-  --border: #b8b4c0;
-  --text: #1d1d3a;
-  --text-muted: #5b5878;
+  --bg: #f8f9fa;
+  --surface: #ffffff;
+  --surface-elevated: #f1f3f5;
+  --border: #e9ecef;
+  --text: #212529;
+  --text-muted: #6c757d;
   --accent: #ff0033;
   --accent-hover: #e6002e;
   --accent-soft: rgba(255, 0, 51, 0.08);
   --success: #22c55e;
-  --shadow: 0 12px 40px rgba(99, 102, 241, 0.1);
+  --shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
 }
 
 *,
@@ -294,6 +294,7 @@ body:has(.app--timer) {
   justify-content: center;
   gap: 0.5rem;
   min-height: 52px;
+  min-width: 120px;
   padding: 1rem 1.5rem;
   font-size: 1rem;
   font-weight: 600;
