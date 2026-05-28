@@ -793,6 +793,21 @@ body:has(.home) {
   color: var(--accent);
 }
 
+.memory-card--matched {
+  animation: fadeOut 0.3s ease forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
 .memory-game__overlay {
   position: fixed;
   inset: 0;

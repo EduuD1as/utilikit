@@ -10,6 +10,7 @@ export default function MemoryGamePage({ onNavigate }) {
   const [cards, setCards] = useState([]);
   const [flipped, setFlipped] = useState([]);
   const [matched, setMatched] = useState([]);
+  const [removed, setRemoved] = useState([]);
   const [moves, setMoves] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [bestScore, setBestScore] = useState(null);
@@ -32,6 +33,7 @@ export default function MemoryGamePage({ onNavigate }) {
     setCards(shuffledCards);
     setFlipped([]);
     setMatched([]);
+    setRemoved([]);
     setMoves(0);
     setGameOver(false);
   };
@@ -51,6 +53,11 @@ export default function MemoryGamePage({ onNavigate }) {
       if (cards[first].emoji === cards[second].emoji) {
         setMatched([...matched, first, second]);
         setFlipped([]);
+
+        // Remove as cartas após um pequeno delay para animação
+        setTimeout(() => {
+          setRemoved([...removed, first, second]);
+        }, 300);
 
         if (matched.length + 2 === cards.length) {
           setTimeout(() => {
@@ -101,18 +108,20 @@ export default function MemoryGamePage({ onNavigate }) {
 
           <div className="memory-game__grid">
             {cards.map((card) => (
-              <button
-                key={card.id}
-                className={`memory-card ${flipped.includes(card.id) || matched.includes(card.id) ? 'memory-card--flipped' : ''
-                  }`}
-                onClick={() => handleCardClick(card.id)}
-                disabled={matched.includes(card.id) || gameOver}
-              >
-                <div className="memory-card__inner">
-                  <div className="memory-card__front">?</div>
-                  <div className="memory-card__back">{card.emoji}</div>
-                </div>
-              </button>
+              removed.includes(card.id) ? null : (
+                <button
+                  key={card.id}
+                  className={`memory-card ${flipped.includes(card.id) || matched.includes(card.id) ? 'memory-card--flipped' : ''
+                    } ${matched.includes(card.id) ? 'memory-card--matched' : ''}`}
+                  onClick={() => handleCardClick(card.id)}
+                  disabled={matched.includes(card.id) || gameOver}
+                >
+                  <div className="memory-card__inner">
+                    <div className="memory-card__front">?</div>
+                    <div className="memory-card__back">{card.emoji}</div>
+                  </div>
+                </button>
+              )
             ))}
           </div>
 
