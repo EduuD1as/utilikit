@@ -797,6 +797,11 @@ body:has(.home) {
   animation: fadeOut 1.75s ease forwards;
 }
 
+.memory-card--removed {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 @keyframes fadeOut {
   from {
     opacity: 1;

@@ -108,20 +108,18 @@ export default function MemoryGamePage({ onNavigate }) {
 
           <div className="memory-game__grid">
             {cards.map((card) => (
-              removed.includes(card.id) ? null : (
-                <button
-                  key={card.id}
-                  className={`memory-card ${flipped.includes(card.id) || matched.includes(card.id) ? 'memory-card--flipped' : ''
-                    } ${matched.includes(card.id) ? 'memory-card--matched' : ''}`}
-                  onClick={() => handleCardClick(card.id)}
-                  disabled={matched.includes(card.id) || gameOver}
-                >
-                  <div className="memory-card__inner">
-                    <div className="memory-card__front">?</div>
-                    <div className="memory-card__back">{card.emoji}</div>
-                  </div>
-                </button>
-              )
+              <button
+                key={card.id}
+                className={`memory-card ${flipped.includes(card.id) || matched.includes(card.id) ? 'memory-card--flipped' : ''
+                  } ${matched.includes(card.id) ? 'memory-card--matched' : ''} ${removed.includes(card.id) ? 'memory-card--removed' : ''}`}
+                onClick={() => handleCardClick(card.id)}
+                disabled={matched.includes(card.id) || gameOver || removed.includes(card.id)}
+              >
+                <div className="memory-card__inner">
+                  <div className="memory-card__front">?</div>
+                  <div className="memory-card__back">{card.emoji}</div>
+                </div>
+              </button>
             ))}
           </div>
 
