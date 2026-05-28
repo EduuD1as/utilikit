@@ -3,6 +3,7 @@ import { CATEGORIES, TOOLS } from '../data/tools.js';
 import { SiteHeader } from '../components/SiteHeader.jsx';
 import { SiteFooter } from '../components/SiteFooter.jsx';
 import { ToolCard } from '../components/ToolCard.jsx';
+import { Logo } from '../components/Logo.jsx';
 import { useLanguage } from '../context/LanguageContext';
 
 export function HomePage({ onNavigate }) {
@@ -39,12 +40,7 @@ export function HomePage({ onNavigate }) {
         <div className="home-hero__content">
           <div className="home-hero__left">
             <div className="home-hero__logo">
-              <svg className="home-hero__logo-mark" viewBox="0 0 100 100" aria-hidden="true">
-                <rect x="10" y="10" width="80" height="80" rx="12" fill="currentColor" opacity="0.1" />
-                <path d="M30 35 L70 35 L70 65 L30 65 Z" fill="none" stroke="currentColor" strokeWidth="3" />
-                <path d="M40 45 L60 45" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-                <path d="M40 55 L55 55" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-              </svg>
+              <Logo size={200} />
             </div>
           </div>
           <div className="home-hero__right">
