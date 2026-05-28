@@ -3,7 +3,6 @@ import { CATEGORIES, TOOLS } from '../data/tools.js';
 import { SiteHeader } from '../components/SiteHeader.jsx';
 import { SiteFooter } from '../components/SiteFooter.jsx';
 import { ToolCard } from '../components/ToolCard.jsx';
-import { Logo } from '../components/Logo.jsx';
 import { useLanguage } from '../context/LanguageContext';
 
 export function HomePage({ onNavigate }) {
@@ -38,38 +37,31 @@ export function HomePage({ onNavigate }) {
       <header className="home-hero">
         <div className="home-hero__glow" aria-hidden="true" />
         <div className="home-hero__content">
-          <div className="home-hero__left">
-            <div className="home-hero__logo">
-              <Logo size={180} />
-            </div>
-          </div>
-          <div className="home-hero__right">
-            <p className="home-hero__eyebrow">{t('homeHeroEyebrow')}</p>
-            <h1 className="home-hero__title">
-              {t('homeHeroTitle')}
-              <span className="home-hero__title-accent">{t('homeHeroTitleAccent')}</span>
-            </h1>
-            <p className="home-hero__lead">{t('homeHeroLead')}</p>
+          <p className="home-hero__eyebrow">{t('homeHeroEyebrow')}</p>
+          <h1 className="home-hero__title">
+            {t('homeHeroTitle')}
+            <span className="home-hero__title-accent">{t('homeHeroTitleAccent')}</span>
+          </h1>
+          <p className="home-hero__lead">{t('homeHeroLead')}</p>
 
-            <div className="home-hero__search">
-              <svg className="home-hero__search-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  d="M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16Zm10 2-5-5"
-                />
-              </svg>
-              <input
-                type="search"
-                className="home-hero__search-input"
-                placeholder={t('homeHeroSearchPlaceholder')}
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                aria-label={t('homeHeroSearchLabel')}
+          <div className="home-hero__search">
+            <svg className="home-hero__search-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                d="M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16Zm10 2-5-5"
               />
-            </div>
+            </svg>
+            <input
+              type="search"
+              className="home-hero__search-input"
+              placeholder={t('homeHeroSearchPlaceholder')}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              aria-label={t('homeHeroSearchLabel')}
+            />
           </div>
         </div>
       </header>
