@@ -124,14 +124,14 @@ const SEO_DATA = {
   },
   '/gerador-id-hash': {
     pt: {
-      title: 'Gerador de ID e Hash — UtiliKit',
-      description: 'Gere UUIDs, strings aleatórias e hashes MD5, SHA-1, SHA-256. Ferramenta para desenvolvedores.',
-      keywords: 'gerador uuid, gerador hash, md5 generator, sha256 generator, random string',
+      title: 'Gerador de UUID e Hash — UtiliKit',
+      description: 'Gere UUIDs v4, strings aleatórias e hashes criptográficos (SHA-1, SHA-256, SHA-512, MD5) 100% local no navegador. Ferramenta premium para desenvolvedores com Web Crypto API.',
+      keywords: 'gerador uuid, gerador hash, uuid v4, sha256 generator, sha512 generator, sha1 generator, md5 generator, random string generator, gerador senha, web crypto api, ferramenta desenvolvedor',
     },
     en: {
-      title: 'ID and Hash Generator — UtiliKit',
-      description: 'Generate UUIDs, random strings and MD5, SHA-1, SHA-256 hashes. Tool for developers.',
-      keywords: 'uuid generator, hash generator, md5 generator, sha256 generator, random string',
+      title: 'UUID and Hash Generator — UtiliKit',
+      description: 'Generate UUID v4, random strings and cryptographic hashes (SHA-1, SHA-256, SHA-512, MD5) 100% locally in browser. Premium tool for developers with Web Crypto API.',
+      keywords: 'uuid generator, hash generator, uuid v4, sha256 generator, sha512 generator, sha1 generator, md5 generator, random string generator, password generator, web crypto api, developer tool',
     },
   },
   '/timer-pomodoro': {
