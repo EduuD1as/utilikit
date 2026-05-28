@@ -1,7 +1,6 @@
 import { Document, Packer, Paragraph, TextRun } from 'docx';
 import mammoth from 'mammoth';
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 import * as pdfjsLib from 'pdfjs-dist';
 
 // Configure PDF.js worker to use local worker
@@ -120,52 +119,23 @@ export async function wordToPdf(file) {
     // Wait for styles to be applied and images to load
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    // Render to canvas
-    const canvas = await html2canvas(container, {
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: '#ffffff',
-      scale: 2,
-      logging: false,
-      windowHeight: container.scrollHeight,
-      windowWidth: 210 * 37.8, // 210mm in pixels at 96dpi
-    });
-
-    if (!canvas || canvas.width === 0 || canvas.height === 0) {
-      throw new Error('Falha ao renderizar documento para canvas');
-    }
-
-    // Create PDF
-    const pageWidthMm = 210;
-    const pageHeightMm = 297;
-    const marginMm = 10;
-
+    // Create PDF using jsPDF with HTML
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
       format: 'a4',
     });
 
-    const imgData = canvas.toDataURL('image/png');
-    const imgWidthMm = pageWidthMm - 2 * marginMm;
-    const imgHeightMm = (canvas.height * imgWidthMm) / canvas.width;
-
-    let currentPageHeight = 0;
-
-    // Add first image
-    pdf.addImage(imgData, 'PNG', marginMm, marginMm, imgWidthMm, imgHeightMm);
-    currentPageHeight = imgHeightMm + 2 * marginMm;
-
-    // Add additional pages if needed
-    let position = marginMm;
-    const availableHeight = pageHeightMm - 2 * marginMm;
-
-    while (currentPageHeight > pageHeightMm) {
-      pdf.addPage();
-      position -= availableHeight;
-      pdf.addImage(imgData, 'PNG', marginMm, position, imgWidthMm, imgHeightMm);
-      currentPageHeight -= availableHeight;
-    }
+    // Use jsPDF's html method to render the HTML directly
+    await pdf.html(container, {
+      callback: async (pdf) => {
+        // PDF is ready
+      },
+      x: 10,
+      y: 10,
+      width: 190,
+      windowWidth: 210 * 3.78,
+    });
 
     const pdfBlob = pdf.output('blob');
 
