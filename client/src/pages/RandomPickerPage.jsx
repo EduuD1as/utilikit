@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
-import { SiteHeader } from '../components/SiteHeader';
+import { Logo } from '../components/Logo';
 import { SiteFooter } from '../components/SiteFooter';
 
 export default function RandomPickerPage({ onNavigate }) {
@@ -70,12 +70,22 @@ export default function RandomPickerPage({ onNavigate }) {
 
   return (
     <div className="app app--random-picker">
-      <SiteHeader onNavigate={onNavigate} variant="tool" />
-
       <header className="hero">
-        <div className="hero__content">
-          <h1>{t('randomPickerTitle')}</h1>
-          <p className="hero__subtitle">{t('randomPickerSubtitle')}</p>
+        <div className="hero__brand">
+          <Logo size={52} className="hero__logo" onNavigate={onNavigate} />
+          <div>
+            <button
+              type="button"
+              className="hero__back"
+              onClick={() => onNavigate('/')}
+            >
+              ← {t('backToTools')}
+            </button>
+            <h1>{t('randomPickerTitle')}</h1>
+            <p className="hero__subtitle">
+              {t('randomPickerSubtitle')}
+            </p>
+          </div>
         </div>
       </header>
 

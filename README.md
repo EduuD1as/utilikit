@@ -1,27 +1,33 @@
 # UtiliKit
 
-Hub de ferramentas online — calculadoras, conversores, geradores e contadores. Interface moderna em React com backend Node.js.
+Hub de ferramentas online — calculadoras, conversores, geradores e contadores. React + Node.js.
 
 ## Ferramentas
 
-| Ferramenta | Rota | Status |
-|------------|------|--------|
-| Página inicial | `/` | Disponível |
-| Contador de inscritos YouTube | `/contador-youtube` | Disponível |
-| Formatador de SQL | `/formatador-sql` | Disponível |
-| Conversor de moedas | `/conversor-moedas` | Disponível |
-| Demais utilidades | — | Em breve |
-
-## Pré-requisitos
-
-- **Node.js** 18+
-- **Git** (para versionamento)
+| Ferramenta | Rota |
+|------------|------|
+| Página inicial | `/` |
+| Contador de inscritos YouTube | `/contador-youtube` |
+| Formatador de SQL | `/formatador-sql` |
+| Formatador de JSON | `/formatador-json` |
+| Conversor de documentos | `/conversor-documentos` |
+| Conversor de moedas | `/conversor-moedas` |
+| Conversor de unidades | `/conversor-unidades` |
+| Contador de caracteres | `/contador-caracteres` |
+| Calculadora simples | `/calculadora` |
+| Calculadora de IMC | `/calculadora-imc` |
+| Gerador de QR Code | `/gerador-qr` |
+| Gerador de ID/Hash | `/gerador-id-hash` |
+| Timer / Pomodoro | `/timer-pomodoro` |
+| Jogo da Memória | `/jogo-memoria` |
+| Roleta de Sorteador | `/roleta-sorteador` |
+| Política de Privacidade | `/privacidade` |
+| Termos de Uso | `/termos` |
 
 ## Configuração
 
 ```bash
-cd c:\Users\edu-b\projects\utilikit
-
+cd utilikit
 npm run install:all
 npm run dev
 ```
@@ -37,41 +43,25 @@ npm run build
 npm run start
 ```
 
-Abra **http://localhost:3001** — o Express serve o React e a API.
+Acesse **http://localhost:3001**
 
-## Privacidade (LGPD)
+## Privacidade
 
-- Política de Privacidade: `/privacidade`
-- Termos de Uso: `/termos`
-- Banner de cookies com opções **Aceitar todos**, **Apenas essenciais** e **Personalizar**
-- Scripts de publicidade (AdSense) só carregam após consentimento — configure `VITE_ADSENSE_CLIENT` em `client/.env` quando aprovado
-
-Atualize o e-mail de contato em `client/src/data/legal.js`.
+- Banner de cookies com opções de consentimento
+- Scripts de publicidade só carregam após consentimento
+- Configure `VITE_ADSENSE_CLIENT` em `client/.env` quando aprovado
 
 ## Tecnologia
 
-- **YouTube**: Dados em tempo real via [SocialCounts API](https://socialcounts.org/) com resolução de handles/nomes por scraping
-- **Frontend**: React 18 + Vite + CSS moderno
-- **Backend**: Node.js + Express + SSE para atualizações em tempo real
-
-## Como usar o Contador de Inscritos
-
-O contador aceita qualquer um dos formatos abaixo:
-
-✅ **Nome do canal:** `MrBeast`  
-✅ **Handle com @:** `@MrBeast`  
-✅ **URL com handle:** `https://www.youtube.com/@MrBeast`  
-✅ **ID do canal:** `UCX6OQ9DkcsbYNE6H8uQQuVA`  
-✅ **URL com ID:** `https://www.youtube.com/channel/UCX6OQ9DkcsbYNE6H8uQQuVA`  
-
-Todos os formatos funcionam igualmente bem!
+- **Frontend**: React 18 + Vite + CSS
+- **Backend**: Node.js + Express + SSE
+- **YouTube**: Dados em tempo real via SocialCounts API
 
 ## Estrutura
 
 ```
 utilikit/
-├── client/     # React + Vite (home + ferramentas)
-├── server/     # Express + YouTube API + SSE
-├── package.json
-└── .env.example
+├── client/  # React + Vite
+├── server/  # Express + API
+└── package.json
 ```

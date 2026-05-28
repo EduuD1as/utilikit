@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
-import { SiteHeader } from '../components/SiteHeader';
+import { Logo } from '../components/Logo';
 import { SiteFooter } from '../components/SiteFooter';
 
 export default function IMCCalculatorPage({ onNavigate }) {
@@ -19,7 +19,7 @@ export default function IMCCalculatorPage({ onNavigate }) {
 
     const heightInMeters = heightNum / 100;
     const bmi = weightNum / (heightInMeters * heightInMeters);
-    
+
     let category = '';
     let color = '';
 
@@ -58,12 +58,22 @@ export default function IMCCalculatorPage({ onNavigate }) {
 
   return (
     <div className="app app--bmi-calculator">
-      <SiteHeader onNavigate={onNavigate} variant="tool" />
-
       <header className="hero">
-        <div className="hero__content">
-          <h1>{t('bmiTitle')}</h1>
-          <p className="hero__subtitle">{t('bmiSubtitle')}</p>
+        <div className="hero__brand">
+          <Logo size={52} className="hero__logo" onNavigate={onNavigate} />
+          <div>
+            <button
+              type="button"
+              className="hero__back"
+              onClick={() => onNavigate('/')}
+            >
+              ← {t('backToTools')}
+            </button>
+            <h1>{t('bmiTitle')}</h1>
+            <p className="hero__subtitle">
+              {t('bmiSubtitle')}
+            </p>
+          </div>
         </div>
       </header>
 
