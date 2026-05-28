@@ -37,16 +37,21 @@ export default function RandomPickerPage({ onNavigate }) {
     setIsSpinning(true);
     setWinner(null);
 
-    const randomIndex = Math.floor(Math.random() * items.length);
     const segmentAngle = 360 / items.length;
-    const targetAngle = 360 - (randomIndex * segmentAngle) - (segmentAngle / 2);
     const spins = 5 + Math.random() * 3; // 5-8 full spins
-    const totalRotation = rotation + (spins * 360) + targetAngle - (rotation % 360);
+    const randomAngle = Math.random() * 360;
+    const totalRotation = rotation + (spins * 360) + randomAngle;
 
     setRotation(totalRotation);
 
     setTimeout(() => {
-      setWinner(items[randomIndex]);
+      // Calcular qual segmento está sob o ponteiro (topo)
+      const finalAngle = totalRotation % 360;
+      // O ponteiro está no topo (0 graus), então precisamos calcular qual segmento está lá
+      // Como a roleta gira no sentido horário, o segmento sob o ponteiro é:
+      const pointerAngle = (360 - finalAngle) % 360;
+      const winningIndex = Math.floor(pointerAngle / segmentAngle);
+      setWinner(items[winningIndex]);
       setIsSpinning(false);
     }, 5000);
   };
@@ -83,36 +88,47 @@ export default function RandomPickerPage({ onNavigate }) {
               className="random-picker__wheel"
               style={{
                 transform: `rotate(${rotation}deg)`,
-                transition: isSpinning ? 'transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99)' : 'none'
+                transition: isSpinning ? 'transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99)' : 'none',
+                background: items.length > 0
+                  ? `conic-gradient(
+                      ${items.map((item, index) => {
+                    const angle = (index * 360) / items.length;
+                    const color = colors[index % colors.length];
+                    return `${color} ${angle}deg ${(angle + 360 / items.length)}deg`;
+                  }).join(', ')}
+                    )`
+                  : '#ccc',
               }}
             >
               {items.map((item, index) => {
                 const angle = (index * 360) / items.length;
-                const color = colors[index % colors.length];
+                const segmentAngle = 360 / items.length;
+                const textAngle = angle + segmentAngle / 2;
+                const radius = 35; // percentage from center (reduzido de 45 para 35)
+                const x = 50 + radius * Math.cos((textAngle - 90) * Math.PI / 180);
+                const y = 50 + radius * Math.sin((textAngle - 90) * Math.PI / 180);
+
                 return (
-                  <div
+                  <span
                     key={index}
-                    className="random-picker__segment"
+                    className="random-picker__segment-text"
                     style={{
-                      transform: `rotate(${angle}deg) skewY(-${90 - 360 / items.length}deg)`,
-                      backgroundColor: color,
-                      transformOrigin: 'center',
-                      width: '50%',
-                      height: '50%',
-                      top: '0',
-                      left: '50%',
+                      position: 'absolute',
+                      left: `${x}%`,
+                      top: `${y}%`,
+                      transform: 'translate(-50%, -50%)',
+                      fontSize: items.length > 8 ? '0.7rem' : '1rem',
+                      fontWeight: 700,
+                      color: '#fff',
+                      textShadow: '0 2px 4px rgba(0, 0, 0, 0.8), 0 0 8px rgba(0, 0, 0, 0.4)',
+                      whiteSpace: 'nowrap',
+                      textAlign: 'center',
+                      zIndex: 2,
+                      padding: '0.5rem',
                     }}
                   >
-                    <span
-                      className="random-picker__segment-text"
-                      style={{
-                        transform: `skewY(${90 - 360 / items.length}deg) rotate(${360 / items.length / 2}deg)`,
-                        fontSize: items.length > 8 ? '0.6rem' : '0.8rem',
-                      }}
-                    >
-                      {item.length > 15 ? item.substring(0, 15) + '...' : item}
-                    </span>
-                  </div>
+                    {item.length > 15 ? item.substring(0, 15) + '...' : item}
+                  </span>
                 );
               })}
             </div>
