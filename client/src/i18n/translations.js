@@ -108,6 +108,19 @@ export const translations = {
     // SQL Formatter
     sqlFormatterTitle: 'Formatador de SQL',
     sqlFormatterSubtitle: 'Indente, organize e minifique consultas SQL',
+    sqlEditorInput: 'SQL Original',
+    sqlEditorOutput: 'SQL Formatado',
+    sqlLines: 'Linhas',
+    sqlCharacters: 'Caracteres',
+    sqlDownload: 'Baixar .sql',
+    sqlKeyboardShortcut: 'Dica: Ctrl+Enter para formatar',
+    sqlSecurityNotice: 'Seu SQL é processado localmente no navegador. Nenhuma informação é enviada para servidores.',
+    sqlEmptyInput: 'Cole ou digite sua consulta SQL aqui...',
+    sqlEmptyOutput: 'O SQL formatado aparecerá aqui...',
+    sqlFormatting: 'Formatando...',
+    sqlSuccess: 'SQL formatado com sucesso!',
+    sqlValidationError: 'SQL inválido. Verifique a sintaxe.',
+    sqlEmptyError: 'Por favor, insira uma consulta SQL.',
 
     // JSON Formatter
     jsonFormatterTitle: 'Formatador de JSON',
@@ -568,6 +581,19 @@ export const translations = {
     // SQL Formatter
     sqlFormatterTitle: 'SQL Formatter',
     sqlFormatterSubtitle: 'Indent, organize and minify SQL queries',
+    sqlEditorInput: 'Original SQL',
+    sqlEditorOutput: 'Formatted SQL',
+    sqlLines: 'Lines',
+    sqlCharacters: 'Characters',
+    sqlDownload: 'Download .sql',
+    sqlKeyboardShortcut: 'Tip: Ctrl+Enter to format',
+    sqlSecurityNotice: 'Your SQL is processed locally in the browser. No information is sent to servers.',
+    sqlEmptyInput: 'Paste or type your SQL query here...',
+    sqlEmptyOutput: 'The formatted SQL will appear here...',
+    sqlFormatting: 'Formatting...',
+    sqlSuccess: 'SQL formatted successfully!',
+    sqlValidationError: 'Invalid SQL. Check the syntax.',
+    sqlEmptyError: 'Please enter a SQL query.',
 
     // JSON Formatter
     jsonFormatterTitle: 'JSON Formatter',
