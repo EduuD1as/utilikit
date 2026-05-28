@@ -20,7 +20,7 @@ Hub de ferramentas online — calculadoras, conversores, geradores e contadores.
 | Gerador de ID/Hash | `/gerador-id-hash` |
 | Timer / Pomodoro | `/timer-pomodoro` |
 | Jogo da Memória | `/jogo-memoria` |
-| Roleta de Sorteador | `/roleta-sorteador` |
+| Sorteador de Roleta | `/roleta-sorteador` |
 | Política de Privacidade | `/privacidade` |
 | Termos de Uso | `/termos` |
 
