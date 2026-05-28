@@ -40,7 +40,7 @@ export function HomePage({ onNavigate }) {
         <div className="home-hero__content">
           <div className="home-hero__left">
             <div className="home-hero__logo">
-              <Logo size={200} />
+              <Logo size={180} />
             </div>
           </div>
           <div className="home-hero__right">
