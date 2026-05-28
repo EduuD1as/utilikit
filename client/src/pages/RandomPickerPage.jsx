@@ -58,7 +58,7 @@ export default function RandomPickerPage({ onNavigate }) {
   };
 
   const colors = [
-    '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', 
+    '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4',
     '#FFEAA7', '#DDA0DD', '#98D8C8', '#F7DC6F',
     '#BB8FCE', '#85C1E9', '#F8B500', '#00CED1'
   ];
@@ -96,13 +96,14 @@ export default function RandomPickerPage({ onNavigate }) {
                     style={{
                       transform: `rotate(${angle}deg) skewY(-${90 - 360 / items.length}deg)`,
                       backgroundColor: color,
-                      transformOrigin: 'center'
+                      transformOrigin: 'center',\n                      width: '50%',\n                      height: '50%',\n                      top: '0',\n                      left: '50%',
                     }}
                   >
                     <span
                       className="random-picker__segment-text"
                       style={{
-                        transform: `skewY(${90 - 360 / items.length}deg) rotate(${360 / items.length / 2}deg)`
+                        transform: `skewY(${90 - 360 / items.length}deg) rotate(${360 / items.length / 2}deg)`,
+                        fontSize: items.length > 8 ? '0.6rem' : '0.8rem',
                       }}
                     >
                       {item.length > 15 ? item.substring(0, 15) + '...' : item}
@@ -116,6 +117,9 @@ export default function RandomPickerPage({ onNavigate }) {
           {winner && (
             <div className="random-picker__result">
               <div className="random-picker__result-content">
+                <button className="btn-ghost random-picker__close" onClick={() => setWinner(null)}>
+                  ✕
+                </button>
                 <h2>{t('winner')}</h2>
                 <p className="random-picker__winner-text">{winner}</p>
                 <button className="search__btn" onClick={spinWheel}>

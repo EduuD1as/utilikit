@@ -813,8 +813,8 @@ body:has(.home) {
 
 .random-picker__wheel-container {
   position: relative;
-  width: 400px;
-  height: 400px;
+  width: 600px;
+  height: 600px;
   max-width: 90vw;
   max-height: 90vw;
 }
@@ -888,6 +888,15 @@ body:has(.home) {
   text-align: center;
   max-width: 90%;
   animation: slideUp 0.3s ease;
+  position: relative;
+}
+
+.random-picker__close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 1.5rem;
+  padding: 0.25rem 0.5rem;
 }
 
 .random-picker__winner-text {
