@@ -1,85 +1,173 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect, useMemo } from 'react';
 import { Logo } from '../components/Logo.jsx';
 import { SiteFooter } from '../components/SiteFooter.jsx';
 import { useLanguage } from '../context/LanguageContext';
+import { CONVERSIONS } from '../data/conversions';
 
 export function UnitConverterPage({ onNavigate }) {
   const { t, language } = useLanguage();
+
   const [inputValue, setInputValue] = useState('1');
   const [inputUnit, setInputUnit] = useState('m');
   const [outputUnit, setOutputUnit] = useState('km');
   const [category, setCategory] = useState('length');
-
-  const conversions = {
-    length: {
-      name: t('unitLength'),
-      units: {
-        mm: { name: t('unitMillimeter'), toBase: 0.001 },
-        cm: { name: t('unitCentimeter'), toBase: 0.01 },
-        m: { name: t('unitMeter'), toBase: 1 },
-        km: { name: t('unitKilometer'), toBase: 1000 },
-        in: { name: t('unitInch'), toBase: 0.0254 },
-        ft: { name: t('unitFoot'), toBase: 0.3048 },
-        mi: { name: t('unitMile'), toBase: 1609.34 },
-      },
-    },
-    weight: {
-      name: t('unitWeight'),
-      units: {
-        mg: { name: t('unitMilligram'), toBase: 0.001 },
-        g: { name: t('unitGram'), toBase: 1 },
-        kg: { name: t('unitKilogram'), toBase: 1000 },
-        oz: { name: t('unitOunce'), toBase: 28.35 },
-        lb: { name: t('unitPound'), toBase: 453.59 },
-        ton: { name: t('unitTon'), toBase: 1000000 },
-      },
-    },
-    temperature: {
-      name: t('unitTemperature'),
-      units: {
-        c: { name: t('unitCelsius'), toBase: null },
-        f: { name: t('unitFahrenheit'), toBase: null },
-        k: { name: t('unitKelvin'), toBase: null },
-      },
-    },
-    volume: {
-      name: t('unitVolume'),
-      units: {
-        ml: { name: t('unitMilliliter'), toBase: 0.001 },
-        l: { name: t('unitLiter'), toBase: 1 },
-        gal: { name: t('unitGallon'), toBase: 3.785 },
-        pt: { name: t('unitPint'), toBase: 0.473 },
-      },
-    },
-  };
+  const [copySuccess, setCopySuccess] = useState(false);
+  const [error, setError] = useState('');
 
   const convertValue = useCallback(() => {
-    const num = parseFloat(inputValue) || 0;
+    // Handle empty input
+    if (!inputValue || inputValue.trim() === '') {
+      return '0';
+    }
 
+    const num = parseFloat(inputValue);
+
+    // Validate input is a number
+    if (isNaN(num)) {
+      return '0';
+    }
+
+    // Check for infinity
+    if (!isFinite(num)) {
+      return '0';
+    }
+
+    // Special handling for fuel economy (inverse conversions)
+    if (category === 'fuel') {
+      return convertFuel(num, inputUnit, outputUnit);
+    }
+
+    // Special handling for temperature
     if (category === 'temperature') {
       return convertTemperature(num, inputUnit, outputUnit);
     }
 
-    const baseValue = num * conversions[category].units[inputUnit].toBase;
-    const result = baseValue / conversions[category].units[outputUnit].toBase;
+    // Regular linear conversions
+    const categoryData = CONVERSIONS[category];
+    const inputFactor = categoryData.units[inputUnit]?.toBase;
+    const outputFactor = categoryData.units[outputUnit]?.toBase;
 
-    // Arredondar para 3 casas decimais para distâncias, pesos e volumes
-    return parseFloat(result.toFixed(3)).toString();
-  }, [inputValue, inputUnit, outputUnit, category]);
+    if (!inputFactor || !outputFactor) {
+      return '0';
+    }
+
+    const baseValue = num * inputFactor;
+    const result = baseValue / outputFactor;
+
+    // Check for overflow
+    if (!isFinite(result)) {
+      return '0';
+    }
+
+    // Format result based on magnitude
+    if (Math.abs(result) < 0.000001 || Math.abs(result) > 999999999) {
+      return result.toExponential(6);
+    }
+
+    return parseFloat(result.toFixed(6)).toString();
+  }, [inputValue, inputUnit, outputUnit, category, t]);
+
+  // Handle error validation separately to avoid infinite loops
+  useEffect(() => {
+    setError('');
+
+    if (!inputValue || inputValue.trim() === '') {
+      return;
+    }
+
+    const num = parseFloat(inputValue);
+
+    // Validate input is a number
+    if (isNaN(num)) {
+      setError(t('errorInvalidNumber'));
+      return;
+    }
+
+    // Check for infinity
+    if (!isFinite(num)) {
+      setError(t('errorNumberTooLarge'));
+      return;
+    }
+
+    // Check for conversion errors
+    const categoryData = CONVERSIONS[category];
+    if (category !== 'fuel' && category !== 'temperature') {
+      const inputFactor = categoryData.units[inputUnit]?.toBase;
+      const outputFactor = categoryData.units[outputUnit]?.toBase;
+      if (!inputFactor || !outputFactor) {
+        setError(t('errorConversionFailed'));
+        return;
+      }
+    }
+  }, [inputValue, inputUnit, outputUnit, category, t]);
 
   const convertTemperature = (value, fromUnit, toUnit) => {
     let celsius;
 
-    if (fromUnit === 'c') celsius = value;
-    else if (fromUnit === 'f') celsius = (value - 32) * 5 / 9;
-    else if (fromUnit === 'k') celsius = value - 273.15;
+    // Convert to Celsius first
+    if (fromUnit === 'c') {
+      celsius = value;
+    } else if (fromUnit === 'f') {
+      celsius = (value - 32) * 5 / 9;
+    } else if (fromUnit === 'k') {
+      celsius = value - 273.15;
+    }
 
+    // Convert from Celsius to target
     let result;
-    if (toUnit === 'c') result = celsius;
-    else if (toUnit === 'f') result = celsius * 9 / 5 + 32;
-    else if (toUnit === 'k') result = celsius + 273.15;
+    if (toUnit === 'c') {
+      result = celsius;
+    } else if (toUnit === 'f') {
+      result = celsius * 9 / 5 + 32;
+    } else if (toUnit === 'k') {
+      result = celsius + 273.15;
+    }
 
-    return result.toFixed(2);
+    // Check for absolute zero violation
+    if (fromUnit === 'k' && value < 0) {
+      return '0';
+    }
+    if (toUnit === 'k' && result < 0) {
+      return '0';
+    }
+
+    // Format result
+    if (Math.abs(result) < 0.0001 || Math.abs(result) > 999999) {
+      return result.toExponential(4);
+    }
+
+    return parseFloat(result.toFixed(4)).toString();
+  };
+
+  const convertFuel = (value, fromUnit, toUnit) => {
+    // Fuel economy conversions are inverse
+    // Base: liters per 100km
+    const toL100km = {
+      l100km: (v) => v,
+      kml: (v) => 100 / v,
+      mpg: (v) => 235.215 / v,
+      mpgus: (v) => 282.481 / v,
+    };
+
+    const fromL100km = {
+      l100km: (v) => v,
+      kml: (v) => 100 / v,
+      mpg: (v) => 235.215 / v,
+      mpgus: (v) => 282.481 / v,
+    };
+
+    if (value <= 0) {
+      return '0';
+    }
+
+    const l100km = toL100km[fromUnit](value);
+    const result = fromL100km[toUnit](l100km);
+
+    if (!isFinite(result)) {
+      return '0';
+    }
+
+    return parseFloat(result.toFixed(4)).toString();
   };
 
   const output = convertValue();
@@ -88,6 +176,17 @@ export function UnitConverterPage({ onNavigate }) {
     setInputUnit(outputUnit);
     setOutputUnit(inputUnit);
   };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(output);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (err) {
+      setError(t('errorCopyFailed'));
+    }
+  };
+
 
   return (
     <div className="app app--unit">
@@ -112,79 +211,110 @@ export function UnitConverterPage({ onNavigate }) {
       </header>
 
       <main className="panel generator-panel">
-        <div className="converter-container">
-          <div className="converter-categories">
-            {Object.entries(conversions).map(([key, data]) => (
+        <div className="unit-converter">
+          <div className="unit-categories">
+            {Object.entries(CONVERSIONS).map(([key, data]) => (
               <button
                 key={key}
-                className={`converter-category ${category === key ? 'converter-category--active' : ''}`}
+                className={`unit-category-btn ${category === key ? 'unit-category-btn--active' : ''}`}
                 onClick={() => {
                   setCategory(key);
-                  setInputUnit(Object.keys(data.units)[0]);
-                  setOutputUnit(Object.keys(data.units)[1] || Object.keys(data.units)[0]);
+                  const units = Object.keys(data.units);
+                  setInputUnit(units[0]);
+                  setOutputUnit(units[1] || units[0]);
+                  setError('');
                 }}
-                aria-label={data.name}
+                aria-label={t(data.name)}
               >
-                {data.name}
+                <span>{getCategoryIcon(key)}</span>
+                {t(data.name)}
               </button>
             ))}
           </div>
 
-          <div className="converter-box">
-            <div className="converter-side">
-              <label className="converter-label">{t('unitFrom')}</label>
-              <input
-                type="number"
-                className="converter-input"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                placeholder={t('placeholderZero')}
-                aria-label={t('unitFrom')}
-              />
-              <div className="custom-select-wrapper">
-                <select
-                  className="converter-select"
-                  value={inputUnit}
-                  onChange={(e) => setInputUnit(e.target.value)}
-                  aria-label={t('unitFrom')}
-                >
-                  {Object.entries(conversions[category].units).map(([key, unit]) => (
-                    <option key={key} value={key}>
-                      {unit.name}
-                    </option>
-                  ))}
-                </select>
-                <svg className="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
+          <div className="unit-conversion-section">
+            {error && (
+              <div className="error-message" role="alert">
+                {error}
               </div>
-            </div>
+            )}
 
-            <button className="converter-swap" onClick={handleSwap} title={t('unitSwap')} aria-label={t('unitSwap')}>
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M7 16V4M7 4 3 8m4-4 4 4M17 8v12m0 0 4-4m-4 4-4-4" />
-              </svg>
-            </button>
+            <div className="conversion-box">
+              <div className="conversion-input-group">
+                <input
+                  type="number"
+                  className="converter-input"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  placeholder={t('placeholderZero')}
+                  aria-label={t('unitFrom')}
+                  step="any"
+                />
+                <div className="custom-select-wrapper">
+                  <select
+                    className="converter-select"
+                    value={inputUnit}
+                    onChange={(e) => setInputUnit(e.target.value)}
+                    aria-label={t('unitFrom')}
+                  >
+                    {CONVERSIONS[category]?.units && Object.entries(CONVERSIONS[category].units).map(([key, unit]) => (
+                      <option key={key} value={key}>
+                        {t(unit.name)}
+                      </option>
+                    ))}
+                  </select>
+                  <svg className="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </div>
+              </div>
 
-            <div className="converter-side">
-              <label className="converter-label">{t('unitTo')}</label>
-              <div className="converter-output">{output}</div>
-              <div className="custom-select-wrapper">
-                <select
-                  className="converter-select"
-                  value={outputUnit}
-                  onChange={(e) => setOutputUnit(e.target.value)}
-                  aria-label={t('unitTo')}
-                >
-                  {Object.entries(conversions[category].units).map(([key, unit]) => (
-                    <option key={key} value={key}>
-                      {unit.name}
-                    </option>
-                  ))}
-                </select>
-                <svg className="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
+              <div className="conversion-swap">
+                <button className="swap-btn" onClick={handleSwap} title={t('unitSwap')} aria-label={t('unitSwap')}>
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M7 16V4M7 4 3 8m4-4 4 4M17 8v12m0 0 4-4m-4 4-4-4" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="conversion-input-group">
+                <div className="converter-output-wrapper">
+                  <div className="converter-output">{output}</div>
+                  <button
+                    className="copy-btn"
+                    onClick={handleCopy}
+                    title={copySuccess ? t('copied') : t('copy')}
+                    aria-label={copySuccess ? t('copied') : t('copy')}
+                  >
+                    {copySuccess ? (
+                      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    ) : (
+                      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+                <div className="custom-select-wrapper">
+                  <select
+                    className="converter-select"
+                    value={outputUnit}
+                    onChange={(e) => setOutputUnit(e.target.value)}
+                    aria-label={t('unitTo')}
+                  >
+                    {CONVERSIONS[category]?.units && Object.entries(CONVERSIONS[category].units).map(([key, unit]) => (
+                      <option key={key} value={key}>
+                        {t(unit.name)}
+                      </option>
+                    ))}
+                  </select>
+                  <svg className="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </div>
               </div>
             </div>
           </div>
@@ -201,4 +331,23 @@ export function UnitConverterPage({ onNavigate }) {
       />
     </div>
   );
+}
+
+function getCategoryIcon(category) {
+  const icons = {
+    length: '📏',
+    weight: '⚖️',
+    temperature: '🌡️',
+    volume: '🧊',
+    speed: '🚀',
+    area: '📐',
+    time: '⏱️',
+    digital: '💾',
+    energy: '⚡',
+    pressure: '🔘',
+    frequency: '📊',
+    angle: '📐',
+    fuel: '⛽',
+  };
+  return icons[category] || '📊';
 }

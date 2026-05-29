@@ -1,25 +1,23 @@
-import { useChannelMonitor } from '../hooks/useChannelMonitor.js';
-import { SearchForm } from '../components/SearchForm.jsx';
-import { SubscriberCounter } from '../components/SubscriberCounter.jsx';
-import { ChannelCard } from '../components/ChannelCard.jsx';
-import { StatusBadge } from '../components/StatusBadge.jsx';
+import { useYouTubeCounter } from '../hooks/useYouTubeCounter.js';
+import { YouTubeSearchForm } from '../components/YouTubeSearchForm.jsx';
+import { YouTubeChannelCard } from '../components/YouTubeChannelCard.jsx';
+import { YouTubeSubscriberCounter } from '../components/YouTubeSubscriberCounter.jsx';
 import { Logo } from '../components/Logo.jsx';
 import { SiteFooter } from '../components/SiteFooter.jsx';
 import { useLanguage } from '../context/LanguageContext';
+import '../youtube-counter.css';
 
 export function YouTubeCounterPage({ onNavigate }) {
   const { t, language } = useLanguage();
   const {
     channel,
     subscriberCount,
-    delta,
-    status,
-    lastUpdate,
-    error,
     loading,
+    error,
+    lastUpdate,
     searchChannel,
     stopMonitoring,
-  } = useChannelMonitor();
+  } = useYouTubeCounter();
 
   const monitoring = Boolean(channel);
 
@@ -43,69 +41,45 @@ export function YouTubeCounterPage({ onNavigate }) {
             </p>
           </div>
         </div>
-        <StatusBadge status={status} />
       </header>
 
       <main className="panel generator-panel">
-        <SearchForm
+        <YouTubeSearchForm
           onSearch={searchChannel}
           loading={loading}
-          disabled={loading}
+          disabled={monitoring}
         />
 
         {error && (
           <div className="alert alert--error" role="alert">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '18px', height: '18px', marginRight: '0.5rem' }}>
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="8" x2="12" y2="12" />
-              <line x1="12" y1="16" x2="12.01" y2="16" />
-            </svg>
-            {error.split('\n').map((line, i) => (
-              <div key={i} style={{ marginBottom: line ? '0.5rem' : 0 }}>
-                {line}
-              </div>
-            ))}
+            {error}
           </div>
         )}
 
-        {monitoring ? (
+        {monitoring && (
           <section className="result">
-            <ChannelCard channel={channel} />
-            <SubscriberCounter
+            <YouTubeChannelCard channel={channel} />
+            <YouTubeSubscriberCounter
               count={subscriberCount}
-              delta={delta}
-              hidden={channel.hiddenSubscriberCount}
+              lastUpdate={lastUpdate}
             />
             <div className="result__actions">
-              {lastUpdate && (
-                <time className="result__time" dateTime={lastUpdate.toISOString()}>
-                  {t('youtubeLastUpdate')}{' '}
-                  {lastUpdate.toLocaleTimeString(language === 'pt' ? 'pt-BR' : 'en-US')}
-                </time>
-              )}
               <button
                 type="button"
                 className="btn-outline btn-outline--danger"
                 onClick={stopMonitoring}
-                aria-label={t('youtubeMonitorAnother')}
               >
                 {t('youtubeMonitorAnother')}
               </button>
             </div>
           </section>
-        ) : (
+        )}
+
+        {!monitoring && (
           <section className="empty">
-            <div className="empty__icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path
-                  fill="currentColor"
-                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Zm-2 14.5v-9l6 4.5-6 4.5Z"
-                />
-              </svg>
-            </div>
-            <p>{t('youtubeEnterChannel')}</p>
+            <p>{t('youtubeEmptyMessage')}</p>
             <p className="empty__examples">
-              <span>{t('youtubeExample')}</span>
+              <span>{t('youtubeExampleLabel')}</span>
               <code>@MrBeast</code>
               <code>MrBeast</code>
               <code>youtube.com/@MrBeast</code>

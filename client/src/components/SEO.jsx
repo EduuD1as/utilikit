@@ -100,14 +100,14 @@ const SEO_DATA = {
   },
   '/conversor-unidades': {
     pt: {
-      title: 'Conversor de Unidades — UtiliKit',
-      description: 'Converta unidades de medida facilmente. Comprimento, peso, temperatura e mais.',
-      keywords: 'conversor unidades, converter medidas, conversor comprimento, conversor peso',
+      title: 'Conversor de Unidades Completo — UtiliKit',
+      description: 'Conversor de unidades online gratuito e instantâneo. Converta comprimento, peso, temperatura, volume, velocidade, área, tempo, armazenamento digital, energia, pressão, frequência, ângulo e consumo de combustível. Preciso e fácil de usar.',
+      keywords: 'conversor unidades, converter medidas, conversor comprimento, conversor peso, conversor temperatura, conversor volume, conversor velocidade, conversor área, conversor tempo, conversor armazenamento, conversor energia, conversor pressão, conversor frequência, conversor ângulo, conversor combustível',
     },
     en: {
-      title: 'Unit Converter — UtiliKit',
-      description: 'Easily convert units of measurement. Length, weight, temperature and more.',
-      keywords: 'unit converter, convert measurements, length converter, weight converter',
+      title: 'Complete Unit Converter — UtiliKit',
+      description: 'Free online instant unit converter. Convert length, weight, temperature, volume, speed, area, time, digital storage, energy, pressure, frequency, angle, and fuel economy. Accurate and easy to use.',
+      keywords: 'unit converter, convert measurements, length converter, weight converter, temperature converter, volume converter, speed converter, area converter, time converter, digital storage converter, energy converter, pressure converter, frequency converter, angle converter, fuel economy converter',
     },
   },
   '/gerador-qr': {

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, lazy, Suspense } from 'react';
 import { ThemeProvider } from './context/ThemeContext.jsx';
 import { LanguageProvider } from './context/LanguageContext.jsx';
 import { CookieConsentProvider } from './context/CookieConsentContext.jsx';
@@ -8,19 +8,19 @@ import { HomePage } from './pages/HomePage.jsx';
 import { YouTubeCounterPage } from './pages/YouTubeCounterPage.jsx';
 import { SqlFormatterPage } from './pages/SqlFormatterPage.jsx';
 import { JsonFormatterPage } from './pages/JsonFormatterPage.jsx';
-import { DocumentConverterPage } from './pages/DocumentConverterPage.jsx';
 import { CurrencyConverterPage } from './pages/CurrencyConverterPage.jsx';
 import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage.jsx';
 import { TermsPage } from './pages/TermsPage.jsx';
 import { CharacterCounterPage } from './pages/CharacterCounterPage.jsx';
-import { SimpleCalculatorPage } from './pages/SimpleCalculatorPage.jsx';
 import { UnitConverterPage } from './pages/UnitConverterPage.jsx';
 import { QRGeneratorPage } from './pages/QRGeneratorPage.jsx';
 import { GeneratorPage } from './pages/GeneratorPage.jsx';
 import { TimerPage } from './pages/TimerPage.jsx';
 import MemoryGamePage from './pages/MemoryGamePage.jsx';
 import RandomPickerPage from './pages/RandomPickerPage.jsx';
-import IMCCalculatorPage from './pages/IMCCalculatorPage.jsx';
+
+// Lazy load DocumentConverterPage to prevent docx library from loading on other pages
+const DocumentConverterPage = lazy(() => import('./pages/DocumentConverterPage.jsx'));
 
 const ROUTES = {
   '/': HomePage,
@@ -30,14 +30,12 @@ const ROUTES = {
   '/conversor-documentos': DocumentConverterPage,
   '/conversor-moedas': CurrencyConverterPage,
   '/contador-caracteres': CharacterCounterPage,
-  '/calculadora': SimpleCalculatorPage,
   '/conversor-unidades': UnitConverterPage,
   '/gerador-qr': QRGeneratorPage,
   '/gerador-id-hash': GeneratorPage,
   '/timer-pomodoro': TimerPage,
   '/jogo-memoria': MemoryGamePage,
   '/roleta-sorteador': RandomPickerPage,
-  '/calculadora-imc': IMCCalculatorPage,
   '/privacidade': PrivacyPolicyPage,
   '/termos': TermsPage,
 };
@@ -72,7 +70,9 @@ export default function App() {
       <LanguageProvider>
         <CookieConsentProvider>
           <SEO path={path} />
-          <Page onNavigate={navigate} />
+          <Suspense fallback={<div className="app"><main className="panel"><p>Carregando...</p></main></div>}>
+            <Page onNavigate={navigate} />
+          </Suspense>
           <CookieBanner onNavigate={navigate} />
         </CookieConsentProvider>
       </LanguageProvider>

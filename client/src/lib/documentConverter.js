@@ -1,21 +1,39 @@
-import { Document, Packer, Paragraph, TextRun } from 'docx';
-import mammoth from 'mammoth';
-import jsPDF from 'jspdf';
-import * as pdfjsLib from 'pdfjs-dist';
+// Lazy load docx library to prevent hydration issues
+let docx = null;
+let mammoth = null;
+let jsPDF = null;
+let pdfjsLib = null;
 
-// Configure PDF.js worker to use local worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.mjs',
-  import.meta.url
-).toString();
+async function loadLibraries() {
+  if (!docx) {
+    docx = await import('docx');
+  }
+  if (!mammoth) {
+    mammoth = await import('mammoth');
+  }
+  if (!jsPDF) {
+    jsPDF = await import('jspdf');
+  }
+  if (!pdfjsLib) {
+    pdfjsLib = await import('pdfjs-dist');
+    // Configure PDF.js worker to use local worker
+    pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+      'pdfjs-dist/build/pdf.worker.min.mjs',
+      import.meta.url
+    ).toString();
+  }
+  return { docx, mammoth, jsPDF, pdfjsLib };
+}
 
 export async function wordToPdf(file) {
   let container = null;
   let style = null;
 
   try {
+    // Load libraries on demand
+    const libs = await loadLibraries();
     const buffer = await file.arrayBuffer();
-    const result = await mammoth.convertToHtml({
+    const result = await libs.mammoth.convertToHtml({
       arrayBuffer: buffer,
       styleMap: [
         "p[style-name='Heading 1'] => h1:fresh",
@@ -120,7 +138,7 @@ export async function wordToPdf(file) {
     await new Promise(resolve => setTimeout(resolve, 500));
 
     // Create PDF using jsPDF with HTML
-    const pdf = new jsPDF({
+    const pdf = new libs.jsPDF({
       orientation: 'portrait',
       unit: 'mm',
       format: 'a4',
@@ -167,10 +185,12 @@ export async function wordToPdf(file) {
 
 export async function pdfToWord(file) {
   try {
+    // Load libraries on demand
+    const libs = await loadLibraries();
     const arrayBuffer = await file.arrayBuffer();
 
     // Load PDF document
-    const loadingTask = pdfjsLib.getDocument(arrayBuffer);
+    const loadingTask = libs.pdfjsLib.getDocument(arrayBuffer);
     const pdf = await loadingTask.promise;
 
     const paragraphs = [];
@@ -205,7 +225,7 @@ export async function pdfToWord(file) {
           const isBold = item.fontName && (item.fontName.includes('Bold') || item.fontName.includes('bold'));
           const isItalic = item.fontName && (item.fontName.includes('Italic') || item.fontName.includes('italic'));
 
-          return new TextRun({
+          return new libs.docx.TextRun({
             text: text,
             bold: isBold,
             italics: isItalic,
@@ -215,7 +235,7 @@ export async function pdfToWord(file) {
 
         if (textRuns.length > 0) {
           paragraphs.push(
-            new Paragraph({
+            new libs.docx.Paragraph({
               children: textRuns,
               spacing: { after: 200 },
             })
@@ -229,19 +249,19 @@ export async function pdfToWord(file) {
     }
 
     // Create Word document
-    const doc = new Document({
+    const doc = new libs.docx.Document({
       sections: [
         {
           children: [
-            new Paragraph({
+            new libs.docx.Paragraph({
               text: `Arquivo original: ${file.name}`,
               spacing: { after: 200 },
-              run: new TextRun({ bold: true, size: 24 }),
+              run: new libs.docx.TextRun({ bold: true, size: 24 }),
             }),
-            new Paragraph({
+            new libs.docx.Paragraph({
               text: 'Conteúdo extraído do PDF:',
               spacing: { after: 200 },
-              run: new TextRun({ bold: true }),
+              run: new libs.docx.TextRun({ bold: true }),
             }),
             ...paragraphs,
           ],
@@ -249,7 +269,7 @@ export async function pdfToWord(file) {
       ],
     });
 
-    const blob = await Packer.toBlob(doc);
+    const blob = await libs.docx.Packer.toBlob(doc);
     return {
       success: true,
       blob,
