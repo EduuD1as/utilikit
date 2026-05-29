@@ -147,7 +147,12 @@ export default function RandomPickerPage({ onNavigate }) {
           {winner && (
             <div className="random-picker__result">
               <div className="random-picker__result-content">
-                <button className="btn-ghost random-picker__close" onClick={() => setWinner(null)}>
+                <button
+                  type="button"
+                  className="btn-ghost random-picker__close"
+                  onClick={() => setWinner(null)}
+                  aria-label="Fechar"
+                >
                   ✕
                 </button>
                 <h2>{t('winner')}</h2>

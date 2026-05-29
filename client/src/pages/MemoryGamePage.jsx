@@ -3,7 +3,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { Logo } from '../components/Logo';
 import { SiteFooter } from '../components/SiteFooter';
 
-const EMOJIS = ['🎮', '🎲', '🎯', '🎪', '🎨', '🎭', '🎪', '🎸', '🎺', '🎻', '🎹', '🎬'];
+const EMOJIS = ['\u{1F3AE}', '\u{1F3B2}', '\u{1F3AF}', '\u{1F3A8}', '\u{1F3AD}', '\u{1F3B8}', '\u{1F3BA}', '\u{1F3BB}', '\u{1F3B9}', '\u{1F3AC}'];
 
 export default function MemoryGamePage({ onNavigate }) {
   const { t } = useLanguage();
@@ -51,15 +51,16 @@ export default function MemoryGamePage({ onNavigate }) {
       const [first, second] = newFlipped;
 
       if (cards[first].emoji === cards[second].emoji) {
-        setMatched([...matched, first, second]);
+        const nextMatchedCount = matched.length + 2;
+
+        setMatched((current) => [...current, first, second]);
         setFlipped([]);
 
-        // Remove as cartas após um delay para animação
         setTimeout(() => {
-          setRemoved([...removed, first, second]);
-        }, 1200);
+          setRemoved((current) => [...current, first, second]);
+        }, 700);
 
-        if (matched.length + 2 === cards.length) {
+        if (nextMatchedCount === cards.length) {
           setTimeout(() => {
             setGameOver(true);
             const currentBest = localStorage.getItem('memoryGameBestScore');
