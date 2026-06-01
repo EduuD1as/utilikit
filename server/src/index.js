@@ -19,6 +19,22 @@ app.use(
 );
 app.use(express.json());
 
+// Ensure API endpoints return JSON for unsupported methods (avoid HTML responses
+// that break client-side JSON parsing). If the method is not POST, respond 405.
+app.all('/api/youtube/channel', (req, res, next) => {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed. Use POST' });
+  }
+  next();
+});
+
+app.all('/api/youtube/subscribers', (req, res, next) => {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed. Use POST' });
+  }
+  next();
+});
+
 app.get('/api/health', (_req, res) => {
   res.json({
     ok: true,

@@ -28,7 +28,14 @@ export function useYouTubeCounter() {
         body: JSON.stringify({ channelId }),
       });
 
-      const data = await response.json();
+      // Safe JSON parsing: some error responses may be empty or non-JSON.
+      const text = await response.text();
+      let data = null;
+      try {
+        data = text ? JSON.parse(text) : null;
+      } catch (e) {
+        data = { error: text || `HTTP ${response.status}` };
+      }
 
       if (!response.ok) {
         throw new Error(data.error || 'Erro ao buscar inscritos');
@@ -73,7 +80,14 @@ export function useYouTubeCounter() {
         body: JSON.stringify({ query: query.trim() }),
       });
 
-      const data = await response.json();
+      // Safe JSON parsing: some error responses may be empty or non-JSON.
+      const text = await response.text();
+      let data = null;
+      try {
+        data = text ? JSON.parse(text) : null;
+      } catch (e) {
+        data = { error: text || `HTTP ${response.status}` };
+      }
 
       if (!response.ok) {
         throw new Error(data.error || 'Erro ao buscar canal');
