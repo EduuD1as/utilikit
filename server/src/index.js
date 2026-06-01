@@ -7,6 +7,20 @@ import { fileURLToPath } from 'url';
 import { fetchCurrencyList, fetchRates } from './exchangeRates.js';
 import { fetchChannelInfo, fetchSubscriberCount } from './youtube-service.js';
 
+// Ensure .env is loaded from project root if not already loaded
+if (!process.env.YOUTUBE_API_KEY) {
+  const envPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../.env');
+  if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, 'utf8');
+    envContent.split('\n').forEach(line => {
+      const [key, ...rest] = line.split('=');
+      if (key && !key.startsWith('#')) {
+        process.env[key.trim()] = rest.join('=').trim();
+      }
+    });
+  }
+}
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 3001;
