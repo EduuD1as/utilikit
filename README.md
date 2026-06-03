@@ -1,67 +1,91 @@
-# UtiliKit
+# 🚀 UtiliKit
 
-Hub de ferramentas online — calculadoras, conversores, geradores e contadores. React + Node.js.
+### Ferramentas online gratuitas para produtividade, desenvolvimento e tarefas do dia a dia
 
-## Ferramentas
+O **UtiliKit** é uma plataforma que reúne diversas ferramentas úteis em um único lugar, permitindo realizar conversões, cálculos, formatações e geração de códigos de forma rápida e intuitiva, diretamente pelo navegador.
 
-| Ferramenta | Rota |
-|------------|------|
-| Página inicial | `/` |
-| Contador de inscritos YouTube | `/contador-youtube` |
-| Formatador de SQL | `/formatador-sql` |
-| Formatador de JSON | `/formatador-json` |
-| Conversor de documentos | `/conversor-documentos` |
-| Conversor de moedas | `/conversor-moedas` |
-| Conversor de unidades | `/conversor-unidades` |
-| Contador de caracteres | `/contador-caracteres` |
-| Calculadora simples | `/calculadora` |
-| Calculadora de IMC | `/calculadora-imc` |
-| Gerador de QR Code | `/gerador-qr` |
-| Gerador de ID/Hash | `/gerador-id-hash` |
-| Timer / Pomodoro | `/timer-pomodoro` |
-| Jogo da Memória | `/jogo-memoria` |
-| Sorteador de Roleta | `/roleta-sorteador` |
-| Política de Privacidade | `/privacidade` |
-| Termos de Uso | `/termos` |
+🌐 **Acesse:** https://utilikit.com.br
 
-## Configuração
+---
 
-```bash
-cd utilikit
-npm run install:all
-npm run dev
-```
+## ✨ Recursos Disponíveis
 
-- Frontend: http://localhost:5173  
-- API: http://localhost:3001
 
-## Produção
+### 🔄 Conversores
 
-```bash
-npm run install:all
-npm run build
-npm run start
-```
+* 💱 Conversor de Moedas
+* 📏 Conversor de Unidades
 
-Acesse **http://localhost:3001**
+### 📝 Formatadores
 
-## Privacidade
+* 🗄️ Formatador de SQL
+* 📋 Formatador de JSON
 
-- Banner de cookies com opções de consentimento
-- Scripts de publicidade só carregam após consentimento
-- Configure `VITE_ADSENSE_CLIENT` em `client/.env` quando aprovado
+### 🧮 Calculadoras
 
-## Tecnologia
+* ➕ Calculadora Simples
+* ⚖️ Calculadora de IMC
 
-- **Frontend**: React 18 + Vite + CSS
-- **Backend**: Node.js + Express + SSE
-- **YouTube**: Dados em tempo real via SocialCounts API
+### ⚙️ Geradores
 
-## Estrutura
+* 📱 Gerador de QR Code
+* 🆔 Gerador de ID e Hash
 
-```
-utilikit/
-├── client/  # React + Vite
-├── server/  # Express + API
-└── package.json
-```
+### ⏱️ Produtividade
+
+* 🍅 Timer Pomodoro
+* 🔢 Contador de Caracteres
+
+### 🎲 Utilidades
+
+* 🎡 Roleta Sorteadora
+* 🧠 Jogo da Memória
+
+---
+
+## 🌟 Diferenciais
+
+✅ Interface moderna e responsiva
+
+✅ Compatível com computadores, tablets e smartphones
+
+✅ Ferramentas rápidas e fáceis de usar
+
+✅ Sem necessidade de instalação
+
+✅ Atualizações frequentes
+
+✅ Experiência focada na simplicidade e produtividade
+
+---
+
+## 👥 Para quem é o UtiliKit?
+
+O UtiliKit foi criado para atender diferentes perfis de usuários:
+
+* 👨‍💻 Desenvolvedores
+* 🎓 Estudantes
+* 📊 Profissionais de escritório
+* 🎨 Criadores de conteúdo
+* 🏢 Pequenos negócios
+* 🌐 Usuários que buscam ferramentas rápidas para o dia a dia
+
+---
+
+## 🔒 Privacidade
+
+A privacidade dos usuários é uma prioridade.
+
+* Controle de consentimento para cookies
+* Transparência no uso de serviços de terceiros
+* Carregamento de recursos externos apenas quando necessário
+
+---
+
+## 🎯 Objetivo
+
+Centralizar ferramentas úteis em uma única plataforma, oferecendo praticidade, rapidez e uma experiência agradável para qualquer usuário.
+
+---
+
+### ⭐ Se o projeto foi útil para você, considere favoritar o repositório.
