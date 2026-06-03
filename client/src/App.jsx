@@ -5,7 +5,6 @@ import { CookieConsentProvider } from './context/CookieConsentContext.jsx';
 import { CookieBanner } from './components/CookieBanner.jsx';
 import { SEO } from './components/SEO.jsx';
 import { HomePage } from './pages/HomePage.jsx';
-import { YouTubeCounterPage } from './pages/YouTubeCounterPage.jsx';
 import { SqlFormatterPage } from './pages/SqlFormatterPage.jsx';
 import { JsonFormatterPage } from './pages/JsonFormatterPage.jsx';
 import { CurrencyConverterPage } from './pages/CurrencyConverterPage.jsx';
@@ -19,15 +18,10 @@ import { TimerPage } from './pages/TimerPage.jsx';
 import MemoryGamePage from './pages/MemoryGamePage.jsx';
 import RandomPickerPage from './pages/RandomPickerPage.jsx';
 
-// Lazy load DocumentConverterPage to prevent docx library from loading on other pages
-const DocumentConverterPage = lazy(() => import('./pages/DocumentConverterPage.jsx'));
-
 const ROUTES = {
   '/': HomePage,
-  '/contador-youtube': YouTubeCounterPage,
   '/formatador-sql': SqlFormatterPage,
   '/formatador-json': JsonFormatterPage,
-  '/conversor-documentos': DocumentConverterPage,
   '/conversor-moedas': CurrencyConverterPage,
   '/contador-caracteres': CharacterCounterPage,
   '/conversor-unidades': UnitConverterPage,

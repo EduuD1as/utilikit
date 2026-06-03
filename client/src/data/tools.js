@@ -1,7 +1,6 @@
 export const CATEGORIES = [
   { id: 'all', label: 'catAll' },
   { id: 'soon', label: 'catSoon' },
-  { id: 'social', label: 'catSocial' },
   { id: 'calculators', label: 'catCalculators' },
   { id: 'converters', label: 'catConverters' },
   { id: 'generators', label: 'catGenerators' },
@@ -10,16 +9,6 @@ export const CATEGORIES = [
 ];
 
 export const TOOLS = [
-  {
-    id: 'youtube-subscribers',
-    titleKey: 'toolYoutubeSubscribersTitle',
-    descKey: 'toolYoutubeSubscribersDesc',
-    category: 'social',
-    path: '/contador-youtube',
-    available: true,
-    accent: '#ff0033',
-    icon: 'youtube',
-  },
   {
     id: 'percentage',
     titleKey: 'toolPercentageTitle',
@@ -86,16 +75,6 @@ export const TOOLS = [
     available: true,
     accent: '#f59e0b',
     icon: 'code',
-  },
-  {
-    id: 'document-converter',
-    titleKey: 'toolDocumentConverterTitle',
-    descKey: 'toolDocumentConverterDesc',
-    category: 'converters',
-    path: '/conversor-documentos',
-    available: true,
-    accent: '#8b5cf6',
-    icon: 'file',
   },
   {
     id: 'password',

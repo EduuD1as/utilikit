@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 import { Logo } from '../components/Logo.jsx';
 import { SiteFooter } from '../components/SiteFooter.jsx';
 import { useLanguage } from '../context/LanguageContext';
@@ -7,6 +7,11 @@ import {
   formatSqlQuery,
   minifySqlQuery,
 } from '../lib/formatSql.js';
+import hljs from 'highlight.js/lib/core';
+import sql from 'highlight.js/lib/languages/sql';
+import 'highlight.js/styles/vs2015.css';
+
+hljs.registerLanguage('sql', sql);
 
 const EXAMPLE = `select u.id,u.name,o.total from users u inner join orders o on o.user_id=u.id where o.status='paid' and o.created_at>=date '2024-01-01' order by o.total desc limit 10;`;
 
@@ -16,7 +21,7 @@ export function SqlFormatterPage({ onNavigate }) {
   // State
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
-  const [dialect, setDialect] = useState('sql');
+  const [dialect, setDialect] = useState('firebird');
   const [keywordCase, setKeywordCase] = useState('upper');
   const [tabWidth, setTabWidth] = useState(2);
   const [error, setError] = useState(null);
@@ -24,6 +29,7 @@ export function SqlFormatterPage({ onNavigate }) {
   const [isFormatting, setIsFormatting] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const outputRef = useRef(null);
 
   // Vibration helper
   const vibrate = useCallback(() => {
@@ -141,6 +147,13 @@ export function SqlFormatterPage({ onNavigate }) {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [input, dialect, tabWidth, keywordCase, runFormat]);
+
+  // Apply syntax highlighting to output
+  useEffect(() => {
+    if (output && outputRef.current) {
+      outputRef.current.innerHTML = hljs.highlight(output, { language: 'sql' }).value;
+    }
+  }, [output]);
 
   return (
     <div className="app app--sql">
@@ -371,13 +384,10 @@ export function SqlFormatterPage({ onNavigate }) {
                 )}
               </div>
             </div>
-            <textarea
-              className="sql-editor__area sql-editor__area--output"
-              value={output}
-              readOnly
-              placeholder={t('sqlEmptyOutput')}
-              spellCheck={false}
-              aria-label={t('sqlEditorOutput')}
+            <div
+              ref={outputRef}
+              className="sql-editor__area sql-editor__area--output sql-editor__area--highlighted"
+              dangerouslySetInnerHTML={{ __html: output ? hljs.highlight(output, { language: 'sql' }).value : '' }}
             />
           </div>
         </div>

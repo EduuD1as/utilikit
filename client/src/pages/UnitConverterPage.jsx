@@ -187,6 +187,14 @@ export function UnitConverterPage({ onNavigate }) {
     }
   };
 
+  const handleCategoryChange = (key, data) => {
+    setCategory(key);
+    const units = Object.keys(data.units);
+    setInputUnit(units[0]);
+    setOutputUnit(units[1] || units[0]);
+    setError('');
+  };
+
 
   return (
     <div className="app app--unit">
@@ -217,16 +225,12 @@ export function UnitConverterPage({ onNavigate }) {
               <button
                 key={key}
                 className={`unit-category-btn ${category === key ? 'unit-category-btn--active' : ''}`}
-                onClick={() => {
-                  setCategory(key);
-                  const units = Object.keys(data.units);
-                  setInputUnit(units[0]);
-                  setOutputUnit(units[1] || units[0]);
-                  setError('');
-                }}
+                onClick={() => handleCategoryChange(key, data)}
                 aria-label={t(data.name)}
+                aria-pressed={category === key}
+                role="button"
               >
-                <span>{getCategoryIcon(key)}</span>
+                <span aria-hidden="true">{getCategoryIcon(key)}</span>
                 {t(data.name)}
               </button>
             ))}
@@ -249,6 +253,7 @@ export function UnitConverterPage({ onNavigate }) {
                   placeholder={t('placeholderZero')}
                   aria-label={t('unitFrom')}
                   step="any"
+                  inputMode="decimal"
                 />
                 <div className="custom-select-wrapper">
                   <select
@@ -270,34 +275,39 @@ export function UnitConverterPage({ onNavigate }) {
               </div>
 
               <div className="conversion-swap">
-                <button className="swap-btn" onClick={handleSwap} title={t('unitSwap')} aria-label={t('unitSwap')}>
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <button
+                  className="swap-btn"
+                  onClick={handleSwap}
+                  title={t('unitSwap')}
+                  aria-label={t('unitSwap')}
+                  type="button"
+                >
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M7 16V4M7 4 3 8m4-4 4 4M17 8v12m0 0 4-4m-4 4-4-4" />
                   </svg>
                 </button>
               </div>
 
               <div className="conversion-input-group">
-                <div className="converter-output-wrapper">
-                  <div className="converter-output">{output}</div>
-                  <button
-                    className="copy-btn"
-                    onClick={handleCopy}
-                    title={copySuccess ? t('copied') : t('copy')}
-                    aria-label={copySuccess ? t('copied') : t('copy')}
-                  >
-                    {copySuccess ? (
-                      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                    ) : (
-                      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                      </svg>
-                    )}
-                  </button>
-                </div>
+                <div className="converter-output">{output}</div>
+                <button
+                  className={`copy-btn ${copySuccess ? 'copy-btn--success' : ''}`}
+                  onClick={handleCopy}
+                  title={copySuccess ? t('copied') : t('copy')}
+                  aria-label={copySuccess ? t('copied') : t('copy')}
+                  type="button"
+                >
+                  {copySuccess ? (
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>
+                  )}
+                </button>
                 <div className="custom-select-wrapper">
                   <select
                     className="converter-select"

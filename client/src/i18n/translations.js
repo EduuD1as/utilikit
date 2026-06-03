@@ -97,14 +97,6 @@ export const translations = {
     currencyConverterTitle: 'Conversor de moedas',
     currencyConverterSubtitle: 'Converta entre principais moedas com cotação atualizada.',
 
-    // Document Converter
-    documentConverterTitle: 'Conversor de Documentos',
-    documentConverterSubtitle: 'Converta entre Word e PDF com suporte local no navegador',
-    convertToPdf: 'Converter para PDF',
-    convertToWord: 'Converter para Word',
-    converting: 'Convertendo...',
-    documentConverterDisclaimer: 'Word → PDF: Converte documentos Word para PDF preservando o layout e formatação.',
-
     // SQL Formatter
     sqlFormatterTitle: 'Formatador de SQL',
     sqlFormatterSubtitle: 'Indente, organize e minifique consultas SQL',
@@ -306,7 +298,6 @@ export const translations = {
     currencyUpdating: 'Atualizando…',
     currencyUpdateRate: 'Atualizar cotação',
     generatorFooterNote: 'Gerador de IDs e hashes.',
-    documentConverterFooterNote: 'Conversão de documentos executada no navegador.',
     copied: '✓ Copiado!',
     copy: 'Copiar',
     copyUrl: '📋 Copiar URL',
@@ -332,8 +323,6 @@ export const translations = {
     size: 'Tamanho',
     text: 'Texto',
     hashType: 'Tipo de Hash',
-    documentConverterPrivacy: 'Privacidade:',
-    documentConverterPrivacyText: 'Todo processamento ocorre localmente no seu navegador.',
     localProcessingDisclaimer: 'Todo processamento ocorre localmente no seu navegador. Seus dados não são enviados para servidores.',
     jsonFormatterFooterNote: 'Formatação de JSON executada no navegador.',
     sqlFormatterFooterNote: 'SQL formatado localmente no seu navegador — nada é enviado ao servidor.',
@@ -439,8 +428,6 @@ export const translations = {
     toolSqlFormatterDesc: 'Idente, organize e minifique consultas SQL no navegador.',
     toolJsonFormatterTitle: 'Formatador de JSON',
     toolJsonFormatterDesc: 'Formate, valide e minifique JSON facilmente no navegador.',
-    toolDocumentConverterTitle: 'Conversor de Documentos',
-    toolDocumentConverterDesc: 'Converta entre Word (DOCX) e PDF no navegador, sem envios.',
     toolPasswordTitle: 'Gerador de senhas',
     toolPasswordDesc: 'Senhas fortes com tamanho e símbolos configuráveis.',
     toolUuidTitle: 'Gerador de UUID e Hash',
@@ -746,14 +733,6 @@ export const translations = {
     currencyConverterTitle: 'Currency Converter',
     currencyConverterSubtitle: 'Convert between currencies with real-time exchange rates.',
 
-    // Document Converter
-    documentConverterTitle: 'Document Converter',
-    documentConverterSubtitle: 'Convert between Word and PDF with local browser support',
-    convertToPdf: 'Convert to PDF',
-    convertToWord: 'Convert to Word',
-    converting: 'Converting...',
-    documentConverterDisclaimer: 'Word → PDF: Converts Word documents to PDF preserving layout and formatting.',
-
     // SQL Formatter
     sqlFormatterTitle: 'SQL Formatter',
     sqlFormatterSubtitle: 'Indent, organize and minify SQL queries',
@@ -955,7 +934,6 @@ export const translations = {
     currencyUpdating: 'Updating…',
     currencyUpdateRate: 'Update rates',
     generatorFooterNote: 'ID and hash generator.',
-    documentConverterFooterNote: 'Document conversion executed in the browser.',
     copied: '✓ Copied!',
     copy: 'Copy',
     copyUrl: '📋 Copy URL',
@@ -981,8 +959,6 @@ export const translations = {
     size: 'Size',
     text: 'Text',
     hashType: 'Hash Type',
-    documentConverterPrivacy: 'Privacy:',
-    documentConverterPrivacyText: 'All processing occurs locally in your browser.',
     localProcessingDisclaimer: 'All processing occurs locally in your browser. Your data is not sent to servers.',
     jsonFormatterFooterNote: 'JSON formatting executed in the browser.',
     sqlFormatterFooterNote: 'SQL formatted locally in your browser — nothing is sent to the server.',
@@ -1088,8 +1064,6 @@ export const translations = {
     toolSqlFormatterDesc: 'Indent, organize and minify SQL queries in the browser.',
     toolJsonFormatterTitle: 'JSON Formatter',
     toolJsonFormatterDesc: 'Format, validate and minify JSON easily in the browser.',
-    toolDocumentConverterTitle: 'Document Converter',
-    toolDocumentConverterDesc: 'Convert between Word (DOCX) and PDF in the browser, no uploads.',
     toolPasswordTitle: 'Password Generator',
     toolPasswordDesc: 'Strong passwords with configurable length and symbols.',
     toolUuidTitle: 'UUID and Hash Generator',

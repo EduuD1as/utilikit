@@ -14,18 +14,6 @@ const SEO_DATA = {
       keywords: 'calculator, converter, generator, counter, online tools, utilities, free tools, online calculator, currency converter, QR code generator, character counter, pomodoro timer',
     },
   },
-  '/contador-youtube': {
-    pt: {
-      title: 'Contador de Inscritos YouTube — UtiliKit',
-      description: 'Contador de inscritos do YouTube em tempo real. Monitore o crescimento do seu canal com atualizações automáticas via SSE.',
-      keywords: 'contador inscritos youtube, monitor youtube, inscritos em tempo real, crescimento canal youtube, youtube analytics',
-    },
-    en: {
-      title: 'YouTube Subscriber Counter — UtiliKit',
-      description: 'Real-time YouTube subscriber counter. Monitor your channel growth with automatic SSE updates.',
-      keywords: 'youtube subscriber counter, youtube monitor, real-time subscribers, youtube channel growth, youtube analytics',
-    },
-  },
   '/formatador-sql': {
     pt: {
       title: 'Formatador SQL — UtiliKit',
@@ -48,18 +36,6 @@ const SEO_DATA = {
       title: 'JSON Formatter — UtiliKit',
       description: 'Format, validate and minify JSON code. Essential tool for developers.',
       keywords: 'json formatter, format json, validate json, minify json, json beautifier',
-    },
-  },
-  '/conversor-documentos': {
-    pt: {
-      title: 'Conversor de Documentos — UtiliKit',
-      description: 'Converta documentos entre diferentes formatos. Word para PDF, PDF para Word e mais.',
-      keywords: 'conversor documentos, word para pdf, pdf para word, converter arquivo, conversor online',
-    },
-    en: {
-      title: 'Document Converter — UtiliKit',
-      description: 'Convert documents between different formats. Word to PDF, PDF to Word and more.',
-      keywords: 'document converter, word to pdf, pdf to word, file converter, online converter',
     },
   },
   '/conversor-moedas': {
