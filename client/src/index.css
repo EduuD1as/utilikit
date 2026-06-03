@@ -1418,6 +1418,25 @@ body:has(.app--timer) {
     align-items: flex-start;
     gap: 0.35rem;
   }
+
+  .app--base64 .sql-editor {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .app--base64 .sql-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .app--base64 .sql-toolbar__actions {
+    margin-left: 0;
+    justify-content: stretch;
+  }
+
+  .app--base64 .sql-toolbar__actions button {
+    flex: 1;
+  }
 }
 
 /* SQL formatter */
@@ -1430,6 +1449,24 @@ body:has(.app--timer) {
   padding-left: clamp(1rem, 2.5vw, 2rem);
   padding-right: clamp(1rem, 2.5vw, 2rem);
   overflow-x: hidden;
+}
+
+/* Base64 encoder */
+.app--base64 {
+  --accent: #06b6d4;
+  --accent-hover: #0891b2;
+  --accent-soft: rgba(6, 182, 212, 0.15);
+  max-width: min(900px, calc(100vw - 2rem));
+  width: 100%;
+  padding-left: clamp(1rem, 2.5vw, 2rem);
+  padding-right: clamp(1rem, 2.5vw, 2rem);
+}
+
+body:has(.app--base64) {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%,
+      rgba(6, 182, 212, 0.15),
+      transparent 50%);
 }
 
 body:has(.app--sql) {

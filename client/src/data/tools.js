@@ -52,8 +52,9 @@ export const TOOLS = [
     titleKey: 'toolBase64Title',
     descKey: 'toolBase64Desc',
     category: 'converters',
-    available: false,
-    accent: '#64748b',
+    path: '/codificador-base64',
+    available: true,
+    accent: '#06b6d4',
     icon: 'code',
   },
   {
