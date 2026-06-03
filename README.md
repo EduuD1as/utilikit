@@ -7,10 +7,8 @@ Hub de ferramentas online — calculadoras, conversores, geradores e contadores.
 | Ferramenta | Rota |
 |------------|------|
 | Página inicial | `/` |
-| Contador de inscritos YouTube | `/contador-youtube` |
 | Formatador de SQL | `/formatador-sql` |
 | Formatador de JSON | `/formatador-json` |
-| Conversor de documentos | `/conversor-documentos` |
 | Conversor de moedas | `/conversor-moedas` |
 | Conversor de unidades | `/conversor-unidades` |
 | Contador de caracteres | `/contador-caracteres` |
@@ -40,7 +38,7 @@ npm run dev
 ```bash
 npm run install:all
 npm run build
-npm run start
+npm run start --prefix server
 ```
 
 Acesse **http://localhost:3001**
