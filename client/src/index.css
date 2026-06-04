@@ -1462,6 +1462,12 @@ body:has(.app--timer) {
   padding-right: clamp(1rem, 2.5vw, 2rem);
 }
 
+.app--base64 .sql-toolbar__actions .btn-outline--danger:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.1) !important;
+  border-color: #ef4444 !important;
+  color: #ef4444 !important;
+}
+
 body:has(.app--base64) {
   background:
     radial-gradient(ellipse 80% 50% at 50% -20%,

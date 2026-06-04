@@ -1,5 +1,6 @@
 const INTERNAL_API_BASE = import.meta.env.VITE_API_URL || '';
 const FRANKFURTER_API_BASE = 'https://api.frankfurter.app';
+const CORS_PROXY_BASE = 'https://corsproxy.io/?';
 const CACHE_MS = 60 * 60 * 1000;
 const FALLBACK_DATE = '2026-05-21';
 const FETCH_TIMEOUT_MS = 12000;
@@ -77,10 +78,16 @@ const rateCache = new Map();
 let currenciesCache = null;
 
 function buildApiCandidates(path) {
-  return [
-    `${INTERNAL_API_BASE}/api/currency${path}`,
-    `${FRANKFURTER_API_BASE}${path}`,
-  ];
+  const candidates = [];
+
+  if (INTERNAL_API_BASE) {
+    candidates.push(`${INTERNAL_API_BASE}/api/currency${path}`);
+  }
+
+  candidates.push(`${CORS_PROXY_BASE}${encodeURIComponent(FRANKFURTER_API_BASE + path)}`);
+  candidates.push(`${FRANKFURTER_API_BASE}${path}`);
+
+  return candidates;
 }
 
 async function fetchJson(url) {
