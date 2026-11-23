@@ -1,107 +1,65 @@
 import { useMemo, useState } from 'react';
-import { CATEGORIES, TOOLS } from '../data/tools.js';
-import { SiteHeader } from '../components/SiteHeader.jsx';
-import { SiteFooter } from '../components/SiteFooter.jsx';
-import { ToolCard } from '../components/ToolCard.jsx';
-import { useLanguage } from '../context/LanguageContext';
+import { CATEGORIES, searchTools } from '../data/tools.js';
+import { usePreferences } from '../context/PreferencesContext.jsx';
+import { Link, useRouter } from '../context/RouterContext.jsx';
+import { Icon } from '../components/Icon.jsx';
 
-export function HomePage({ onNavigate }) {
-  const { t } = useLanguage();
+export default function HomePage() {
+  const { t } = usePreferences();
+  const { navigate } = useRouter();
   const [query, setQuery] = useState('');
-  const [category, setCategory] = useState('all');
-
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return TOOLS.filter((tool) => {
-      const matchesAvailability =
-        category === 'soon'
-          ? !tool.available
-          : category === 'all'
-            ? tool.available
-            : tool.available && tool.category === category;
-      const title = t(tool.titleKey) || '';
-      const description = t(tool.descKey) || '';
-      const matchesQuery =
-        !q ||
-        title.toLowerCase().includes(q) ||
-        description.toLowerCase().includes(q);
-      return matchesAvailability && matchesQuery;
-    });
-  }, [query, category, t]);
-
-  const availableCount = TOOLS.filter((t) => t.available).length;
-  const soonCount = TOOLS.length - availableCount;
+  const results = useMemo(() => searchTools(query, t), [query, t]);
 
   return (
-    <div className="home">
-      <SiteHeader onNavigate={onNavigate} />
-
-      <header className="home-hero">
-        <div className="home-hero__glow" aria-hidden="true" />
-        <div className="home-hero__content">
-          <p className="home-hero__eyebrow">{t('homeHeroEyebrow')}</p>
-          <h1 className="home-hero__title">
-            {t('homeHeroTitle')}
-            <span className="home-hero__title-accent">{t('homeHeroTitleAccent')}</span>
-          </h1>
-          <p className="home-hero__lead">{t('homeHeroLead')}</p>
-
-          <div className="home-hero__search">
-            <svg className="home-hero__search-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                d="M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16Zm10 2-5-5"
-              />
-            </svg>
-            <input
-              type="search"
-              className="home-hero__search-input"
-              placeholder={t('homeHeroSearchPlaceholder')}
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              aria-label={t('homeHeroSearchLabel')}
-            />
-          </div>
-        </div>
+    <div className="tool home">
+      <header className="home__intro">
+        <h1 className="home__title">{t('home.title')}</h1>
+        <p className="home__lead">{t('home.lead')}</p>
+        <label className="prompt">
+          <span className="prompt__sign" aria-hidden="true">
+            &gt;
+          </span>
+          <input
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' && results[0]) navigate(results[0].path);
+            }}
+            placeholder={t('home.filter')}
+            aria-label={t('home.filter')}
+            spellCheck={false}
+            autoComplete="off"
+          />
+          <span className="prompt__count">{t('home.count', { n: results.length })}</span>
+        </label>
       </header>
 
-      <main className="home-main">
-        <nav className="home-filters" role="navigation" aria-label={t('homeFiltersLabel')}>
-          {CATEGORIES.map((cat) => {
-            const translatedLabel = t(cat.label) || cat.label;
-            return (
-              <button
-                key={cat.id}
-                type="button"
-                aria-current={category === cat.id ? 'page' : undefined}
-                className={`home-filter${category === cat.id ? ' home-filter--active' : ''}`}
-                onClick={() => setCategory(cat.id)}
-              >
-                {translatedLabel}
-              </button>
-            );
-          })}
-        </nav>
+      {results.length === 0 && <p className="muted home__empty">{t('shell.noResults')}</p>}
 
-        {filtered.length === 0 ? (
-          <p className="home-empty" role="status">
-            {category === 'soon'
-              ? t('homeEmptySoon')
-              : t('homeEmpty')}
-          </p>
-        ) : (
-          <section className="home-grid" aria-label="Ferramentas disponíveis">
-            {filtered.map((tool) => (
-              <ToolCard key={tool.id} tool={tool} onOpen={onNavigate} />
-            ))}
+      {CATEGORIES.map((category) => {
+        const items = results.filter((tool) => tool.category === category);
+        if (items.length === 0) return null;
+        return (
+          <section className="home__group" key={category} aria-labelledby={`cat-${category}`}>
+            <h2 className="home__heading" id={`cat-${category}`}>
+              {t(`categories.${category}`)}
+            </h2>
+            <ul className="home__list">
+              {items.map((tool) => (
+                <li key={tool.id}>
+                  <Link to={tool.path} className="home__item">
+                    <Icon name={tool.icon} size={18} />
+                    <span className="home__name">{t(`tools.${tool.id}.name`)}</span>
+                    <span className="home__desc">{t(`tools.${tool.id}.desc`)}</span>
+                    <span className="home__path">{tool.path}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </section>
-        )}
-      </main>
-
-      <SiteFooter onNavigate={onNavigate} />
+        );
+      })}
     </div>
   );
 }

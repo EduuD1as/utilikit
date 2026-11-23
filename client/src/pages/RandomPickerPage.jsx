@@ -1,220 +1,181 @@
-import { useState, useRef, useEffect } from 'react';
-import { useLanguage } from '../context/LanguageContext';
-import { Logo } from '../components/Logo';
-import { SiteFooter } from '../components/SiteFooter';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { usePageT } from '../context/PreferencesContext.jsx';
+import { Button, Checkbox, Pane, ToolHeader } from '../components/ui.jsx';
+import { randomInt, shuffle } from '../lib/random.js';
+import { readJson, writeJson } from '../lib/storage.js';
 
-export default function RandomPickerPage({ onNavigate }) {
-  const { t } = useLanguage();
-  const [items, setItems] = useState(['Opção 1', 'Opção 2', 'Opção 3', 'Opção 4']);
-  const [inputValue, setInputValue] = useState('');
-  const [isSpinning, setIsSpinning] = useState(false);
-  const [winner, setWinner] = useState(null);
+const STRINGS = {
+  pt: {
+    options: 'Opções (uma por linha)',
+    spin: 'Girar',
+    spinning: 'Girando…',
+    winner: 'Resultado',
+    removeWinner: 'Remover o sorteado da lista após girar',
+    shuffle: 'Embaralhar',
+    needTwo: 'Adicione pelo menos duas opções.',
+    count: '{n} opções',
+    defaults: 'Pizza\nHambúrguer\nSushi\nSalada\nTacos\nMassa',
+  },
+  en: {
+    options: 'Options (one per line)',
+    spin: 'Spin',
+    spinning: 'Spinning…',
+    winner: 'Result',
+    removeWinner: 'Remove the picked option after spinning',
+    shuffle: 'Shuffle',
+    needTwo: 'Add at least two options.',
+    count: '{n} options',
+    defaults: 'Pizza\nBurger\nSushi\nSalad\nTacos\nPasta',
+  },
+};
+
+const STORAGE_KEY = 'utilikit-picker';
+const SPIN_MS = 4200;
+
+function polar(cx, cy, r, deg) {
+  const rad = ((deg - 90) * Math.PI) / 180;
+  return [cx + r * Math.cos(rad), cy + r * Math.sin(rad)];
+}
+
+function slicePath(index, count) {
+  if (count === 1) return 'M150 150 m-140 0 a140 140 0 1 0 280 0 a140 140 0 1 0 -280 0';
+  const a0 = (index * 360) / count;
+  const a1 = ((index + 1) * 360) / count;
+  const [x0, y0] = polar(150, 150, 140, a0);
+  const [x1, y1] = polar(150, 150, 140, a1);
+  const large = a1 - a0 > 180 ? 1 : 0;
+  return `M150 150 L${x0} ${y0} A140 140 0 ${large} 1 ${x1} ${y1} Z`;
+}
+
+export default function RandomPickerPage() {
+  const t = usePageT(STRINGS);
+  const [text, setText] = useState(() => readJson(STORAGE_KEY, null)?.text ?? t('defaults'));
+  const [removeWinner, setRemoveWinner] = useState(false);
   const [rotation, setRotation] = useState(0);
-  const wheelRef = useRef(null);
+  const [spinning, setSpinning] = useState(false);
+  const [winner, setWinner] = useState(null);
+  const timer = useRef(null);
 
-  const addItem = () => {
-    if (inputValue.trim()) {
-      setItems([...items, inputValue.trim()]);
-      setInputValue('');
-      setWinner(null);
-    }
-  };
+  useEffect(() => writeJson(STORAGE_KEY, { text }), [text]);
+  useEffect(() => () => clearTimeout(timer.current), []);
 
-  const removeItem = (index) => {
-    setItems(items.filter((_, i) => i !== index));
+  const items = useMemo(
+    () =>
+      text
+        .split('\n')
+        .map((s) => s.trim())
+        .filter(Boolean),
+    [text]
+  );
+
+  const spin = () => {
+    if (items.length < 2 || spinning) return;
+    const count = items.length;
+    const index = randomInt(count);
+    const seg = 360 / count;
+    // Ponto aleatório dentro da fatia sorteada, longe das bordas.
+    const target = index * seg + seg * (0.15 + (randomInt(1000) / 1000) * 0.7);
+    const current = ((rotation % 360) + 360) % 360;
+    const delta = (360 - target - current + 720) % 360;
+    setRotation(rotation + 360 * 6 + delta);
+    setSpinning(true);
     setWinner(null);
+    timer.current = setTimeout(() => {
+      setSpinning(false);
+      setWinner(items[index]);
+      if (removeWinner) {
+        const lines = text.split('\n');
+        const pos = lines.findIndex((line) => line.trim() === items[index]);
+        if (pos > -1) lines.splice(pos, 1);
+        setText(lines.join('\n'));
+      }
+    }, SPIN_MS);
   };
 
-  const clearAll = () => {
-    setItems([]);
-    setWinner(null);
-    setRotation(0);
-  };
-
-  const spinWheel = () => {
-    if (items.length < 2 || isSpinning) return;
-
-    setIsSpinning(true);
-    setWinner(null);
-
-    const segmentAngle = 360 / items.length;
-    const spins = 5 + Math.random() * 3; // 5-8 full spins
-    const randomAngle = Math.random() * 360;
-    const totalRotation = rotation + (spins * 360) + randomAngle;
-
-    setRotation(totalRotation);
-
-    setTimeout(() => {
-      // Calcular qual segmento está sob o ponteiro (topo)
-      const finalAngle = totalRotation % 360;
-      // O ponteiro está no topo (0 graus), então precisamos calcular qual segmento está lá
-      // Como a roleta gira no sentido horário, o segmento sob o ponteiro é:
-      const pointerAngle = (360 - finalAngle) % 360;
-      const winningIndex = Math.floor(pointerAngle / segmentAngle);
-      setWinner(items[winningIndex]);
-      setIsSpinning(false);
-    }, 5000);
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      addItem();
-    }
-  };
-
-  const colors = [
-    '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4',
-    '#FFEAA7', '#DDA0DD', '#98D8C8', '#F7DC6F',
-    '#BB8FCE', '#85C1E9', '#F8B500', '#00CED1'
-  ];
+  const fontSize = items.length > 16 ? 9 : items.length > 10 ? 11 : 13;
 
   return (
-    <div className="app app--random-picker">
-      <header className="hero">
-        <div className="hero__brand">
-          <Logo size={52} className="hero__logo" onNavigate={onNavigate} />
-          <div>
-            <button
-              type="button"
-              className="hero__back"
-              onClick={() => onNavigate('/')}
-            >
-              ← {t('backToTools')}
-            </button>
-            <h1>{t('randomPickerTitle')}</h1>
-            <p className="hero__subtitle">
-              {t('randomPickerSubtitle')}
-            </p>
-          </div>
-        </div>
-      </header>
+    <div className="tool">
+      <ToolHeader title={t('tools.picker.name')} description={t('tools.picker.long')} />
 
-      <main className="panel">
-        <div className="random-picker">
-          <div className="random-picker__wheel-container">
-            <div className="random-picker__pointer">▼</div>
-            <div
-              ref={wheelRef}
-              className="random-picker__wheel"
+      <div className="picker">
+        <div className="picker__stage">
+          <div className="picker__wheel-wrap">
+            <span className="picker__pointer" aria-hidden="true" />
+            <svg
+              viewBox="0 0 300 300"
+              className="picker__wheel"
               style={{
                 transform: `rotate(${rotation}deg)`,
-                transition: isSpinning ? 'transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99)' : 'none',
-                background: items.length > 0
-                  ? `conic-gradient(
-                      ${items.map((item, index) => {
-                    const angle = (index * 360) / items.length;
-                    const color = colors[index % colors.length];
-                    return `${color} ${angle}deg ${(angle + 360 / items.length)}deg`;
-                  }).join(', ')}
-                    )`
-                  : '#ccc',
+                transition: spinning ? `transform ${SPIN_MS}ms cubic-bezier(0.12, 0.7, 0.1, 1)` : 'none',
               }}
+              role="img"
+              aria-label={t('tools.picker.name')}
             >
+              {items.length === 0 && <circle cx="150" cy="150" r="140" className="picker__empty" />}
               {items.map((item, index) => {
-                const angle = (index * 360) / items.length;
-                const segmentAngle = 360 / items.length;
-                const textAngle = angle + segmentAngle / 2;
-                const radius = 35; // percentage from center (reduzido de 45 para 35)
-                const x = 50 + radius * Math.cos((textAngle - 90) * Math.PI / 180);
-                const y = 50 + radius * Math.sin((textAngle - 90) * Math.PI / 180);
-
+                const mid = ((index + 0.5) * 360) / items.length;
+                const [tx, ty] = polar(150, 150, 84, mid);
+                const label = item.length > 16 ? `${item.slice(0, 15)}…` : item;
                 return (
-                  <span
-                    key={index}
-                    className="random-picker__segment-text"
-                    style={{
-                      position: 'absolute',
-                      left: `${x}%`,
-                      top: `${y}%`,
-                      transform: 'translate(-50%, -50%)',
-                      fontSize: items.length > 8 ? '0.7rem' : '1rem',
-                      fontWeight: 700,
-                      color: '#fff',
-                      textShadow: '0 2px 4px rgba(0, 0, 0, 0.8), 0 0 8px rgba(0, 0, 0, 0.4)',
-                      whiteSpace: 'nowrap',
-                      textAlign: 'center',
-                      zIndex: 2,
-                      padding: '0.5rem',
-                    }}
-                  >
-                    {item.length > 15 ? item.substring(0, 15) + '...' : item}
-                  </span>
+                  <g key={`${index}-${item}`}>
+                    <path d={slicePath(index, items.length)} className={`picker__slice picker__slice--${index % 8}`} />
+                    <text
+                      x={tx}
+                      y={ty}
+                      fontSize={fontSize}
+                      className="picker__label"
+                      transform={`rotate(${mid - 90} ${tx} ${ty})`}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                    >
+                      {label}
+                    </text>
+                  </g>
                 );
               })}
-            </div>
+              <circle cx="150" cy="150" r="16" className="picker__hub" />
+            </svg>
           </div>
 
-          {winner && (
-            <div className="random-picker__result">
-              <div className="random-picker__result-content">
-                <button
-                  type="button"
-                  className="btn-ghost random-picker__close"
-                  onClick={() => setWinner(null)}
-                  aria-label="Fechar"
-                >
-                  ✕
-                </button>
-                <h2>{t('winner')}</h2>
-                <p className="random-picker__winner-text">{winner}</p>
-                <button className="search__btn" onClick={spinWheel}>
-                  {t('spinAgain')}
-                </button>
-              </div>
-            </div>
-          )}
-
-          <div className="random-picker__controls">
-            <div className="random-picker__input-group">
-              <input
-                type="text"
-                className="search__input"
-                placeholder={t('addOptionPlaceholder')}
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyPress={handleKeyPress}
-                disabled={isSpinning}
-              />
-              <button className="search__btn" onClick={addItem} disabled={isSpinning}>
-                {t('add')}
-              </button>
-            </div>
-
-            <div className="random-picker__items-list">
-              <div className="random-picker__items-header">
-                <span>{t('options')} ({items.length})</span>
-                <button className="btn-ghost" onClick={clearAll} disabled={isSpinning || items.length === 0}>
-                  {t('clearAll')}
-                </button>
-              </div>
-              <div className="random-picker__items">
-                {items.map((item, index) => (
-                  <div key={index} className="random-picker__item">
-                    <span className="random-picker__item-text">{item}</span>
-                    <button
-                      className="btn-ghost btn-ghost--danger"
-                      onClick={() => removeItem(index)}
-                      disabled={isSpinning}
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <button
-              className="search__btn search__btn--large"
-              onClick={spinWheel}
-              disabled={items.length < 2 || isSpinning}
-            >
-              {isSpinning ? t('spinning') : t('spinWheel')}
-            </button>
+          <div className="picker__result" aria-live="polite">
+            <span className="muted">{t('winner')}</span>
+            <strong className="picker__winner">{winner ?? (spinning ? t('spinning') : '—')}</strong>
           </div>
+
+          <Button variant="primary" size="lg" onClick={spin} disabled={items.length < 2 || spinning}>
+            {spinning ? t('spinning') : t('spin')}
+          </Button>
         </div>
-      </main>
 
-      <SiteFooter onNavigate={onNavigate} />
+        <Pane
+          title={t('options')}
+          meta={t('count', { n: items.length })}
+          actions={
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => setText(shuffle(items).join('\n'))}
+              disabled={spinning || items.length < 2}
+            >
+              {t('shuffle')}
+            </Button>
+          }
+        >
+          <div className="pane__pad stack">
+            <textarea
+              className="textarea picker__input"
+              value={text}
+              onChange={(event) => setText(event.target.value)}
+              disabled={spinning}
+              aria-label={t('options')}
+              rows={12}
+            />
+            {items.length < 2 && <p className="field__hint">{t('needTwo')}</p>}
+            <Checkbox label={t('removeWinner')} checked={removeWinner} onChange={setRemoveWinner} />
+          </div>
+        </Pane>
+      </div>
     </div>
   );
 }

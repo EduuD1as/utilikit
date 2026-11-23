@@ -1,161 +1,185 @@
-import { useState, useEffect } from 'react';
-import { useLanguage } from '../context/LanguageContext';
-import { Logo } from '../components/Logo';
-import { SiteFooter } from '../components/SiteFooter';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { usePageT } from '../context/PreferencesContext.jsx';
+import { Button, Segmented, Stat, ToolHeader } from '../components/ui.jsx';
+import { shuffle } from '../lib/random.js';
+import { readJson, writeJson } from '../lib/storage.js';
 
-const EMOJIS = ['\u{1F3AE}', '\u{1F3B2}', '\u{1F3AF}', '\u{1F3A8}', '\u{1F3AD}', '\u{1F3B8}', '\u{1F3BA}', '\u{1F3BB}', '\u{1F3B9}', '\u{1F3AC}'];
+const STRINGS = {
+  pt: {
+    level: 'Nível',
+    easy: 'Fácil',
+    medium: 'Médio',
+    hard: 'Difícil',
+    moves: 'Jogadas',
+    time: 'Tempo',
+    pairs: 'Pares',
+    best: 'Recorde',
+    newGame: 'Novo jogo',
+    won: 'Você encontrou todos os pares em {moves} jogadas e {time}.',
+    record: 'Novo recorde neste nível.',
+    card: 'Carta {n}',
+    hidden: 'virada para baixo',
+  },
+  en: {
+    level: 'Level',
+    easy: 'Easy',
+    medium: 'Medium',
+    hard: 'Hard',
+    moves: 'Moves',
+    time: 'Time',
+    pairs: 'Pairs',
+    best: 'Best',
+    newGame: 'New game',
+    won: 'You found every pair in {moves} moves and {time}.',
+    record: 'New record for this level.',
+    card: 'Card {n}',
+    hidden: 'face down',
+  },
+};
 
-export default function MemoryGamePage({ onNavigate }) {
-  const { t } = useLanguage();
-  const [cards, setCards] = useState([]);
-  const [flipped, setFlipped] = useState([]);
-  const [matched, setMatched] = useState([]);
-  const [removed, setRemoved] = useState([]);
+const SYMBOLS = ['{ }', '</>', '=>', '&&', '||', '[ ]', '#!', '$_', '@', '%', '::', '++', '!=', '?.', '**', '~/', '>>', ';;'];
+const LEVELS = { easy: { pairs: 8, cols: 4 }, medium: { pairs: 10, cols: 5 }, hard: { pairs: 18, cols: 6 } };
+const STORAGE_KEY = 'utilikit-memory-best';
+
+const fmtTime = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+
+function deal(level) {
+  const symbols = shuffle(SYMBOLS).slice(0, LEVELS[level].pairs);
+  return shuffle([...symbols, ...symbols]).map((symbol, id) => ({ id, symbol }));
+}
+
+export default function MemoryGamePage() {
+  const t = usePageT(STRINGS);
+  const [level, setLevel] = useState('easy');
+  const [cards, setCards] = useState(() => deal('easy'));
+  const [open, setOpen] = useState([]);
+  const [matched, setMatched] = useState(() => new Set());
   const [moves, setMoves] = useState(0);
-  const [gameOver, setGameOver] = useState(false);
-  const [bestScore, setBestScore] = useState(null);
+  const [seconds, setSeconds] = useState(0);
+  const [started, setStarted] = useState(false);
+  const [best, setBest] = useState(() => readJson(STORAGE_KEY, {}));
+  const [record, setRecord] = useState(false);
+  const lock = useRef(false);
+  const flipTimer = useRef(null);
 
-  useEffect(() => {
-    const saved = localStorage.getItem('memoryGameBestScore');
-    if (saved) {
-      setBestScore(parseInt(saved, 10));
-    }
-  }, []);
+  const total = LEVELS[level].pairs;
+  const won = matched.size === total * 2;
 
-  useEffect(() => {
-    initializeGame();
-  }, []);
-
-  const initializeGame = () => {
-    const shuffledCards = [...EMOJIS, ...EMOJIS]
-      .sort(() => Math.random() - 0.5)
-      .map((emoji, index) => ({ id: index, emoji }));
-    setCards(shuffledCards);
-    setFlipped([]);
-    setMatched([]);
-    setRemoved([]);
+  const newGame = useCallback((nextLevel = level) => {
+    clearTimeout(flipTimer.current);
+    lock.current = false;
+    setLevel(nextLevel);
+    setCards(deal(nextLevel));
+    setOpen([]);
+    setMatched(new Set());
     setMoves(0);
-    setGameOver(false);
-  };
+    setSeconds(0);
+    setStarted(false);
+    setRecord(false);
+  }, [level]);
 
-  const handleCardClick = (cardId) => {
-    if (flipped.length === 2 || flipped.includes(cardId) || matched.includes(cardId)) {
-      return;
+  useEffect(() => () => clearTimeout(flipTimer.current), []);
+
+  useEffect(() => {
+    if (!started || won) return undefined;
+    const id = setInterval(() => setSeconds((s) => s + 1), 1000);
+    return () => clearInterval(id);
+  }, [started, won]);
+
+  useEffect(() => {
+    if (!won) return;
+    const prev = best[level];
+    if (!prev || moves < prev.moves || (moves === prev.moves && seconds < prev.seconds)) {
+      const next = { ...best, [level]: { moves, seconds } };
+      setBest(next);
+      writeJson(STORAGE_KEY, next);
+      setRecord(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [won]);
 
-    const newFlipped = [...flipped, cardId];
-    setFlipped(newFlipped);
+  const flip = (card) => {
+    if (lock.current || open.includes(card.id) || matched.has(card.id)) return;
+    if (!started) setStarted(true);
+    const next = [...open, card.id];
+    setOpen(next);
+    if (next.length < 2) return;
 
-    if (newFlipped.length === 2) {
-      setMoves(moves + 1);
-      const [first, second] = newFlipped;
-
-      if (cards[first].emoji === cards[second].emoji) {
-        const nextMatchedCount = matched.length + 2;
-
-        setMatched((current) => [...current, first, second]);
-        setFlipped([]);
-
-        setTimeout(() => {
-          setRemoved((current) => [...current, first, second]);
-        }, 700);
-
-        if (nextMatchedCount === cards.length) {
-          setTimeout(() => {
-            setGameOver(true);
-            const currentBest = localStorage.getItem('memoryGameBestScore');
-            if (!currentBest || moves + 1 < parseInt(currentBest, 10)) {
-              localStorage.setItem('memoryGameBestScore', (moves + 1).toString());
-              setBestScore(moves + 1);
-            }
-          }, 500);
-        }
-      } else {
-        setTimeout(() => setFlipped([]), 1000);
-      }
+    setMoves((m) => m + 1);
+    const [a, b] = next.map((id) => cards[id]);
+    if (a.symbol === b.symbol) {
+      setMatched((prev) => new Set([...prev, a.id, b.id]));
+      setOpen([]);
+    } else {
+      lock.current = true;
+      flipTimer.current = setTimeout(() => {
+        setOpen([]);
+        lock.current = false;
+      }, 800);
     }
   };
 
-  const handleRestart = () => {
-    initializeGame();
-  };
+  const bestHere = best[level];
 
   return (
-    <div className="app app--memory">
-      <header className="hero">
-        <div className="hero__brand">
-          <Logo size={52} className="hero__logo" onNavigate={onNavigate} />
-          <div>
+    <div className="tool tool--narrow">
+      <ToolHeader title={t('tools.memory.name')} description={t('tools.memory.long')} />
+
+      <div className="row">
+        <Segmented
+          label={t('level')}
+          value={level}
+          onChange={(v) => newGame(v)}
+          options={[
+            { value: 'easy', label: `${t('easy')} 4×4` },
+            { value: 'medium', label: `${t('medium')} 5×4` },
+            { value: 'hard', label: `${t('hard')} 6×6` },
+          ]}
+        />
+        <Button icon="refresh" onClick={() => newGame()}>
+          {t('newGame')}
+        </Button>
+      </div>
+
+      <div className="stats">
+        <Stat label={t('moves')} value={moves} />
+        <Stat label={t('time')} value={fmtTime(seconds)} />
+        <Stat label={t('pairs')} value={`${matched.size / 2}/${total}`} />
+        <Stat label={t('best')} value={bestHere ? `${bestHere.moves} · ${fmtTime(bestHere.seconds)}` : '—'} />
+      </div>
+
+      {won && (
+        <div className="win" role="status">
+          <p>{t('won', { moves, time: fmtTime(seconds) })}</p>
+          {record && <p className="win__record">{t('record')}</p>}
+          <Button variant="primary" icon="refresh" onClick={() => newGame()}>
+            {t('newGame')}
+          </Button>
+        </div>
+      )}
+
+      <div className="memory" style={{ '--cols': LEVELS[level].cols }}>
+        {cards.map((card, index) => {
+          const faceUp = open.includes(card.id) || matched.has(card.id);
+          return (
             <button
+              key={`${level}-${card.id}`}
               type="button"
-              className="hero__back"
-              onClick={() => onNavigate('/')}
-              aria-label={t('backToTools')}
+              className={`memory__card${faceUp ? ' is-up' : ''}${matched.has(card.id) ? ' is-matched' : ''}`}
+              onClick={() => flip(card)}
+              disabled={matched.has(card.id)}
+              aria-label={`${t('card', { n: index + 1 })}: ${faceUp ? card.symbol : t('hidden')}`}
             >
-              ← {t('backToTools')}
+              <span className="memory__inner">
+                <span className="memory__back" aria-hidden="true" />
+                <span className="memory__face" aria-hidden="true">
+                  {card.symbol}
+                </span>
+              </span>
             </button>
-            <h1>{t('memoryGameTitle')}</h1>
-            <p className="hero__subtitle">
-              {t('memoryGameSubtitle')}
-            </p>
-          </div>
-        </div>
-      </header>
-
-      <main className="panel generator-panel">
-        <div className="memory-game">
-          <div className="memory-game__stats">
-            <div className="memory-game__stat">
-              <span className="memory-game__stat-label">{t('moves')}</span>
-              <span className="memory-game__stat-value">{moves}</span>
-            </div>
-            <div className="memory-game__stat">
-              <span className="memory-game__stat-label">{t('bestScore')}</span>
-              <span className="memory-game__stat-value">{bestScore || '-'}</span>
-            </div>
-            <button className="btn-outline btn-outline--danger" onClick={handleRestart} aria-label={t('restart')}>
-              {t('restart')}
-            </button>
-          </div>
-
-          <div className="memory-game__grid">
-            {cards.map((card) => (
-              <button
-                key={card.id}
-                className={`memory-card ${flipped.includes(card.id) || matched.includes(card.id) ? 'memory-card--flipped' : ''
-                  } ${matched.includes(card.id) ? 'memory-card--matched' : ''} ${removed.includes(card.id) ? 'memory-card--removed' : ''}`}
-                onClick={() => handleCardClick(card.id)}
-                disabled={matched.includes(card.id) || gameOver || removed.includes(card.id)}
-                aria-label={`Card ${card.id}`}
-              >
-                <div className="memory-card__inner">
-                  <div className="memory-card__front">?</div>
-                  <div className="memory-card__back">{card.emoji}</div>
-                </div>
-              </button>
-            ))}
-          </div>
-
-          {gameOver && (
-            <div className="memory-game__overlay">
-              <div className="memory-game__result">
-                <h2>{t('gameOver')}</h2>
-                <p>{t('gameComplete').replace('{{moves}}', moves)}</p>
-                <button className="btn-primary" onClick={handleRestart} aria-label={t('playAgain')}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="23 4 23 10 17 10" />
-                    <polyline points="1 20 1 14 7 14" />
-                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-                  </svg>
-                  {t('playAgain')}
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      </main>
-
-      <SiteFooter onNavigate={onNavigate} />
+          );
+        })}
+      </div>
     </div>
   );
 }

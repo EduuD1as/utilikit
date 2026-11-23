@@ -1,131 +1,66 @@
-import { useState } from 'react';
-import { useCookieConsent } from '../context/CookieConsentContext.jsx';
-import { useLanguage } from '../context/LanguageContext';
+import { useEffect, useState } from 'react';
+import { useConsent } from '../context/ConsentContext.jsx';
+import { useT } from '../context/PreferencesContext.jsx';
+import { Link } from '../context/RouterContext.jsx';
+import { Checkbox } from './ui.jsx';
 
-export function CookieBanner({ onNavigate }) {
-  const { t } = useLanguage();
-  const {
-    bannerOpen,
-    acceptAll,
-    rejectNonEssential,
-    savePreferences,
-    closeBanner,
-  } = useCookieConsent();
-  const [showDetails, setShowDetails] = useState(false);
+export function CookieBanner() {
+  const t = useT();
+  const { bannerOpen, consent, acceptAll, rejectAll, save, closeBanner } = useConsent();
+  const [details, setDetails] = useState(false);
   const [analytics, setAnalytics] = useState(false);
   const [marketing, setMarketing] = useState(false);
 
+  useEffect(() => {
+    if (!bannerOpen) return;
+    setAnalytics(Boolean(consent?.analytics));
+    setMarketing(Boolean(consent?.marketing));
+    setDetails(Boolean(consent));
+  }, [bannerOpen, consent]);
+
   if (!bannerOpen) return null;
 
-  const handleSaveCustom = () => {
-    savePreferences({ essential: true, analytics, marketing });
-    setShowDetails(false);
-  };
-
   return (
-    <div
-      className="cookie-banner"
-      role="dialog"
-      aria-labelledby="cookie-banner-title"
-      aria-describedby="cookie-banner-desc"
-    >
-      <div className="cookie-banner__panel">
-        <h2 id="cookie-banner-title" className="cookie-banner__title">
-          {t('cookieTitle')}
-        </h2>
-        <p id="cookie-banner-desc" className="cookie-banner__text">
-          {t('cookieMessage')}
-        </p>
+    <section className="cookie" role="dialog" aria-labelledby="cookie-title" aria-describedby="cookie-text">
+      <h2 id="cookie-title" className="cookie__title">
+        {t('cookies.title')}
+      </h2>
+      <p id="cookie-text" className="cookie__text">
+        {t('cookies.text')} <Link to="/privacidade">{t('legal.privacyTitle')}</Link>
+      </p>
 
-        {showDetails && (
-          <div className="cookie-banner__prefs">
-            <label className="cookie-banner__option cookie-banner__option--locked">
-              <input type="checkbox" checked disabled />
-              <span>
-                <strong>{t('cookieEssential')}</strong>
-              </span>
-            </label>
-            <label className="cookie-banner__option">
-              <input
-                type="checkbox"
-                checked={analytics}
-                onChange={(e) => setAnalytics(e.target.checked)}
-              />
-              <span>
-                <strong>{t('cookieAnalytics')}</strong>
-              </span>
-            </label>
-            <label className="cookie-banner__option">
-              <input
-                type="checkbox"
-                checked={marketing}
-                onChange={(e) => setMarketing(e.target.checked)}
-              />
-              <span>
-                <strong>{t('cookieMarketing')}</strong>
-              </span>
-            </label>
-          </div>
-        )}
-
-        <div className="cookie-banner__actions">
-          <button
-            type="button"
-            className="search__btn cookie-banner__btn"
-            onClick={acceptAll}
-          >
-            {t('cookieAccept')}
-          </button>
-          <button
-            type="button"
-            className="btn-ghost cookie-banner__btn"
-            onClick={rejectNonEssential}
-          >
-            {t('cookieDecline')}
-          </button>
-          {!showDetails ? (
-            <button
-              type="button"
-              className="btn-ghost cookie-banner__btn"
-              onClick={() => setShowDetails(true)}
-            >
-              {t('cookieCustomize')}
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="btn-ghost cookie-banner__btn"
-              onClick={handleSaveCustom}
-            >
-              {t('cookieSavePreferences')}
-            </button>
-          )}
+      {details && (
+        <div className="cookie__prefs">
+          <Checkbox label={t('cookies.essential')} checked disabled onChange={() => {}} />
+          <Checkbox label={t('cookies.analytics')} checked={analytics} onChange={setAnalytics} />
+          <Checkbox label={t('cookies.marketing')} checked={marketing} onChange={setMarketing} />
         </div>
+      )}
 
-        <p className="cookie-banner__links">
-          <button
-            type="button"
-            className="cookie-banner__link"
-            onClick={() => {
-              closeBanner();
-              onNavigate('/privacidade');
-            }}
-          >
-            {t('footerPrivacy')}
+      <div className="cookie__actions">
+        {details ? (
+          <button type="button" className="btn btn--primary" onClick={() => save({ analytics, marketing })}>
+            {t('cookies.save')}
           </button>
-          <span aria-hidden="true">·</span>
-          <button
-            type="button"
-            className="cookie-banner__link"
-            onClick={() => {
-              closeBanner();
-              onNavigate('/termos');
-            }}
-          >
-            {t('footerTerms')}
+        ) : (
+          <button type="button" className="btn btn--primary" onClick={acceptAll}>
+            {t('cookies.accept')}
           </button>
-        </p>
+        )}
+        <button type="button" className="btn" onClick={rejectAll}>
+          {t('cookies.reject')}
+        </button>
+        {!details && (
+          <button type="button" className="btn btn--ghost" onClick={() => setDetails(true)}>
+            {t('cookies.customize')}
+          </button>
+        )}
+        {consent && (
+          <button type="button" className="btn btn--ghost" onClick={closeBanner}>
+            {t('common.close')}
+          </button>
+        )}
       </div>
-    </div>
+    </section>
   );
 }

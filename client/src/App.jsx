@@ -1,77 +1,102 @@
-import { useCallback, useEffect, useState, lazy, Suspense } from 'react';
-import { ThemeProvider } from './context/ThemeContext.jsx';
-import { LanguageProvider } from './context/LanguageContext.jsx';
-import { CookieConsentProvider } from './context/CookieConsentContext.jsx';
+import { Component, Suspense, lazy } from 'react';
+import { PreferencesProvider, useT } from './context/PreferencesContext.jsx';
+import { ConsentProvider } from './context/ConsentContext.jsx';
+import { ToastProvider } from './context/ToastContext.jsx';
+import { RouterProvider, useRouter } from './context/RouterContext.jsx';
+import { TOOLS_BY_PATH } from './data/tools.js';
+import { Shell } from './components/Shell.jsx';
 import { CookieBanner } from './components/CookieBanner.jsx';
-import { SEO } from './components/SEO.jsx';
-import { HomePage } from './pages/HomePage.jsx';
-import { SqlFormatterPage } from './pages/SqlFormatterPage.jsx';
-import { JsonFormatterPage } from './pages/JsonFormatterPage.jsx';
-import { CurrencyConverterPage } from './pages/CurrencyConverterPage.jsx';
-import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage.jsx';
-import { TermsPage } from './pages/TermsPage.jsx';
-import { CharacterCounterPage } from './pages/CharacterCounterPage.jsx';
-import { UnitConverterPage } from './pages/UnitConverterPage.jsx';
-import { QRGeneratorPage } from './pages/QRGeneratorPage.jsx';
-import { GeneratorPage } from './pages/GeneratorPage.jsx';
-import { TimerPage } from './pages/TimerPage.jsx';
-import MemoryGamePage from './pages/MemoryGamePage.jsx';
-import RandomPickerPage from './pages/RandomPickerPage.jsx';
-import { Base64EncoderPage } from './pages/Base64EncoderPage.jsx';
+import { Seo } from './components/Seo.jsx';
+import HomePage from './pages/HomePage.jsx';
 
-const ROUTES = {
-  '/': HomePage,
-  '/formatador-sql': SqlFormatterPage,
-  '/formatador-json': JsonFormatterPage,
-  '/conversor-moedas': CurrencyConverterPage,
-  '/contador-caracteres': CharacterCounterPage,
-  '/conversor-unidades': UnitConverterPage,
-  '/gerador-qr': QRGeneratorPage,
-  '/gerador-id-hash': GeneratorPage,
-  '/timer-pomodoro': TimerPage,
-  '/jogo-memoria': MemoryGamePage,
-  '/roleta-sorteador': RandomPickerPage,
-  '/codificador-base64': Base64EncoderPage,
-  '/privacidade': PrivacyPolicyPage,
-  '/termos': TermsPage,
+const LegalPage = lazy(() => import('./pages/LegalPage.jsx'));
+
+const STATIC_ROUTES = {
+  '/': () => <HomePage />,
+  '/privacidade': () => <LegalPage kind="privacy" />,
+  '/termos': () => <LegalPage kind="terms" />,
 };
 
-function normalizePath(pathname) {
-  const path = pathname.replace(/\/+$/, '') || '/';
-  return ROUTES[path] ? path : '/';
+function NotFound() {
+  const t = useT();
+  const { navigate } = useRouter();
+  return (
+    <div className="tool empty-state">
+      <p className="empty-state__code">404</p>
+      <h1>{t('notFound.title')}</h1>
+      <p className="muted">{t('notFound.text')}</p>
+      <button type="button" className="btn btn--primary" onClick={() => navigate('/')}>
+        {t('notFound.action')}
+      </button>
+    </div>
+  );
+}
+
+class ErrorBoundary extends Component {
+  state = { error: null };
+
+  static getDerivedStateFromError(error) {
+    return { error };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.path !== this.props.path && this.state.error) this.setState({ error: null });
+  }
+
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="tool empty-state">
+          <p className="empty-state__code">erro</p>
+          <h1>{this.props.title}</h1>
+          <p className="muted">{String(this.state.error.message || this.state.error)}</p>
+          <button type="button" className="btn" onClick={() => window.location.reload()}>
+            {this.props.action}
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+function Routes() {
+  const { path } = useRouter();
+  const t = useT();
+  const tool = TOOLS_BY_PATH[path];
+  const render = STATIC_ROUTES[path];
+
+  let page;
+  if (tool) {
+    const Page = tool.component;
+    page = <Page key={tool.id} />;
+  } else if (render) {
+    page = render();
+  } else {
+    page = <NotFound />;
+  }
+
+  return (
+    <ErrorBoundary path={path} title={t('errors.crashTitle')} action={t('errors.reload')}>
+      <Suspense fallback={<div className="tool loading" aria-busy="true" />}>{page}</Suspense>
+    </ErrorBoundary>
+  );
 }
 
 export default function App() {
-  const [path, setPath] = useState(() => normalizePath(window.location.pathname));
-
-  const navigate = useCallback((to) => {
-    const next = normalizePath(to);
-    if (next !== window.location.pathname) {
-      window.history.pushState({}, '', next);
-    }
-    setPath(next);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
-
-  useEffect(() => {
-    const onPopState = () => setPath(normalizePath(window.location.pathname));
-    window.addEventListener('popstate', onPopState);
-    return () => window.removeEventListener('popstate', onPopState);
-  }, []);
-
-  const Page = ROUTES[path] ?? HomePage;
-
   return (
-    <ThemeProvider>
-      <LanguageProvider>
-        <CookieConsentProvider>
-          <SEO path={path} />
-          <Suspense fallback={<div className="app"><main className="panel"><p>Carregando...</p></main></div>}>
-            <Page onNavigate={navigate} />
-          </Suspense>
-          <CookieBanner onNavigate={navigate} />
-        </CookieConsentProvider>
-      </LanguageProvider>
-    </ThemeProvider>
+    <PreferencesProvider>
+      <ConsentProvider>
+        <RouterProvider>
+          <ToastProvider>
+            <Seo />
+            <Shell>
+              <Routes />
+            </Shell>
+            <CookieBanner />
+          </ToastProvider>
+        </RouterProvider>
+      </ConsentProvider>
+    </PreferencesProvider>
   );
 }

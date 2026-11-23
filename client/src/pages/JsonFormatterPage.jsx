@@ -1,250 +1,183 @@
-import { useCallback, useState } from 'react';
-import { Logo } from '../components/Logo.jsx';
-import { SiteFooter } from '../components/SiteFooter.jsx';
-import { useLanguage } from '../context/LanguageContext';
+import { useEffect, useMemo, useState } from 'react';
+import { usePageT } from '../context/PreferencesContext.jsx';
+import { CodeEditor } from '../components/CodeEditor.jsx';
 import {
-  formatJson,
-  minifyJson,
-  validateJson,
-  getSizeInfo,
-} from '../lib/formatJson.js';
+  Button,
+  Checkbox,
+  CopyButton,
+  IconButton,
+  Notice,
+  Pane,
+  Segmented,
+  Select,
+  Spacer,
+  ToolHeader,
+  Toolbar,
+  downloadText,
+} from '../components/ui.jsx';
+import { byteSize, describeJson, formatBytes, parseJson, sortKeysDeep } from '../lib/json.js';
+import { highlightJson } from '../lib/highlight.js';
+import { readJson, writeJson } from '../lib/storage.js';
 
-const EXAMPLE = JSON.stringify({
-  name: 'UtiliKit',
-  version: '1.0.0',
-  tools: [
-    { id: 'json-formatter', name: 'Formatador de JSON' },
-    { id: 'sql-formatter', name: 'Formatador de SQL' },
-  ],
-  settings: {
-    theme: 'dark',
-    notifications: true,
+const STRINGS = {
+  pt: {
+    placeholder: 'Cole seu JSON aqui',
+    outputPlaceholder: 'O JSON formatado aparece aqui',
+    invalid: 'JSON inválido',
+    at: 'linha {line}, coluna {column}',
+    valid: 'JSON válido',
+    sortKeys: 'Ordenar chaves',
+    mode: 'Modo',
+    pretty: 'Formatado',
+    compact: 'Minificado',
+    summary: '{type} · {keys} chaves · profundidade {depth}',
+    escape: 'Escapar como string',
   },
-});
+  en: {
+    placeholder: 'Paste your JSON here',
+    outputPlaceholder: 'Formatted JSON appears here',
+    invalid: 'Invalid JSON',
+    at: 'line {line}, column {column}',
+    valid: 'Valid JSON',
+    sortKeys: 'Sort keys',
+    mode: 'Mode',
+    pretty: 'Pretty',
+    compact: 'Minified',
+    summary: '{type} · {keys} keys · depth {depth}',
+    escape: 'Escape as string',
+  },
+};
 
-export function JsonFormatterPage({ onNavigate }) {
-  const { t } = useLanguage();
+const EXAMPLE = '{"id":42,"nome":"UtiliKit","ativo":true,"tags":["sql","json"],"dono":{"login":"dev","desde":"2024-01-15"},"versao":null}';
+const STORAGE_KEY = 'utilikit-json-options';
+
+export default function JsonFormatterPage() {
+  const t = usePageT(STRINGS);
   const [input, setInput] = useState('');
-  const [output, setOutput] = useState('');
-  const [tabWidth, setTabWidth] = useState(2);
-  const [error, setError] = useState(null);
-  const [copied, setCopied] = useState(false);
-  const [sizeInfo, setSizeInfo] = useState(null);
+  const [options, setOptions] = useState(() => ({
+    indent: '2',
+    mode: 'pretty',
+    sortKeys: false,
+    escape: false,
+    ...readJson(STORAGE_KEY, {}),
+  }));
 
-  const runFormat = useCallback(
-    (mode) => {
-      const json = input.trim();
-      if (!json) {
-        setError('Cole ou digite um JSON válido.');
-        setOutput('');
-        setSizeInfo(null);
-        return;
-      }
+  useEffect(() => writeJson(STORAGE_KEY, options), [options]);
+  const set = (key) => (value) => setOptions((prev) => ({ ...prev, [key]: value }));
 
-      const validation = validateJson(json);
-      if (!validation.valid) {
-        setError(`JSON inválido: ${validation.error}`);
-        setOutput('');
-        setSizeInfo(null);
-        return;
-      }
+  const result = useMemo(() => {
+    if (!input.trim()) return { output: '', error: null, info: null };
+    const { value, error } = parseJson(input);
+    if (error) return { output: '', error, info: null };
+    const data = options.sortKeys ? sortKeysDeep(value) : value;
+    const space = options.mode === 'compact' ? undefined : options.indent === 'tab' ? '\t' : Number(options.indent);
+    let output = JSON.stringify(data, null, space);
+    if (options.escape) output = JSON.stringify(output);
+    return { output, error: null, info: describeJson(value) };
+  }, [input, options]);
 
-      try {
-        const result = mode === 'minify' ? minifyJson(json) : formatJson(json, tabWidth);
-        setOutput(result);
-        setSizeInfo(getSizeInfo(json));
-        setError(null);
-      } catch (err) {
-        setError(err.message || t('errorCouldNotProcessJSON') || 'Não foi possível processar o JSON.');
-        setOutput('');
-        setSizeInfo(null);
-      }
-    },
-    [input, tabWidth]
-  );
-
-  const handleCopy = async () => {
-    if (!output) return;
-    try {
-      await navigator.clipboard.writeText(output);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      setError(t('errorCouldNotCopy'));
-    }
-  };
-
-  const handleClear = () => {
-    setInput('');
-    setOutput('');
-    setSizeInfo(null);
-    setError(null);
-  };
-
-  const loadExample = () => {
-    setInput(EXAMPLE);
-    setOutput('');
-    setSizeInfo(null);
-    setError(null);
-  };
+  const inputSize = byteSize(input);
+  const outputSize = byteSize(result.output);
 
   return (
-    <div className="app app--json">
-      <header className="hero">
-        <div className="hero__brand">
-          <Logo size={52} className="hero__logo" onNavigate={onNavigate} />
-          <div>
-            <button
-              type="button"
-              className="hero__back"
-              onClick={() => onNavigate('/')}
-              aria-label={t('backToTools')}
-            >
-              ← {t('backToTools')}
-            </button>
-            <h1>{t('jsonFormatterTitle')}</h1>
-            <p className="hero__subtitle">
-              {t('jsonFormatterSubtitle')}
-            </p>
-          </div>
+    <div className="tool">
+      <ToolHeader title={t('tools.json.name')} description={t('tools.json.long')} />
+
+      <Toolbar>
+        <div className="field">
+          <span className="field__label">{t('mode')}</span>
+          <Segmented
+            label={t('mode')}
+            value={options.mode}
+            onChange={set('mode')}
+            options={[
+              { value: 'pretty', label: t('pretty') },
+              { value: 'compact', label: t('compact') },
+            ]}
+          />
         </div>
-      </header>
-
-      <main className="panel generator-panel">
-        {error && (
-          <div className="alert alert--error" role="alert">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '18px', height: '18px', marginRight: '0.5rem' }}>
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="8" x2="12" y2="12" />
-              <line x1="12" y1="16" x2="12.01" y2="16" />
-            </svg>
-            {error}
-          </div>
-        )}
-
-        <div className="fx-converter">
-          <div className="sql-toolbar">
-            <div className="sql-toolbar__field">
-              <label className="sql-toolbar__label">{t('spacing')}</label>
-              <div className="custom-select-wrapper">
-                <select
-                  className="sql-toolbar__select"
-                  value={tabWidth}
-                  onChange={(e) => setTabWidth(Number(e.target.value))}
-                  aria-label={t('spacing')}
-                >
-                  <option value={2}>{t('spaces2')}</option>
-                  <option value={4}>{t('spaces4')}</option>
-                  <option value={8}>{t('spaces8')}</option>
-                </select>
-                <svg className="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </div>
-            </div>
-
-            <div className="sql-toolbar__actions">
-              <button
-                type="button"
-                className="btn-primary"
-                onClick={() => runFormat('format')}
-                aria-label={t('formatButton')}
-              >
-                {t('formatButton')}
-              </button>
-              <button
-                type="button"
-                className="btn-outline"
-                onClick={() => runFormat('minify')}
-                aria-label={t('minifyButton')}
-              >
-                {t('minifyButton')}
-              </button>
-              <button
-                type="button"
-                className="btn-outline"
-                onClick={loadExample}
-                aria-label={t('exampleButton')}
-              >
-                {t('exampleButton')}
-              </button>
-              <button
-                type="button"
-                className="btn-outline btn-outline--danger"
-                onClick={handleClear}
-                aria-label={t('clearButton')}
-              >
-                {t('clearButton')}
-              </button>
-            </div>
-          </div>
-
-          <div className="sql-editor">
-            <div className="sql-editor__pane">
-              <div className="sql-editor__head">
-                <span className="sql-editor__title">{t('input')}</span>
-              </div>
-              <textarea
-                className="sql-editor__area"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder={t('placeholderJsonInput')}
-                aria-label={t('input')}
-              />
-            </div>
-
-            <div className="sql-editor__pane">
-              <div className="sql-editor__head">
-                <span className="sql-editor__title">{t('output')}</span>
-                {output && (
-                  <button
-                    type="button"
-                    className="btn-copy-mini"
-                    onClick={handleCopy}
-                    aria-label={t('copy')}
-                  >
-                    {copied ? (
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                    ) : (
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                      </svg>
-                    )}
-                  </button>
-                )}
-              </div>
-              <textarea
-                className="sql-editor__area sql-editor__area--output"
-                value={output}
-                readOnly
-                placeholder={t('placeholderJsonOutput')}
-                aria-label={t('output')}
-              />
-            </div>
-          </div>
-
-          {sizeInfo && (
-            <div className="fx-meta" style={{ marginTop: '1.5rem' }}>
-              <span>
-                Original: {sizeInfo.original} bytes | {t('minified')}: {sizeInfo.minified} bytes |
-                {sizeInfo.saved > 0 && ` ${t('economy')}: ${sizeInfo.saved}%`}
-              </span>
-            </div>
-          )}
+        <Select
+          label={t('common.indent')}
+          value={options.indent}
+          onChange={set('indent')}
+          disabled={options.mode === 'compact'}
+          options={[
+            { value: '2', label: t('common.spaces', { n: 2 }) },
+            { value: '4', label: t('common.spaces', { n: 4 }) },
+            { value: 'tab', label: 'Tab' },
+          ]}
+        />
+        <div className="row" style={{ alignSelf: 'center', marginTop: 18 }}>
+          <Checkbox label={t('sortKeys')} checked={options.sortKeys} onChange={set('sortKeys')} />
+          <Checkbox label={t('escape')} checked={options.escape} onChange={set('escape')} />
         </div>
+        <Spacer />
+      </Toolbar>
 
-        <p className="fx-disclaimer">
-          {t('jsonFormatterDisclaimer')}
-        </p>
-      </main>
+      {result.error ? (
+        <Notice tone="error">
+          <strong>{t('invalid')}:</strong> {result.error.message}
+          {result.error.line && <> — {t('at', result.error)}</>}
+        </Notice>
+      ) : (
+        result.info && (
+          <Notice tone="info">
+            <strong>{t('valid')}</strong> — {t('summary', result.info)}
+          </Notice>
+        )
+      )}
 
-      <SiteFooter
-        onNavigate={onNavigate}
-        note={t('jsonFormatterFooterNote')}
-      />
+      <div className="split">
+        <Pane
+          title={t('common.input')}
+          meta={formatBytes(inputSize)}
+          status={result.error ? 'error' : undefined}
+          actions={
+            <>
+              <Button size="sm" variant="ghost" onClick={() => setInput(EXAMPLE)}>
+                {t('common.example')}
+              </Button>
+              <IconButton icon="trash" label={t('common.clear')} onClick={() => setInput('')} disabled={!input} />
+            </>
+          }
+        >
+          <CodeEditor
+            value={input}
+            onChange={setInput}
+            highlight={highlightJson}
+            placeholder={t('placeholder')}
+            errorLine={result.error?.line}
+            label={t('common.input')}
+          />
+        </Pane>
+        <Pane
+          title={options.mode === 'compact' ? t('common.minified') : t('common.output')}
+          meta={
+            result.output
+              ? `${formatBytes(outputSize)}${inputSize ? ` (${Math.round((outputSize / inputSize) * 100)}%)` : ''}`
+              : null
+          }
+          actions={
+            <>
+              <IconButton
+                icon="download"
+                label={t('common.download')}
+                onClick={() => downloadText('dados.json', result.output, 'application/json')}
+                disabled={!result.output}
+              />
+              <CopyButton value={result.output} iconOnly />
+            </>
+          }
+        >
+          <CodeEditor
+            value={result.output}
+            readOnly
+            highlight={highlightJson}
+            placeholder={t('outputPlaceholder')}
+            label={t('common.output')}
+          />
+        </Pane>
+      </div>
     </div>
   );
 }

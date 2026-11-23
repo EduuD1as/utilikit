@@ -1,7 +1,7 @@
 {
   "name": "utilikit-client",
   "private": true,
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,14 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "docx": "^8.5.0",
     "highlight.js": "^11.11.1",
-    "jspdf": "^4.2.1",
-    "mammoth": "^1.6.0",
-    "pdfjs-dist": "^5.7.284",
+    "qrcode": "^1.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "sql-formatter": "^15.8.0"
+    "sql-formatter": "^15.10.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",

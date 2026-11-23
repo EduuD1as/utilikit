@@ -1,304 +1,259 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Logo } from '../components/Logo.jsx';
-import { SiteFooter } from '../components/SiteFooter.jsx';
-import { useLanguage } from '../context/LanguageContext';
+import { usePageT } from '../context/PreferencesContext.jsx';
+import { Button, Checkbox, Input, Kbd, Pane, Segmented, ToolHeader } from '../components/ui.jsx';
+import { readJson, writeJson } from '../lib/storage.js';
 
-const getModes = (t) => ({
-  pomodoro: { label: t('timerPomodoro'), minutes: 25, color: '#ef4444' },
-  shortBreak: { label: t('timerShortBreak'), minutes: 5, color: '#22c55e' },
-  longBreak: { label: t('timerLongBreak'), minutes: 15, color: '#3b82f6' },
-  custom: { label: t('timerCustom'), minutes: 10, color: '#8b5cf6' },
-});
+const STRINGS = {
+  pt: {
+    focus: 'Foco',
+    short: 'Pausa curta',
+    long: 'Pausa longa',
+    start: 'Iniciar',
+    resume: 'Continuar',
+    pause: 'Pausar',
+    skip: 'Pular',
+    settings: 'Durações (minutos)',
+    autoStart: 'Iniciar a próxima etapa automaticamente',
+    sound: 'Tocar som ao terminar',
+    cycle: 'Ciclo {n} de 4',
+    done: '{n} ciclos de foco concluídos hoje',
+    shortcuts: 'atalhos',
+    space: 'Espaço',
+    toggle: 'iniciar/pausar',
+    reset: 'reiniciar',
+  },
+  en: {
+    focus: 'Focus',
+    short: 'Short break',
+    long: 'Long break',
+    start: 'Start',
+    resume: 'Resume',
+    pause: 'Pause',
+    skip: 'Skip',
+    settings: 'Durations (minutes)',
+    autoStart: 'Start the next step automatically',
+    sound: 'Play a sound when done',
+    cycle: 'Cycle {n} of 4',
+    done: '{n} focus cycles completed today',
+    shortcuts: 'shortcuts',
+    space: 'Space',
+    toggle: 'start/pause',
+    reset: 'reset',
+  },
+};
 
-export function TimerPage({ onNavigate }) {
-  const { t, language } = useLanguage();
-  const MODES = getModes(t);
-  const [mode, setMode] = useState('pomodoro');
-  const [timeLeft, setTimeLeft] = useState(MODES.pomodoro.minutes * 60);
-  const [isRunning, setIsRunning] = useState(false);
-  const [customMinutes, setCustomMinutes] = useState(10);
-  const [cycles, setCycles] = useState(0);
-  const intervalRef = useRef(null);
-  const endTimeRef = useRef(null);
+const STORAGE_KEY = 'utilikit-timer';
+const DEFAULTS = { focus: 25, short: 5, long: 15, autoStart: false, sound: true };
 
-  const totalSeconds = useCallback(() => {
-    if (mode === 'custom') return customMinutes * 60;
-    return MODES[mode].minutes * 60;
-  }, [mode, customMinutes, MODES]);
+function beep() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [0, 0.35, 0.7].forEach((offset) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = 880;
+      gain.gain.setValueAtTime(0.0001, ctx.currentTime + offset);
+      gain.gain.exponentialRampToValueAtTime(0.25, ctx.currentTime + offset + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + offset + 0.25);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(ctx.currentTime + offset);
+      osc.stop(ctx.currentTime + offset + 0.3);
+    });
+    setTimeout(() => ctx.close(), 1500);
+  } catch {
+    // Sem Web Audio: segue sem som.
+  }
+}
 
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-  };
+const fmt = (s) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 
-  const progress = ((totalSeconds() - timeLeft) / totalSeconds()) * 100;
-  const currentColor = MODES[mode].color;
+export default function TimerPage() {
+  const t = usePageT(STRINGS);
+  const [settings, setSettings] = useState(() => ({ ...DEFAULTS, ...readJson(STORAGE_KEY, {}) }));
+  const [phase, setPhase] = useState('focus');
+  const [remaining, setRemaining] = useState(settings.focus * 60);
+  const [running, setRunning] = useState(false);
+  const [completed, setCompleted] = useState(0);
+  const endRef = useRef(null);
+  const settingsRef = useRef(settings);
+  settingsRef.current = settings;
+
+  useEffect(() => writeJson(STORAGE_KEY, settings), [settings]);
+
+  const total = settings[phase] * 60;
+
+  const goTo = useCallback((next, autoStart = false) => {
+    setPhase(next);
+    const secs = settingsRef.current[next] * 60;
+    setRemaining(secs);
+    if (autoStart) {
+      endRef.current = Date.now() + secs * 1000;
+      setRunning(true);
+    } else {
+      endRef.current = null;
+      setRunning(false);
+    }
+  }, []);
+
+  const finish = useCallback(() => {
+    if (settingsRef.current.sound) beep();
+    const auto = settingsRef.current.autoStart;
+    if (phase === 'focus') {
+      const n = completed + 1;
+      setCompleted(n);
+      goTo(n % 4 === 0 ? 'long' : 'short', auto);
+    } else {
+      goTo('focus', auto);
+    }
+  }, [phase, completed, goTo]);
+
+  useEffect(() => {
+    if (!running) return undefined;
+    const id = setInterval(() => {
+      const left = Math.max(0, Math.round((endRef.current - Date.now()) / 1000));
+      setRemaining(left);
+      if (left <= 0) finish();
+    }, 250);
+    return () => clearInterval(id);
+  }, [running, finish]);
 
   const start = useCallback(() => {
-    if (timeLeft <= 0) return;
-
-    endTimeRef.current = Date.now() + timeLeft * 1000;
-    setIsRunning(true);
-
-    intervalRef.current = setInterval(() => {
-      const remaining = Math.max(0, Math.round((endTimeRef.current - Date.now()) / 1000));
-      setTimeLeft(remaining);
-
-      if (remaining <= 0) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-        setIsRunning(false);
-
-        // Tocar som de notificação (vibração se disponível)
-        if (navigator.vibrate) {
-          navigator.vibrate([200, 100, 200, 100, 200]);
-        }
-
-        // Incrementar ciclos se for pomodoro
-        if (mode === 'pomodoro') {
-          setCycles(c => c + 1);
-        }
-      }
-    }, 100);
-  }, [timeLeft, mode]);
+    if (remaining <= 0) return;
+    endRef.current = Date.now() + remaining * 1000;
+    setRunning(true);
+  }, [remaining]);
 
   const pause = useCallback(() => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-    endTimeRef.current = null;
-    setIsRunning(false);
+    setRunning(false);
+    endRef.current = null;
   }, []);
 
-  const reset = useCallback(() => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-    endTimeRef.current = null;
-    setIsRunning(false);
-    setTimeLeft(totalSeconds());
-  }, [totalSeconds]);
+  const reset = useCallback(() => goTo(phase), [goTo, phase]);
 
-  const switchMode = (newMode) => {
-    setMode(newMode);
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-    endTimeRef.current = null;
-    setIsRunning(false);
-    if (newMode === 'custom') {
-      setTimeLeft(customMinutes * 60);
-    } else {
-      setTimeLeft(MODES[newMode].minutes * 60);
-    }
-  };
-
-  const handleCustomChange = (e) => {
-    const value = Math.max(1, Math.min(180, parseInt(e.target.value) || 1));
-    setCustomMinutes(value);
-    if (!isRunning && mode === 'custom') {
-      setTimeLeft(value * 60);
-    }
-  };
-
-  // Limpar intervalo ao desmontar
+  // Título da aba mostra o tempo restante.
   useEffect(() => {
+    const previous = document.title;
+    if (running) document.title = `${fmt(remaining)} · ${t(phase)}`;
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
+      document.title = previous;
     };
-  }, []);
+  }, [running, remaining, phase, t]);
 
-  // Atalhos de teclado
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.code === 'Space' && e.target.tagName !== 'INPUT') {
-        e.preventDefault();
-        if (isRunning) {
-          pause();
-        } else {
-          start();
-        }
-      } else if (e.code === 'Escape') {
-        reset();
-      } else if (e.code === 'KeyR' && e.ctrlKey) {
-        e.preventDefault();
+    const onKey = (event) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON'].includes(event.target.tagName)) return;
+      if (event.code === 'Space') {
+        event.preventDefault();
+        if (running) pause();
+        else start();
+      } else if (event.key.toLowerCase() === 'r' && !event.ctrlKey && !event.metaKey) {
         reset();
       }
     };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [running, start, pause, reset]);
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isRunning, start, pause, reset]);
+  const setDuration = (key) => (event) => {
+    const value = Math.min(180, Math.max(1, Math.round(Number(event.target.value) || 1)));
+    setSettings((prev) => ({ ...prev, [key]: value }));
+    if (key === phase && !running) setRemaining(value * 60);
+  };
 
-  // Atualizar título da página
-  useEffect(() => {
-    const originalTitle = document.title;
-    if (isRunning) {
-      document.title = `${formatTime(timeLeft)} - Timer`;
-    }
-    return () => {
-      document.title = originalTitle;
-    };
-  }, [timeLeft, isRunning]);
+  const progress = total ? 1 - remaining / total : 0;
+  const R = 130;
+  const C = 2 * Math.PI * R;
 
   return (
-    <div className="app app--timer">
-      <header className="hero">
-        <div className="hero__brand">
-          <Logo size={52} className="hero__logo" onNavigate={onNavigate} />
-          <div>
-            <button
-              type="button"
-              className="hero__back"
-              onClick={() => onNavigate('/')}
-              aria-label={t('backToTools')}
-            >
-              ← {t('backToTools')}
-            </button>
-            <h1>{t('timerTitle')}</h1>
-            <p className="hero__subtitle">
-              {t('timerSubtitle') || 'Temporizador com modo Pomodoro e pausas programadas'}
-            </p>
+    <div className="tool tool--narrow">
+      <ToolHeader title={t('tools.timer.name')} description={t('tools.timer.long')} />
+
+      <Segmented
+        label={t('tools.timer.name')}
+        value={phase}
+        size="lg"
+        onChange={(next) => goTo(next)}
+        options={[
+          { value: 'focus', label: t('focus') },
+          { value: 'short', label: t('short') },
+          { value: 'long', label: t('long') },
+        ]}
+      />
+
+      <div className={`timer timer--${phase}`}>
+        <svg viewBox="0 0 300 300" className="timer__ring" aria-hidden="true">
+          <circle cx="150" cy="150" r={R} className="timer__track" />
+          <circle
+            cx="150"
+            cy="150"
+            r={R}
+            className="timer__progress"
+            strokeDasharray={C}
+            strokeDashoffset={C * (1 - progress)}
+          />
+        </svg>
+        <div className="timer__center">
+          <div className="timer__time" role="timer" aria-live="off">
+            {fmt(remaining)}
+          </div>
+          <div className="timer__cycle muted">
+            {t('cycle', { n: (completed % 4) + (phase === 'focus' ? 1 : 0) || 4 })}
           </div>
         </div>
-      </header>
+      </div>
 
-      <main className="panel generator-panel">
-        <div className="fx-converter">
-          {/* Seletor de modo */}
-          <div className="timer-modes">
-            {Object.entries(MODES).map(([key, config]) => (
-              <button
+      <div className="row row--center">
+        {running ? (
+          <Button size="lg" icon="pause" onClick={pause}>
+            {t('pause')}
+          </Button>
+        ) : (
+          <Button size="lg" variant="primary" icon="play" onClick={start}>
+            {remaining === total ? t('start') : t('resume')}
+          </Button>
+        )}
+        <Button size="lg" icon="refresh" onClick={reset}>
+          {t('common.reset')}
+        </Button>
+        <Button size="lg" variant="ghost" onClick={finish}>
+          {t('skip')}
+        </Button>
+      </div>
+
+      <p className="hint row--center row">
+        {t('shortcuts')}: <Kbd>{t('space')}</Kbd> {t('toggle')} · <Kbd>R</Kbd> {t('reset')}
+      </p>
+      {completed > 0 && <p className="muted row--center row">{t('done', { n: completed })}</p>}
+
+      <Pane title={t('settings')}>
+        <div className="pane__pad stack">
+          <div className="grid-3">
+            {['focus', 'short', 'long'].map((key) => (
+              <Input
                 key={key}
-                type="button"
-                className={`timer-mode-btn${mode === key ? ' timer-mode-btn--active' : ''}`}
-                onClick={() => switchMode(key)}
-                disabled={isRunning}
-                style={{
-                  '--mode-color': config.color,
-                }}
-                aria-label={config.label}
-              >
-                {config.label}
-              </button>
+                label={t(key)}
+                type="number"
+                min={1}
+                max={180}
+                value={settings[key]}
+                onChange={setDuration(key)}
+                suffix="min"
+              />
             ))}
           </div>
-
-          {/* Input personalizado */}
-          {mode === 'custom' && (
-            <div className="fx-field">
-              <label className="fx-field__label">{t('timerMinutesLabel')}</label>
-              <input
-                type="number"
-                className="fx-field__amount"
-                value={customMinutes}
-                onChange={handleCustomChange}
-                min="1"
-                max="180"
-                disabled={isRunning}
-                aria-label={t('timerMinutesLabel')}
-              />
-            </div>
-          )}
-
-          {/* Display do timer */}
-          <div className="timer-display" style={{ '--timer-color': currentColor }}>
-            <div className="timer-display__ring">
-              <svg className="timer-display__svg" viewBox="0 0 200 200">
-                <circle
-                  className="timer-display__bg"
-                  cx="100"
-                  cy="100"
-                  r="90"
-                />
-                <circle
-                  className="timer-display__progress"
-                  cx="100"
-                  cy="100"
-                  r="90"
-                  style={{
-                    strokeDasharray: `${2 * Math.PI * 90}`,
-                    strokeDashoffset: `${2 * Math.PI * 90 * (1 - progress / 100)}`,
-                  }}
-                />
-              </svg>
-              <div className="timer-display__time">{formatTime(timeLeft)}</div>
-            </div>
-          </div>
-
-          {/* Controles */}
-          <div className="timer-controls">
-            {!isRunning ? (
-              <button
-                type="button"
-                className="btn-primary timer-btn--primary"
-                onClick={start}
-                disabled={timeLeft <= 0}
-                aria-label={timeLeft === totalSeconds() ? t('timerStart') : t('timerContinue')}
-              >
-                <svg viewBox="0 0 24 24" width="24" height="24">
-                  <path fill="currentColor" d="M8 5v14l11-7z" />
-                </svg>
-                {timeLeft === totalSeconds() ? t('timerStart') : t('timerContinue')}
-              </button>
-            ) : (
-              <button
-                type="button"
-                className="btn-outline timer-btn--pause"
-                onClick={pause}
-                aria-label={t('timerPause')}
-              >
-                <svg viewBox="0 0 24 24" width="24" height="24">
-                  <path fill="currentColor" d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
-                </svg>
-                {t('timerPause')}
-              </button>
-            )}
-            <button
-              type="button"
-              className="btn-outline btn-outline--danger timer-btn--secondary"
-              onClick={reset}
-              aria-label={t('timerReset')}
-            >
-              <svg viewBox="0 0 24 24" width="20" height="20">
-                <path fill="currentColor" d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
-              </svg>
-              {t('timerReset')}
-            </button>
-          </div>
-
-          {/* Informações */}
-          <div className="timer-info">
-            {mode === 'pomodoro' && cycles > 0 && (
-              <div className="timer-info__item">
-                <span className="timer-info__label">{t('timerCyclesCompleted')}</span>
-                <span className="timer-info__value">{cycles}</span>
-              </div>
-            )}
-            <div className="timer-info__item">
-              <span className="timer-info__label">{t('timerCurrentMode')}</span>
-              <span className="timer-info__value" style={{ color: currentColor }}>
-                {MODES[mode].label} ({MODES[mode].minutes}min)
-              </span>
-            </div>
-          </div>
+          <Checkbox
+            label={t('autoStart')}
+            checked={settings.autoStart}
+            onChange={(autoStart) => setSettings((prev) => ({ ...prev, autoStart }))}
+          />
+          <Checkbox
+            label={t('sound')}
+            checked={settings.sound}
+            onChange={(sound) => setSettings((prev) => ({ ...prev, sound }))}
+          />
         </div>
-
-        <p className="fx-disclaimer">
-          {t('timerTip')}
-        </p>
-      </main>
-
-      <SiteFooter
-        onNavigate={onNavigate}
-        note={t('timerFooterNote')}
-      />
+      </Pane>
     </div>
   );
 }

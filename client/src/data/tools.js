@@ -1,149 +1,178 @@
-export const CATEGORIES = [
-  { id: 'all', label: 'catAll' },
-  { id: 'soon', label: 'catSoon' },
-  { id: 'calculators', label: 'catCalculators' },
-  { id: 'converters', label: 'catConverters' },
-  { id: 'generators', label: 'catGenerators' },
-  { id: 'counters', label: 'catCounters' },
-  { id: 'games', label: 'catGames' },
-];
+import { lazy } from 'react';
+
+/**
+ * Registro único das ferramentas. A ordem aqui define a ordem na barra
+ * lateral, na página inicial e na paleta de comandos.
+ * Nome e descrição vêm de `tools.<id>.name` / `tools.<id>.desc` nas traduções.
+ */
+export const CATEGORIES = ['dev', 'generators', 'converters', 'calculators', 'productivity', 'fun'];
 
 export const TOOLS = [
   {
-    id: 'percentage',
-    titleKey: 'toolPercentageTitle',
-    descKey: 'toolPercentageDesc',
-    category: 'calculators',
-    available: false,
-    accent: '#8b5cf6',
-    icon: 'percent',
-  },
-  {
-    id: 'compound-interest',
-    titleKey: 'toolCompoundInterestTitle',
-    descKey: 'toolCompoundInterestDesc',
-    category: 'calculators',
-    available: false,
-    accent: '#10b981',
-    icon: 'chart',
-  },
-  {
-    id: 'currency',
-    titleKey: 'toolCurrencyTitle',
-    descKey: 'toolCurrencyDesc',
-    category: 'converters',
-    path: '/conversor-moedas',
-    available: true,
-    accent: '#f59e0b',
-    icon: 'currency',
-  },
-  {
-    id: 'units',
-    titleKey: 'toolUnitsTitle',
-    descKey: 'toolUnitsDesc',
-    category: 'converters',
-    path: '/conversor-unidades',
-    available: true,
-    accent: '#3b82f6',
-    icon: 'ruler',
-  },
-  {
-    id: 'base64',
-    titleKey: 'toolBase64Title',
-    descKey: 'toolBase64Desc',
-    category: 'converters',
-    path: '/codificador-base64',
-    available: true,
-    accent: '#06b6d4',
-    icon: 'code',
-  },
-  {
-    id: 'sql-formatter',
-    titleKey: 'toolSqlFormatterTitle',
-    descKey: 'toolSqlFormatterDesc',
-    category: 'converters',
+    id: 'sql',
     path: '/formatador-sql',
-    available: true,
-    accent: '#0ea5e9',
+    category: 'dev',
     icon: 'database',
+    keywords: 'sql query beautify minify firebird postgres mysql oracle',
+    component: lazy(() => import('../pages/SqlFormatterPage.jsx')),
   },
   {
-    id: 'json-formatter',
-    titleKey: 'toolJsonFormatterTitle',
-    descKey: 'toolJsonFormatterDesc',
-    category: 'converters',
+    id: 'json',
     path: '/formatador-json',
-    available: true,
-    accent: '#f59e0b',
-    icon: 'code',
+    category: 'dev',
+    icon: 'braces',
+    keywords: 'json validate validar minify beautify',
+    component: lazy(() => import('../pages/JsonFormatterPage.jsx')),
+  },
+  {
+    id: 'encoder',
+    path: '/codificador-base64',
+    category: 'dev',
+    icon: 'binary',
+    keywords: 'base64 url encode decode codificar decodificar percent',
+    component: lazy(() => import('../pages/EncoderPage.jsx')),
+  },
+  {
+    id: 'jwt',
+    path: '/decodificador-jwt',
+    category: 'dev',
+    icon: 'key',
+    keywords: 'jwt token json web token decode header payload',
+    component: lazy(() => import('../pages/JwtDecoderPage.jsx')),
+  },
+  {
+    id: 'timestamp',
+    path: '/conversor-timestamp',
+    category: 'dev',
+    icon: 'clock',
+    keywords: 'unix epoch timestamp data date iso 8601',
+    component: lazy(() => import('../pages/TimestampPage.jsx')),
+  },
+  {
+    id: 'text',
+    path: '/contador-caracteres',
+    category: 'dev',
+    icon: 'text',
+    keywords: 'contador caracteres palavras linhas word count bytes',
+    component: lazy(() => import('../pages/TextCounterPage.jsx')),
+  },
+  {
+    id: 'hash',
+    path: '/gerador-id-hash',
+    category: 'generators',
+    icon: 'hash',
+    keywords: 'uuid guid hash sha256 sha1 sha512 md5 random string',
+    component: lazy(() => import('../pages/IdHashPage.jsx')),
   },
   {
     id: 'password',
-    titleKey: 'toolPasswordTitle',
-    descKey: 'toolPasswordDesc',
+    path: '/gerador-senha',
     category: 'generators',
-    available: false,
-    accent: '#ef4444',
     icon: 'lock',
-  },
-  {
-    id: 'uuid',
-    titleKey: 'toolUuidTitle',
-    descKey: 'toolUuidDesc',
-    category: 'generators',
-    path: '/gerador-id-hash',
-    available: true,
-    accent: '#a855f7',
-    icon: 'hash',
+    keywords: 'senha password forte segura generator',
+    component: lazy(() => import('../pages/PasswordPage.jsx')),
   },
   {
     id: 'qr',
-    titleKey: 'toolQrTitle',
-    descKey: 'toolQrDesc',
-    category: 'generators',
     path: '/gerador-qr',
-    available: true,
-    accent: '#14b8a6',
-    icon: 'qr',
-  },
-  {
-    id: 'word-count',
-    titleKey: 'toolWordCountTitle',
-    descKey: 'toolWordCountDesc',
-    category: 'counters',
-    path: '/contador-caracteres',
-    available: true,
-    accent: '#6366f1',
-    icon: 'text',
-  },
-  {
-    id: 'timer-pomodoro',
-    titleKey: 'toolTimerPomodoroTitle',
-    descKey: 'toolTimerPomodoroDesc',
-    category: 'counters',
-    path: '/timer-pomodoro',
-    available: true,
-    accent: '#ef4444',
-    icon: 'clock',
-  },
-  {
-    id: 'memory-game',
-    titleKey: 'toolMemoryGameTitle',
-    descKey: 'toolMemoryGameDesc',
-    category: 'games',
-    path: '/jogo-memoria',
-    available: true,
-    accent: '#ec4899',
-    icon: 'game',
-  },
-  {
-    id: 'random-picker',
-    titleKey: 'toolRandomPickerTitle',
-    descKey: 'toolRandomPickerDesc',
     category: 'generators',
+    icon: 'qr',
+    keywords: 'qr code qrcode png svg wifi link',
+    component: lazy(() => import('../pages/QrCodePage.jsx')),
+  },
+  {
+    id: 'units',
+    path: '/conversor-unidades',
+    category: 'converters',
+    icon: 'ruler',
+    keywords: 'unidades medidas comprimento peso temperatura bytes',
+    component: lazy(() => import('../pages/UnitConverterPage.jsx')),
+  },
+  {
+    id: 'currency',
+    path: '/conversor-moedas',
+    category: 'converters',
+    icon: 'coins',
+    remote: true,
+    keywords: 'moedas câmbio cambio dólar dolar euro real cotação',
+    component: lazy(() => import('../pages/CurrencyPage.jsx')),
+  },
+  {
+    id: 'calculator',
+    path: '/calculadora',
+    category: 'calculators',
+    icon: 'calculator',
+    keywords: 'calculadora calculator soma',
+    component: lazy(() => import('../pages/CalculatorPage.jsx')),
+  },
+  {
+    id: 'percentage',
+    path: '/calculadora-porcentagem',
+    category: 'calculators',
+    icon: 'percent',
+    keywords: 'porcentagem percentual desconto aumento percent',
+    component: lazy(() => import('../pages/PercentagePage.jsx')),
+  },
+  {
+    id: 'interest',
+    path: '/juros-compostos',
+    category: 'calculators',
+    icon: 'chart',
+    keywords: 'juros compostos investimento aporte rendimento',
+    component: lazy(() => import('../pages/CompoundInterestPage.jsx')),
+  },
+  {
+    id: 'bmi',
+    path: '/calculadora-imc',
+    category: 'calculators',
+    icon: 'scale',
+    keywords: 'imc bmi peso altura índice massa corporal',
+    component: lazy(() => import('../pages/BmiPage.jsx')),
+  },
+  {
+    id: 'timer',
+    path: '/timer-pomodoro',
+    category: 'productivity',
+    icon: 'timer',
+    keywords: 'timer pomodoro foco temporizador cronômetro',
+    component: lazy(() => import('../pages/TimerPage.jsx')),
+  },
+  {
+    id: 'picker',
     path: '/roleta-sorteador',
-    available: true,
-    accent: '#f59e0b',
+    category: 'fun',
     icon: 'wheel',
+    keywords: 'roleta sorteio sorteador aleatório random wheel',
+    component: lazy(() => import('../pages/RandomPickerPage.jsx')),
+  },
+  {
+    id: 'memory',
+    path: '/jogo-memoria',
+    category: 'fun',
+    icon: 'grid',
+    keywords: 'jogo memória memory game',
+    component: lazy(() => import('../pages/MemoryGamePage.jsx')),
   },
 ];
+
+export const TOOLS_BY_PATH = Object.fromEntries(TOOLS.map((tool) => [tool.path, tool]));
+
+/** Normaliza texto para busca: minúsculas e sem acentos. */
+export function normalizeSearch(text) {
+  return String(text)
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '');
+}
+
+export function searchTools(query, t) {
+  const q = normalizeSearch(query.trim());
+  if (!q) return TOOLS;
+  const terms = q.split(/\s+/);
+  return TOOLS.filter((tool) => {
+    const haystack = normalizeSearch(
+      `${t(`tools.${tool.id}.name`)} ${t(`tools.${tool.id}.desc`)} ${tool.keywords} ${tool.path}`
+    );
+    return terms.every((term) => haystack.includes(term));
+  });
+}

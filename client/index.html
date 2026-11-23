@@ -1,95 +1,67 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UtiliKit — Ferramentas online para desenvolvedores</title>
+    <meta
+      name="description"
+      content="Formatador de SQL e JSON, Base64, JWT, UUID, hash, QR Code, conversores e calculadoras. Tudo roda no seu navegador, sem cadastro."
+    />
+    <link rel="canonical" href="https://utilikit.com.br/" />
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://utilikit.com.br/" />
+    <meta property="og:title" content="UtiliKit — Ferramentas online para desenvolvedores" />
+    <meta
+      property="og:description"
+      content="Formatadores, codificadores, geradores e conversores que rodam no seu navegador."
+    />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:site_name" content="UtiliKit" />
+    <meta name="twitter:card" content="summary" />
 
-  <!-- SEO Meta Tags -->
-  <meta name="description"
-    content="UtiliKit — calculadoras, conversores, geradores e contadores online gratuitos. Ferramentas úteis para o dia a dia, rápidas, modernas e funcionam no navegador sem cadastro." />
-  <meta name="keywords"
-    content="calculadora, conversor, gerador, contador, ferramentas online, utilitários, ferramentas gratuitas, calculadora online, conversor de moedas, gerador de QR code, contador de caracteres, timer pomodoro" />
-  <meta name="author" content="UtiliKit" />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://utilikit.com.br/" />
+    <meta name="google-adsense-account" content="ca-pub-9872963703717031" />
+    <meta name="theme-color" content="#15171c" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f6f7f9" media="(prefers-color-scheme: light)" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/logo.svg" />
 
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://utilikit.com.br/" />
-  <meta property="og:title" content="UtiliKit — Ferramentas online gratuitas" />
-  <meta property="og:description"
-    content="Calculadoras, conversores, geradores e contadores online gratuitos. Ferramentas úteis para o dia a dia, rápidas e modernas." />
-  <meta property="og:image" content="https://utilikit.com.br/og-image.png" />
-  <meta property="og:locale" content="pt_BR" />
-  <meta property="og:site_name" content="UtiliKit" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
 
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:url" content="https://utilikit.com.br/" />
-  <meta name="twitter:title" content="UtiliKit — Ferramentas online gratuitas" />
-  <meta name="twitter:description"
-    content="Calculadoras, conversores, geradores e contadores online gratuitos. Ferramentas úteis para o dia a dia." />
-  <meta name="twitter:image" content="https://utilikit.com.br/og-image.png" />
+    <!-- Aplica o tema antes do primeiro paint (evita piscar). -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('theme');
+          if (t !== 'light' && t !== 'dark') {
+            t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+          }
+          document.documentElement.setAttribute('data-theme', t);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
 
-  <!-- Theme -->
-  <meta name="theme-color" content="#6366f1" />
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="/logo.svg" />
-  <title>UtiliKit — Ferramentas online gratuitas</title>
-
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap"
-    rel="stylesheet" />
-
-  <!-- Google AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9872963703717031"
-    crossorigin="anonymous"></script>
-
-  <!-- Schema.org Structured Data -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "UtiliKit",
-    "url": "https://utilikit.com.br/",
-    "description": "Calculadoras, conversores, geradores e contadores online gratuitos. Ferramentas úteis para o dia a dia, rápidas, modernas e funcionam no navegador sem cadastro.",
-    "inLanguage": "pt-BR",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://utilikit.com.br/?search={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
-  }
-  </script>
-
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "UtiliKit",
-    "applicationCategory": "UtilitiesApplication",
-    "operatingSystem": "Web Browser",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "BRL"
-    },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.8",
-      "ratingCount": "150"
-    }
-  }
-  </script>
-</head>
-
-<body>
-  <div id="root"></div>
-  <script type="module" src="/src/main.jsx"></script>
-</body>
-
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "UtiliKit",
+        "url": "https://utilikit.com.br/",
+        "inLanguage": "pt-BR"
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>O UtiliKit precisa de JavaScript para funcionar.</noscript>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
