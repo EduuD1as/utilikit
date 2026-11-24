@@ -53,7 +53,11 @@ if (fs.existsSync(clientDist)) {
     express.static(path.join(clientDist, 'assets'), { immutable: true, maxAge: '1y' })
   );
   app.use(express.static(clientDist, { index: false, maxAge: '1h' }));
-  // Qualquer rota que não seja arquivo devolve o index.html (SPA).
+  // Arquivo inexistente (ex.: /favicon.png) responde 404 em vez do HTML da SPA.
+  app.get(/\.[a-z0-9]+$/i, (_req, res) => {
+    res.status(404).end();
+  });
+  // Qualquer outra rota devolve o index.html (SPA).
   app.get('*', (_req, res) => {
     res.set('Cache-Control', 'no-cache');
     res.sendFile(path.join(clientDist, 'index.html'));
